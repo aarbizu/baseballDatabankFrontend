@@ -13,17 +13,10 @@ import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.ktor.websocket.WebSockets
 import java.time.Duration
-import kweb.ElementCreator
 import kweb.Kweb
-import kweb.button
-import kweb.li
-import kweb.new
-import kweb.plugins.fomanticUI.fomantic
 import kweb.plugins.fomanticUI.fomanticUIPlugin
 import kweb.respondKwebRender
 import kweb.route
-import kweb.toInt
-import kweb.ul
 
 fun Application.module() {
     install(DefaultHeaders)
@@ -37,26 +30,10 @@ fun Application.module() {
         routing {
             get("/{visitedUrl...}") {
                 call.respondKwebRender {
-                    getRouteReceiver()
+                    route {
+                        getRoutePaths()
+                    }
                 }
-            }
-        }
-    }
-}
-
-private fun ElementCreator<*>.getRouteReceiver() {
-    route {
-        path("/") {
-            browser.url.value = "/number/1"
-        }
-        path("/number/{num}") { params ->
-            var ulist = ul(fomantic.ui.bulleted.list).new {
-                li(fomantic.ui.bulleted).text("num = ${ params.getValue("num").value }")
-            }
-            val num = params.getValue("num").toInt()
-            button(fomantic.ui.button).text(num.map { "Number $it" }).on.click {
-                num.value++
-                ulist.innerHTML("num = ${ params.getValue("num").value }")
             }
         }
     }

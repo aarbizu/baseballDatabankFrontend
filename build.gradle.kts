@@ -25,6 +25,8 @@ repositories {
 }
 
 object DependencyVersions {
+    val expose = "0.24.1"
+    val plsql = "42.2.2"
     val kotlinLogging= "1.8.3"
     val kweb = "0.7.20"
     val kotlinxCoroutines = "1.3.8"
@@ -37,7 +39,6 @@ object DependencyVersions {
     val truth = "1.0.1"
     val junit = "5.7.0-M1"
     val junitPlatformConsole = "1.7.0-M1"
-//    val kotlinArgparser = "2.0.7"
 }
 
 dependencies {
@@ -61,6 +62,12 @@ dependencies {
 
     //Coroutines (chapter 8)
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-common:${DependencyVersions.kotlinxCoroutines}")
+
+    // postgres
+    implementation("org.postgresql:postgresql:${DependencyVersions.plsql}")
+
+    // expose db driver
+    implementation("org.jetbrains.exposed:exposed-core:${DependencyVersions.expose}")
 
     implementation("org.slf4j:slf4j-api:${DependencyVersions.slf4j}")
     implementation("org.slf4j:slf4j-simple:${DependencyVersions.slf4j}")
