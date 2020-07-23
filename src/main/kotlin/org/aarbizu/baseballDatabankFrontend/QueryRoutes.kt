@@ -26,15 +26,20 @@ import kweb.td
 import kweb.th
 import kweb.thead
 import kweb.tr
+import org.apache.commons.lang3.time.StopWatch
+import org.slf4j.LoggerFactory
 
 private val massiveButtonStyle = mapOf("class" to "ui massive orange right labeled icon button")
 private val buttonStyle = mapOf("class" to "ui large orange right labeled icon button")
 private val baseballGlyphStyle = mapOf("class" to "baseball ball icon")
 private val subHeaderStyle = mapOf("class" to "sub header")
 private val homeIcon = mapOf("class" to "home icon")
+private val fieldButtonStyle = mapOf("class" to buttonStyle["class"] + " field")
 
 private const val playerNameLengthQuery = "player-name-by-len"
 private const val playerNameSearchQuery = "player-name"
+
+private val logger = LoggerFactory.getLogger("QueryRoutes")
 
 fun RouteReceiver.getRoutePaths() {
     path("/") {
@@ -53,7 +58,7 @@ fun RouteReceiver.getRoutePaths() {
                 }
                 div(fomantic.content).new {
                     a(href = "http://chadwick-bureau.com/")
-                        .text("Visit the Chadwick Bureau")
+                        .text("Visit the Chadwick Baseball Bureau")
                 }
                 div(fomantic.ui.divider)
                 button(massiveButtonStyle).text("Get Started").on.click {
@@ -82,15 +87,6 @@ fun RouteReceiver.getRoutePaths() {
             }
 
             div(fomantic.ui.container.id("query"))
-
-//            button(buttonStyle).text("Search").on.click {
-//                val queryType = params.getValue("type").value
-//                val queryElement = browser.doc.getElementById("query")
-//                val nextQueryType = handleQuery(queryType, queryElement)
-//                browser.url.value = "/q/$nextQueryType"
-//            }.new {
-//                i(baseballGlyphStyle)
-//            }
         }
     }
 }
@@ -106,25 +102,10 @@ private fun ElementCreator<*>.renderNavMenu() {
 }
 
 private fun handleQuery(queryType: String, element: Element) {
-    if (queryType == "begin") {
-        element.removeChildren().new {
-            table().new {
-                thead().new {
-                    tr().new {
-                        th().text("Name"); th().text("Position")
-                    }
-                }
-                tbody().new {
-                    tr().new {
-                        td().text("Bonds"); td().text("The G.O.A.T.")
-                    }
-                }
-            }
-        }
-    }
+    val queryEngine = QueryEngine()
 
     if (queryType == playerNameLengthQuery) {
-        generatePlayerNameLengthForm(element)
+        generatePlayerNameLengthForm(element, queryEngine)
     }
 
     if (queryType == playerNameSearchQuery) {
@@ -134,32 +115,62 @@ private fun handleQuery(queryType: String, element: Element) {
     }
 }
 
-private fun generatePlayerNameLengthForm(element: Element) {
+private fun generatePlayerNameLengthForm(element: Element, queries: QueryEngine) {
     val output = KVar("")
     var length: String
     var nameLengthInput: InputElement? = null
     element.removeChildren().new {
         form(fomantic.ui.form).new {
-            div(fomantic.three.wide.field).new {
-                label("Name Length")
-                nameLengthInput = input(
-                    type = InputType.text,
-                    name = "name-length",
-                    initialValue = "",
-                    size = 2,
-                    placeholder = "Name Length"
-                )
-            }
-            button(attributes = buttonStyle).text("Search").on.click {
-                GlobalScope.launch {
-                    length = nameLengthInput!!.getValue().await()
-                    output.value = length
+            div(fomantic.fields).new {
+                div(fomantic.three.wide.field).new {
+                    label("Name Length")
+                    nameLengthInput = input(
+                        type = InputType.text,
+                        name = "name-length",
+                        initialValue = "",
+                        size = 2,
+                        placeholder = "Name Length"
+                    )
                 }
-            }.new {
-                i(baseballGlyphStyle)
+                button(fieldButtonStyle).text("Search").on.click {
+                    GlobalScope.launch {
+                        length = nameLengthInput!!.getValue().await()
+                        val timer = StopWatch.createStarted()
+                        val players = queries.playerNamesByLength(length)
+                        logger.info("queryPlayers: $timer")
+                        timer.reset()
+                        tableOfPlayers(players, browser.doc.getElementById("output"))
+                        logger.info("renderTable: $timer")
+                    }
+                }.new {
+                    i(baseballGlyphStyle)
+                }
             }
         }
         div(fomantic.ui.hidden.divider)
         div(fomantic.content.id("output")).text(output)
+    }
+}
+
+//TODO -- figure out a way to paginate the results into a "PaginatedTable" Element
+fun tableOfPlayers(players: List<Player>, element: Element) {
+    element.removeChildren().new {
+        table(fomantic.ui.celled.table).new {
+            thead().new {
+                tr().new {
+                    th().text(Player::name.name); th().text(Player::born.name)
+                    th().text(Player::debut.name); th().text(Player::finalgame.name)
+                    th().text(Player::playerId.name); th().text(Player::bbrefid.name)
+                }
+            }
+            tbody().new {
+                players.forEach {
+                    tr().new {
+                        td().text(it.name); td().text(it.born); td().text(it.debut); td().text(it.finalgame)
+                        td().text(it.playerId); td().text(it.bbrefid)
+                    }
+                }
+            }
+        }
     }
 }

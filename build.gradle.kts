@@ -25,20 +25,19 @@ repositories {
 }
 
 object DependencyVersions {
-    val expose = "0.24.1"
-    val plsql = "42.2.2"
-    val kotlinLogging= "1.8.3"
-    val kweb = "0.7.20"
-    val kotlinxCoroutines = "1.3.8"
-    val ktor = "1.3.2"
-    val okhttp = "4.8.0"
-    val gson = "2.8.6"
-    val guava = "29.0-jre"
-    val systemRules = "1.19.0"
-    val slf4j = "2.0.0-alpha1"
-    val truth = "1.0.1"
-    val junit = "5.7.0-M1"
-    val junitPlatformConsole = "1.7.0-M1"
+    const val postgres = "42.2.2"
+    const val kotlinLogging= "1.8.3"
+    const val kweb = "0.7.20"
+    const val kotlinxCoroutines = "1.3.8"
+    const val ktor = "1.3.2"
+    const val okhttp = "4.8.0"
+    const val gson = "2.8.6"
+    const val guava = "29.0-jre"
+    const val systemRules = "1.19.0"
+    const val slf4j = "2.0.0-alpha1"
+    const val truth = "1.0.1"
+    const val junit = "5.7.0-M1"
+    const val junitPlatformConsole = "1.7.0-M1"
 }
 
 dependencies {
@@ -64,10 +63,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-common:${DependencyVersions.kotlinxCoroutines}")
 
     // postgres
-    implementation("org.postgresql:postgresql:${DependencyVersions.plsql}")
-
-    // expose db driver
-    implementation("org.jetbrains.exposed:exposed-core:${DependencyVersions.expose}")
+    implementation("org.postgresql:postgresql:${DependencyVersions.postgres}")
 
     implementation("org.slf4j:slf4j-api:${DependencyVersions.slf4j}")
     implementation("org.slf4j:slf4j-simple:${DependencyVersions.slf4j}")
