@@ -139,7 +139,7 @@ private fun generatePlayerNameLengthForm(element: Element, queries: QueryEngine)
                         val players = queries.playerNamesByLength(length)
                         logger.info("queryPlayers: $timer")
                         timer.reset()
-                        tableOfPlayers(players, browser.doc.getElementById("output"))
+                        PaginatedRecords(players, browser.doc.getElementById("output")).renderTable()
                         logger.info("renderTable: $timer")
                     }
                 }.new {
@@ -152,24 +152,68 @@ private fun generatePlayerNameLengthForm(element: Element, queries: QueryEngine)
     }
 }
 
-//TODO -- figure out a way to paginate the results into a "PaginatedTable" Element
-fun tableOfPlayers(players: List<Player>, element: Element) {
-    element.removeChildren().new {
-        table(fomantic.ui.celled.table).new {
-            thead().new {
-                tr().new {
-                    th().text(Player::name.name); th().text(Player::born.name)
-                    th().text(Player::debut.name); th().text(Player::finalgame.name)
-                    th().text(Player::playerId.name); th().text(Player::bbrefid.name)
-                }
-            }
-            tbody().new {
-                players.forEach {
-                    tr().new {
-                        td().text(it.name); td().text(it.born); td().text(it.debut); td().text(it.finalgame)
-                        td().text(it.playerId); td().text(it.bbrefid)
+class PaginatedRecords(
+    private val records: List<TableRecord>,
+    private val element: Element,
+    private val pageSize: Int = 10
+) {
+    private val size = records.size
+    private var from: Int = 0
+    private var to: Int = from + pageSize
+
+    private fun nextPage() {
+        if (to < size) {
+            from += pageSize
+            to = if (to + pageSize > size) size else to + pageSize
+        }
+    }
+
+    private fun prevPage() {
+        if (from > 0) {
+            from = if (from - pageSize < 0) 0 else from - pageSize
+            to = if (to == size) from + pageSize else to - pageSize
+        }
+    }
+
+    fun renderTable() {
+        if (size > 0) {
+            element.removeChildren().new {
+                div(fomantic.content).text("$size result found.")
+                table(fomantic.ui.celled.table).new {
+                    thead().new {
+                        tr().new {
+                            th().text("#")
+                            records[0].headers().forEach {
+                                th().text(it)
+                            }
+                        }
+                    }
+                    tbody().new {
+                        var recNum = from + 1
+                        records.subList(from, to).forEach { row ->
+                            tr().new {
+                                td().text("${recNum++}")
+                                row.cells().forEach { cell ->
+                                    td().text(cell)
+                                }
+                            }
+                        }
                     }
                 }
+                div(fomantic.ui.compact.menu).new {
+                    div(mapOf("class" to "link item")).text("Prev").on.click {
+                        prevPage()
+                        renderTable()
+                    }
+                    div(mapOf("class" to "link item")).text("Next").on.click {
+                        nextPage()
+                        renderTable()
+                    }
+                }
+            }
+        } else {
+            element.removeChildren().new {
+                div(fomantic.content).text("No results.")
             }
         }
     }

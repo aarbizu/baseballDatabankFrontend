@@ -13,7 +13,27 @@ object DB {
     }
 }
 
-data class PlayerBasic(val name: String, val born: String, val debut: String, val finalgame: String)
+// TODO move these into their own file for data types
+abstract class TableRecord() {
+    abstract fun headers(): List<String>
+    abstract fun cells(): List<String>
+}
+data class PlayerBasic(
+    val name: String,
+    val born: String,
+    val debut: String,
+    val finalgame: String
+) : TableRecord() {
+
+    override fun headers(): List<String> {
+        return listOf("Name", "Born", "Debut", "Final Game")
+    }
+
+    override fun cells(): List<String> {
+        return listOf(name, born, debut, finalgame)
+    }
+}
+
 data class Player(
     val name: String,
     val born: String,
@@ -21,12 +41,22 @@ data class Player(
     val finalgame: String,
     val playerId: String,
     val bbrefid: String
-)
+) : TableRecord() {
 
+    override fun headers(): List<String> {
+        return listOf("Name", "Born", "Debut", "Final Game", "Player Id", "bbref Id")
+    }
+
+    override fun cells(): List<String> {
+        return listOf(name, born, debut, finalgame, playerId, bbrefid)
+    }
+}
+
+// TODO move these into a file for queries
 val playerNamesByLength = """
     SELECT
         COALESCE(namegiven, 'unknown') || ' ' || COALESCE(namelast, 'unknown') as name,
-        COALESCE(birthyear, -1) || '-' || COALESCE(birthmonth, -1) || '-' || COALESCE(birthday, -1) as born,
+        COALESCE(birthyear, 0) || '-' || COALESCE(birthmonth, 0) || '-' || COALESCE(birthday, 0) as born,
         COALESCE(debut, 'unknown') as debut,
         COALESCE(finalgame, 'unknown') as finalgame,
         COALESCE(playerid, 'unknown') as playerid,
@@ -39,7 +69,7 @@ val playerNamesByLength = """
 val playerName = """
     SELECT
         COALESCE(namegiven, 'unknown') || ' ' || COALESCE(namelast, 'unknown') as name,
-        COALESCE(birthyear, -1) || '-' || COALESCE(birthmonth, -1) || '-' || COALESCE(birthday, -1) as born,
+        COALESCE(birthyear, 0) || '-' || COALESCE(birthmonth, 0) || '-' || COALESCE(birthday, 0) as born,
         COALESCE(debut, 'unknown') as debut,
         COALESCE(finalgame, 'unknown') as finalgame
     FROM people
@@ -62,7 +92,8 @@ class QueryEngine {
             players.add(
                 Player(
                     rs.getString("name"),
-                    rs.getString("born"),
+                    // TODO what if, say, just the year is known:  '0-0-1888', e.g. ?
+                    if (rs.getString("born") == "0-0-0") { "unknown" } else { rs.getString("born") },
                     rs.getString("debut"),
                     rs.getString("finalgame"),
                     rs.getString("playerid"),
