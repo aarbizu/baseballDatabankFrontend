@@ -21,18 +21,26 @@ class PaginatedRecords(
     private var from: Int = 0
     private var to: Int = if (size < pageSize) size else from + pageSize
 
-    private fun nextPage() {
+    private fun nextPage(): Boolean {
+        var changed = true
         if (to < size) {
             from += pageSize
             to = if (to + pageSize > size) size else to + pageSize
+        } else {
+            changed = false
         }
+        return changed
     }
 
-    private fun prevPage() {
+    private fun prevPage(): Boolean {
+        var changed = true
         if (from > 0) {
             from = if (from - pageSize < 0) 0 else from - pageSize
             to = if (to == size) from + pageSize else to - pageSize
+        } else {
+            changed = false
         }
+        return changed
     }
 
     fun renderTable() {
@@ -61,13 +69,19 @@ class PaginatedRecords(
                     }
                 }
                 div(fomantic.ui.compact.menu).new {
-                    div(mapOf("class" to "link item")).text("Prev").on.click {
-                        prevPage()
-                        renderTable()
+                    div(mapOf("class" to "link item", "id" to "previous-item")).text("Prev").on.click {
+                        if (prevPage()) {
+                            renderTable()
+                            browser.doc.getElementById("next-item").removeClasses("disabled")
+                            if (from == 0) browser.doc.getElementById("previous-item").addClasses("disabled")
+                        }
                     }
-                    div(mapOf("class" to "link item")).text("Next").on.click {
-                        nextPage()
-                        renderTable()
+                    div(mapOf("class" to "link item", "id" to "next-item")).text("Next").on.click {
+                        if (nextPage()) {
+                            renderTable()
+                            browser.doc.getElementById("previous-item").removeClasses("disabled")
+                            if (to == size) browser.doc.getElementById("next-item").addClasses("disabled")
+                        }
                     }
                 }
             }

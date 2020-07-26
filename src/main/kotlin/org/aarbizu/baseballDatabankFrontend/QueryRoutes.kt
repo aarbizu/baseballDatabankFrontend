@@ -1,5 +1,6 @@
 package org.aarbizu.baseballDatabankFrontend
 
+import io.ktor.http.Parameters
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.future.await
 import kotlinx.coroutines.launch
@@ -36,7 +37,7 @@ private const val playerNameSearchQuery = "player-name"
 
 private val logger = LoggerFactory.getLogger("QueryRoutes")
 
-fun RouteReceiver.getRoutePaths() {
+fun RouteReceiver.getRoutePaths(parameters: Parameters) {
     path("/") {
         renderNavMenu()
         div(fomantic.ui.center.aligned.container).new {
@@ -64,7 +65,7 @@ fun RouteReceiver.getRoutePaths() {
             }
         }
     }
-    path("/q/{type}") { _ ->
+    path("/q/{type}") {
         renderNavMenu()
         div(fomantic.ui.hidden.divider)
         div(fomantic.ui.container).new {
@@ -110,11 +111,10 @@ private fun handleQuery(queryType: String, element: Element) {
 
 private fun generatePlayerNameSearchForm(element: Element, queries: QueryEngine) {
     val output = KVar("")
-    var nameFragment: String
     var nameFragmentInput: InputElement? = null
 
     element.removeChildren().new {
-        form(fomantic.ui.form).new {
+        form(mapOf("class" to "ui form", "action" to "")).new {
             div(fomantic.fields).new {
                 div(fomantic.six.wide.field).new {
                     label("Last Name")
@@ -128,24 +128,38 @@ private fun generatePlayerNameSearchForm(element: Element, queries: QueryEngine)
                 }
                 button(fieldButtonStyle).text("Search").on.click {
                     GlobalScope.launch {
-                        nameFragment = nameFragmentInput!!.getValue().await()
-                        val timer = StopWatch.createStarted()
-                        val players = queries.playerNameSearch("%${nameFragment.toLowerCase()}%")
-                        logger.info("queryPlayerNames: $timer")
-                        timer.reset()
-                        timer.start()
-                        PaginatedRecords(players, browser.doc.getElementById("names")).renderTable()
-                        logger.info("render table: $timer")
-                        timer.stop()
+                        getInputAndRenderResult(listOf(nameFragmentInput!!),
+                            browser.doc.getElementById("names")) {
+                            inputs -> queries.playerNameSearch("%${inputs[0].toLowerCase()}%")
+                        }
                     }
                 }.new {
                     i(baseballGlyphStyle)
                 }
             }
-        }
+        }.on.submit {  }
         div(fomantic.ui.hidden.divider)
         div(fomantic.content.id("names")).text(output)
     }
+}
+
+private suspend fun getInputAndRenderResult(
+    inputs: List<InputElement>,
+    outputElement: Element,
+    query: (inputs: List<String>) -> List<TableRecord>
+) {
+    val params = mutableListOf<String>()
+    inputs.forEach {
+        params.add(it.getValue().await())
+    }
+    val timer = StopWatch.createStarted()
+    val records = query(params)
+    logger.info("queryPlayerNames: $timer")
+    timer.reset()
+    timer.start()
+    PaginatedRecords(records, outputElement).renderTable()
+    logger.info("render table: $timer")
+    timer.stop()
 }
 
 private fun generatePlayerNameLengthForm(element: Element, queries: QueryEngine) {

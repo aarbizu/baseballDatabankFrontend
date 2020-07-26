@@ -29,9 +29,10 @@ fun Application.module() {
         plugins = listOf(fomanticUIPlugin)
         routing {
             get("/{visitedUrl...}") {
+                val parameters = call.parameters
                 call.respondKwebRender {
                     route {
-                        getRoutePaths()
+                        getRoutePaths(parameters)
                     }
                 }
             }
