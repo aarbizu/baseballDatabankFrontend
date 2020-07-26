@@ -20,12 +20,7 @@ import kweb.new
 import kweb.plugins.fomanticUI.fomantic
 import kweb.routing.RouteReceiver
 import kweb.state.KVar
-import kweb.table
-import kweb.tbody
-import kweb.td
-import kweb.th
-import kweb.thead
-import kweb.tr
+import org.aarbizu.baseballDatabankFrontend.config.PaginatedRecords
 import org.apache.commons.lang3.time.StopWatch
 import org.slf4j.LoggerFactory
 
@@ -109,9 +104,47 @@ private fun handleQuery(queryType: String, element: Element) {
     }
 
     if (queryType == playerNameSearchQuery) {
-        element.removeChildren().new {
-            div(fomantic.content).text("insert player name search query")
+        generatePlayerNameSearchForm(element, queryEngine)
+    }
+}
+
+private fun generatePlayerNameSearchForm(element: Element, queries: QueryEngine) {
+    val output = KVar("")
+    var nameFragment: String
+    var nameFragmentInput: InputElement? = null
+
+    element.removeChildren().new {
+        form(fomantic.ui.form).new {
+            div(fomantic.fields).new {
+                div(fomantic.six.wide.field).new {
+                    label("Last Name")
+                    nameFragmentInput = input(
+                        type = InputType.text,
+                        name = "last-name",
+                        initialValue = "",
+                        size = 32,
+                        placeholder = """ Surname, e.g."Bonds" """
+                    )
+                }
+                button(fieldButtonStyle).text("Search").on.click {
+                    GlobalScope.launch {
+                        nameFragment = nameFragmentInput!!.getValue().await()
+                        val timer = StopWatch.createStarted()
+                        val players = queries.playerNameSearch("%${nameFragment.toLowerCase()}%")
+                        logger.info("queryPlayerNames: $timer")
+                        timer.reset()
+                        timer.start()
+                        PaginatedRecords(players, browser.doc.getElementById("names")).renderTable()
+                        logger.info("render table: $timer")
+                        timer.stop()
+                    }
+                }.new {
+                    i(baseballGlyphStyle)
+                }
+            }
         }
+        div(fomantic.ui.hidden.divider)
+        div(fomantic.content.id("names")).text(output)
     }
 }
 
@@ -119,6 +152,7 @@ private fun generatePlayerNameLengthForm(element: Element, queries: QueryEngine)
     val output = KVar("")
     var length: String
     var nameLengthInput: InputElement? = null
+
     element.removeChildren().new {
         form(fomantic.ui.form).new {
             div(fomantic.fields).new {
@@ -139,8 +173,10 @@ private fun generatePlayerNameLengthForm(element: Element, queries: QueryEngine)
                         val players = queries.playerNamesByLength(length)
                         logger.info("queryPlayers: $timer")
                         timer.reset()
+                        timer.start()
                         PaginatedRecords(players, browser.doc.getElementById("output")).renderTable()
                         logger.info("renderTable: $timer")
+                        timer.stop()
                     }
                 }.new {
                     i(baseballGlyphStyle)
@@ -149,72 +185,5 @@ private fun generatePlayerNameLengthForm(element: Element, queries: QueryEngine)
         }
         div(fomantic.ui.hidden.divider)
         div(fomantic.content.id("output")).text(output)
-    }
-}
-
-class PaginatedRecords(
-    private val records: List<TableRecord>,
-    private val element: Element,
-    private val pageSize: Int = 10
-) {
-    private val size = records.size
-    private var from: Int = 0
-    private var to: Int = from + pageSize
-
-    private fun nextPage() {
-        if (to < size) {
-            from += pageSize
-            to = if (to + pageSize > size) size else to + pageSize
-        }
-    }
-
-    private fun prevPage() {
-        if (from > 0) {
-            from = if (from - pageSize < 0) 0 else from - pageSize
-            to = if (to == size) from + pageSize else to - pageSize
-        }
-    }
-
-    fun renderTable() {
-        if (size > 0) {
-            element.removeChildren().new {
-                div(fomantic.content).text("$size result found.")
-                table(fomantic.ui.celled.table).new {
-                    thead().new {
-                        tr().new {
-                            th().text("#")
-                            records[0].headers().forEach {
-                                th().text(it)
-                            }
-                        }
-                    }
-                    tbody().new {
-                        var recNum = from + 1
-                        records.subList(from, to).forEach { row ->
-                            tr().new {
-                                td().text("${recNum++}")
-                                row.cells().forEach { cell ->
-                                    td().text(cell)
-                                }
-                            }
-                        }
-                    }
-                }
-                div(fomantic.ui.compact.menu).new {
-                    div(mapOf("class" to "link item")).text("Prev").on.click {
-                        prevPage()
-                        renderTable()
-                    }
-                    div(mapOf("class" to "link item")).text("Next").on.click {
-                        nextPage()
-                        renderTable()
-                    }
-                }
-            }
-        } else {
-            element.removeChildren().new {
-                div(fomantic.content).text("No results.")
-            }
-        }
     }
 }
