@@ -17,6 +17,10 @@ import kweb.Kweb
 import kweb.plugins.fomanticUI.fomanticUIPlugin
 import kweb.respondKwebRender
 import kweb.route
+import org.slf4j.LoggerFactory
+
+const val uriPrefix = "loc"
+private val logger = LoggerFactory.getLogger("Server")
 
 fun Application.module() {
     install(DefaultHeaders)
@@ -28,8 +32,9 @@ fun Application.module() {
     install(Kweb) {
         plugins = listOf(fomanticUIPlugin)
         routing {
-            get("/{visitedUrl...}") {
-                val parameters = call.parameters
+            // trace { logger.info(it.buildText()) }
+            get("/{$uriPrefix...}") {
+                val parameters = call.request.queryParameters
                 call.respondKwebRender {
                     route {
                         getRoutePaths(parameters)

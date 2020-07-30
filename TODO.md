@@ -1,6 +1,7 @@
 ### TODO
 
-- player name search (last name substring)
+- ~~player name search (last name substring)~~
+- (WIP) use the ktor param parsing to handle form submits, etc
 - add linking from bbrefid to the bbref site
 - process the db to build some static content pages
     - players (reg/postseason)

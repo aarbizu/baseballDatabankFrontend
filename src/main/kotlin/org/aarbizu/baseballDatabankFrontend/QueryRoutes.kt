@@ -22,8 +22,6 @@ import kweb.plugins.fomanticUI.fomantic
 import kweb.routing.RouteReceiver
 import kweb.state.KVar
 import org.aarbizu.baseballDatabankFrontend.config.PaginatedRecords
-import org.apache.commons.lang3.time.StopWatch
-import org.slf4j.LoggerFactory
 
 private val massiveButtonStyle = mapOf("class" to "ui massive orange right labeled icon button")
 private val buttonStyle = mapOf("class" to "ui large orange right labeled icon button")
@@ -35,11 +33,48 @@ private val fieldButtonStyle = mapOf("class" to buttonStyle["class"] + " field")
 private const val playerNameLengthQuery = "player-name-by-len"
 private const val playerNameSearchQuery = "player-name"
 
-private val logger = LoggerFactory.getLogger("QueryRoutes")
+private val queryEngine = QueryEngine()
+private val crumbs = mutableListOf<Crumb>()
+
+data class Crumb(val section: String, val url: String) {
+    fun isNotEmpty() = section.isNotBlank() && url.isNotBlank()
+    fun isEmpty() = !isNotEmpty()
+    companion object EmptyCrumb {
+        val empty = Crumb("", "")
+    }
+}
+
+private fun ElementCreator<*>.renderNavMenu(newCrumb: Crumb) {
+    div(fomantic.ui.attached.inverted.segment).new {
+        div(fomantic.ui.inverted.breadcrumb).new {
+            a(fomantic.section, href = "/").new {
+                div(fomantic.ui.item).new {
+                    i(homeIcon)
+                }
+            }
+            appendSection(newCrumb)
+        }
+    }
+}
+
+private fun ElementCreator<*>.appendSection(newCrumb: Crumb) {
+    if (newCrumb.isEmpty()) {
+        crumbs.clear()
+    }
+
+    if (!crumbs.contains(newCrumb) && newCrumb.isNotEmpty()) {
+        crumbs.add(newCrumb)
+    }
+
+    crumbs.forEach {
+        i(fomantic.right.chevron.icon.divider)
+        a(fomantic.section, href = it.url).text(it.section)
+    }
+}
 
 fun RouteReceiver.getRoutePaths(parameters: Parameters) {
     path("/") {
-        renderNavMenu()
+        renderNavMenu(Crumb.empty)
         div(fomantic.ui.center.aligned.container).new {
             div(fomantic.ui.hidden.divider)
             div(fomantic.content).new {
@@ -65,82 +100,104 @@ fun RouteReceiver.getRoutePaths(parameters: Parameters) {
             }
         }
     }
-    path("/q/{type}") {
-        renderNavMenu()
+    path("/q/begin") {
+        renderNavMenu(Crumb("Begin", "/q/begin"))
         div(fomantic.ui.hidden.divider)
         div(fomantic.ui.container).new {
             div(fomantic.ui.two.item.menu).new {
                 a(fomantic.ui.item).text("Player Name By Length").on.click {
-                    val queryElement = browser.doc.getElementById("query")
-                    handleQuery(playerNameLengthQuery, queryElement)
-                    browser.url.value = "/q/$playerNameLengthQuery"
+                    browser.url.value = "/q/$playerNameLengthQuery/"
                 }
                 a(fomantic.ui.item).text("Player Name Search").on.click {
-                    val queryElement = browser.doc.getElementById("query")
-                    handleQuery(playerNameSearchQuery, queryElement)
-                    browser.url.value = "/q/$playerNameSearchQuery"
+                    browser.url.value = "/q/$playerNameSearchQuery/"
                 }
             }
-
-            div(fomantic.ui.container.id("query"))
+        }
+    }
+    path("/q/$playerNameLengthQuery/{lengthParam}") {
+        renderNavMenu(Crumb("Name Length", "/q/$playerNameLengthQuery/${parameters[playerNameLengthQuery]}"))
+        div(fomantic.ui.hidden.divider)
+        div(fomantic.ui.container).new {
+            generatePlayerNameLengthForm(queryEngine)
+            div(fomantic.content).text(parameters.entries().mapIndexed {
+                idx, entry -> "$idx: ${entry.key}=${entry.value.map { it }}"
+            }.joinToString())
+        }
+    }
+    path("/q/$playerNameSearchQuery/{nameParam}") {
+        renderNavMenu(Crumb("Last Name", "/q/$playerNameSearchQuery/${parameters[playerNameSearchQuery]}"))
+        div(fomantic.ui.hidden.divider)
+        div(fomantic.ui.container).new {
+            generatePlayerNameSearchForm(queryEngine)
+            div(fomantic.content).text(parameters.entries().mapIndexed {
+                    idx, entry -> "$idx: ${entry.key}=${entry.value.map { it }}"
+            }.joinToString())
         }
     }
 }
 
-private fun ElementCreator<*>.renderNavMenu() {
-    div(fomantic.ui.top.attached.menu.inverted).new {
-        a(href = "/").new {
-            div(fomantic.ui.item).new {
-                i(homeIcon)
-            }
-        }
-    }
-}
-
-private fun handleQuery(queryType: String, element: Element) {
-    val queryEngine = QueryEngine()
-
-    if (queryType == playerNameLengthQuery) {
-        generatePlayerNameLengthForm(element, queryEngine)
-    }
-
-    if (queryType == playerNameSearchQuery) {
-        generatePlayerNameSearchForm(element, queryEngine)
-    }
-}
-
-private fun generatePlayerNameSearchForm(element: Element, queries: QueryEngine) {
+private fun ElementCreator<*>.generatePlayerNameSearchForm(queries: QueryEngine) {
     val output = KVar("")
     var nameFragmentInput: InputElement? = null
 
-    element.removeChildren().new {
-        form(mapOf("class" to "ui form", "action" to "")).new {
-            div(fomantic.fields).new {
-                div(fomantic.six.wide.field).new {
-                    label("Last Name")
-                    nameFragmentInput = input(
-                        type = InputType.text,
-                        name = "last-name",
-                        initialValue = "",
-                        size = 32,
-                        placeholder = """ Surname, e.g."Bonds" """
-                    )
-                }
-                button(fieldButtonStyle).text("Search").on.click {
-                    GlobalScope.launch {
-                        getInputAndRenderResult(listOf(nameFragmentInput!!),
-                            browser.doc.getElementById("names")) {
-                            inputs -> queries.playerNameSearch("%${inputs[0].toLowerCase()}%")
-                        }
-                    }
-                }.new {
-                    i(baseballGlyphStyle)
-                }
+    form(fomantic.ui.form).new {
+        div(fomantic.fields).new {
+            div(fomantic.six.wide.field).new {
+                label("Last Name")
+                nameFragmentInput = input(
+                    type = InputType.text,
+                    name = "last-name",
+                    initialValue = "",
+                    size = 32,
+                    placeholder = """ Surname, e.g."Bonds" """
+                )
             }
-        }.on.submit {  }
-        div(fomantic.ui.hidden.divider)
-        div(fomantic.content.id("names")).text(output)
+            button(fieldButtonStyle).text("Search").on.click {
+                GlobalScope.launch {
+                    getInputAndRenderResult(listOf(nameFragmentInput!!),
+                        browser.doc.getElementById("names")) {
+                        inputs -> queries.playerNameSearch("%${inputs[0].toLowerCase()}%")
+                    }
+                }
+            }.new {
+                i(baseballGlyphStyle)
+            }
+        }
     }
+    div(fomantic.ui.hidden.divider)
+    div(fomantic.content.id("names")).text(output)
+}
+
+private fun ElementCreator<*>.generatePlayerNameLengthForm(queries: QueryEngine) {
+    val output = KVar("")
+    var nameLengthInput: InputElement? = null
+
+    form(fomantic.ui.form).new {
+        div(fomantic.fields).new {
+            div(fomantic.three.wide.field).new {
+                label("Name Length")
+                nameLengthInput = input(
+                    type = InputType.text,
+                    name = "name-length",
+                    initialValue = "",
+                    size = 2,
+                    placeholder = "Name Length"
+                )
+            }
+            button(fieldButtonStyle).text("Search").on.click {
+                GlobalScope.launch {
+                    getInputAndRenderResult(listOf(nameLengthInput!!),
+                        browser.doc.getElementById("output")) {
+                        inputs -> queries.playerNamesByLength(inputs[0])
+                    }
+                }
+            }.new {
+                i(baseballGlyphStyle)
+            }
+        }
+    }
+    div(fomantic.ui.hidden.divider)
+    div(fomantic.content.id("output")).text(output)
 }
 
 private suspend fun getInputAndRenderResult(
@@ -152,52 +209,13 @@ private suspend fun getInputAndRenderResult(
     inputs.forEach {
         params.add(it.getValue().await())
     }
-    val timer = StopWatch.createStarted()
-    val records = query(params)
-    logger.info("queryPlayerNames: $timer")
-    timer.reset()
-    timer.start()
-    PaginatedRecords(records, outputElement).renderTable()
-    logger.info("render table: $timer")
-    timer.stop()
+    getQueryResult(params, query, outputElement)
 }
 
-private fun generatePlayerNameLengthForm(element: Element, queries: QueryEngine) {
-    val output = KVar("")
-    var length: String
-    var nameLengthInput: InputElement? = null
-
-    element.removeChildren().new {
-        form(fomantic.ui.form).new {
-            div(fomantic.fields).new {
-                div(fomantic.three.wide.field).new {
-                    label("Name Length")
-                    nameLengthInput = input(
-                        type = InputType.text,
-                        name = "name-length",
-                        initialValue = "",
-                        size = 2,
-                        placeholder = "Name Length"
-                    )
-                }
-                button(fieldButtonStyle).text("Search").on.click {
-                    GlobalScope.launch {
-                        length = nameLengthInput!!.getValue().await()
-                        val timer = StopWatch.createStarted()
-                        val players = queries.playerNamesByLength(length)
-                        logger.info("queryPlayers: $timer")
-                        timer.reset()
-                        timer.start()
-                        PaginatedRecords(players, browser.doc.getElementById("output")).renderTable()
-                        logger.info("renderTable: $timer")
-                        timer.stop()
-                    }
-                }.new {
-                    i(baseballGlyphStyle)
-                }
-            }
-        }
-        div(fomantic.ui.hidden.divider)
-        div(fomantic.content.id("output")).text(output)
-    }
+private fun getQueryResult(
+    params: List<String>,
+    query: (inputs: List<String>) -> List<TableRecord>,
+    outputElement: Element
+) {
+    PaginatedRecords(query(params), outputElement).renderTable()
 }
