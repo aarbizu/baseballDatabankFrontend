@@ -65,12 +65,15 @@ dependencies {
     // postgres
     implementation("org.postgresql:postgresql:${DependencyVersions.postgres}")
 
+    // coroutine debug
+
     implementation("org.slf4j:slf4j-api:${DependencyVersions.slf4j}")
     implementation("org.slf4j:slf4j-simple:${DependencyVersions.slf4j}")
     implementation("com.squareup.okhttp3:okhttp:${DependencyVersions.okhttp}")
     implementation("com.google.code.gson:gson:${DependencyVersions.gson}")
     implementation("com.google.guava:guava:${DependencyVersions.guava}")
 
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-debug:${DependencyVersions.kotlinxCoroutines}")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit")
     testImplementation("com.github.stefanbirkner:system-rules:${DependencyVersions.systemRules}")
     testImplementation("com.google.truth:truth:${DependencyVersions.truth}")

@@ -32,3 +32,23 @@ val playerLastNameSubstring = """
     WHERE LOWER(namelast) LIKE ?
     ORDER BY LENGTH(namelast) ASC
 """.trimIndent()
+
+fun playerNameRegex(first: Boolean = true, last: Boolean = true, caseSensitive: Boolean = false): String {
+    val nameClauseColumn = if (first && last) {
+            "namefirst || ' ' || namelast"
+        } else if (first) {
+            "namefirst"
+        } else {
+            "namelast"
+        }
+
+    return """
+        SELECT 
+            namefirst || ' ' || namelast as name,
+            COALESCE(birthyear, 0) || '-' || COALESCE(birthmonth, 0) || '-' || COALESCE(birthday, 0) as born,
+            COALESCE(debut, 'unknown') as debut,
+            COALESCE(finalgame, 'unknown') as finalgame
+        FROM people
+        WHERE $nameClauseColumn ${ if (caseSensitive) { "~" } else { "~*" }} ?
+    """.trimIndent()
+}

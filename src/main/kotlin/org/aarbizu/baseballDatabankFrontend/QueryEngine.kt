@@ -70,4 +70,14 @@ class QueryEngine {
             Player.extract
         )
     }
+
+    fun playerNameRegexSearch(regex: String, matchFirst: Boolean, matchLast: Boolean, caseSensitive: Boolean): List<TableRecord> {
+        return query(
+            statement(
+                playerNameRegex(matchFirst, matchLast, caseSensitive),
+                listOf(StrBind("nameRegex", regex))
+            ),
+            PlayerBasic.extract
+        )
+    }
 }
