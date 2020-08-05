@@ -20,7 +20,6 @@ import kweb.route
 import org.slf4j.LoggerFactory
 
 const val uriPrefix = "loc"
-private val logger = LoggerFactory.getLogger("Server")
 
 fun Application.module() {
     install(DefaultHeaders)

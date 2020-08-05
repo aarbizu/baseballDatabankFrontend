@@ -1,15 +1,18 @@
 ### TODO
 
-- ~~player name search (last name substring)~~
-- (WIP) use the ktor param parsing to handle form submits, etc
-- add linking from bbrefid to the bbref site
-- add the ability to query player name by regex (first, last, full name)
-- process the db to build some static content pages
-    - players (reg/postseason)
-    - teams (reg/postseason)
-    - managers (reg/postseason)
+- [x] player name search (last name substring)
+- [ ] refactor QueryRoutes to have individual form/query using an interface
+- ~~[ ] (WIP) use the ktor param parsing to handle form submits, etc~~
+    - [ ] actually KVars should be usable for all of this: keep tinkering
+- [ ] add linking from bbrefid to the bbref site
+- [x] add the ability to query player name by regex (first, last, full name)
+- [ ] process the db to build some static content pages
+    - [ ] players (reg/postseason)
+    - [ ] teams (reg/postseason)
+    - [ ] managers (reg/postseason)
 - checkbox modifiers to superlative queries, e.g. top HR hitters whose names are:
-    - palindromes
-    - supervocalic
+    - [ ] ~~palindromes (infeasible, computationally)~~
+    - [ ] supervocalic
+    - [ ] stricy supervocalic (exactly one each of vowel)
     
     

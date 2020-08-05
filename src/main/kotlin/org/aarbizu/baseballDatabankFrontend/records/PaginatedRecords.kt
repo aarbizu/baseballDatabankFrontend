@@ -1,4 +1,4 @@
-package org.aarbizu.baseballDatabankFrontend.config
+package org.aarbizu.baseballDatabankFrontend.records
 
 import kweb.Element
 import kweb.div
@@ -10,7 +10,6 @@ import kweb.td
 import kweb.th
 import kweb.thead
 import kweb.tr
-import org.aarbizu.baseballDatabankFrontend.TableRecord
 
 class PaginatedRecords(
     private val records: List<TableRecord>,

@@ -1,4 +1,4 @@
-package org.aarbizu.baseballDatabankFrontend
+package org.aarbizu.baseballDatabankFrontend.db
 
 import com.google.common.base.Stopwatch
 import java.sql.DriverManager
@@ -7,6 +7,14 @@ import java.sql.ResultSet
 import org.aarbizu.baseballDatabankFrontend.config.dbPassword
 import org.aarbizu.baseballDatabankFrontend.config.dbUrl
 import org.aarbizu.baseballDatabankFrontend.config.dbUser
+import org.aarbizu.baseballDatabankFrontend.query.Bind
+import org.aarbizu.baseballDatabankFrontend.query.IntBind
+import org.aarbizu.baseballDatabankFrontend.query.StrBind
+import org.aarbizu.baseballDatabankFrontend.query.playerLastNameSubstring
+import org.aarbizu.baseballDatabankFrontend.query.playerNameRegex
+import org.aarbizu.baseballDatabankFrontend.records.Player
+import org.aarbizu.baseballDatabankFrontend.records.PlayerBasic
+import org.aarbizu.baseballDatabankFrontend.records.TableRecord
 import org.slf4j.LoggerFactory
 
 private val logger = LoggerFactory.getLogger("QueryEngine")
@@ -55,7 +63,12 @@ class QueryEngine {
         return query(
             statement(
                 playerLastNameSubstring,
-                listOf(StrBind("lnameSubstr", nameSubstring))
+                listOf(
+                    StrBind(
+                        "lnameSubstr",
+                        nameSubstring
+                    )
+                )
             ),
             PlayerBasic.extract
         )
@@ -64,8 +77,13 @@ class QueryEngine {
     fun playerNamesByLength(length: String): List<TableRecord> {
         return query(
             statement(
-                playerNamesByLength,
-                listOf(IntBind("lnameLength", length.toInt()))
+                org.aarbizu.baseballDatabankFrontend.query.playerNamesByLength,
+                listOf(
+                    IntBind(
+                        "lnameLength",
+                        length.toInt()
+                    )
+                )
             ),
             Player.extract
         )
@@ -74,7 +92,11 @@ class QueryEngine {
     fun playerNameRegexSearch(regex: String, matchFirst: Boolean, matchLast: Boolean, caseSensitive: Boolean): List<TableRecord> {
         return query(
             statement(
-                playerNameRegex(matchFirst, matchLast, caseSensitive),
+                playerNameRegex(
+                    matchFirst,
+                    matchLast,
+                    caseSensitive
+                ),
                 listOf(StrBind("nameRegex", regex))
             ),
             PlayerBasic.extract

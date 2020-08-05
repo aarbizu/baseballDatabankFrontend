@@ -11,7 +11,6 @@ import kweb.InputType
 import kweb.a
 import kweb.button
 import kweb.div
-import kweb.form
 import kweb.h1
 import kweb.i
 import kweb.id
@@ -21,8 +20,9 @@ import kweb.new
 import kweb.plugins.fomanticUI.fomantic
 import kweb.routing.RouteReceiver
 import kweb.state.KVar
-import org.aarbizu.baseballDatabankFrontend.config.PaginatedRecords
-import org.slf4j.LoggerFactory
+import org.aarbizu.baseballDatabankFrontend.db.QueryEngine
+import org.aarbizu.baseballDatabankFrontend.records.PaginatedRecords
+import org.aarbizu.baseballDatabankFrontend.records.TableRecord
 
 private val massiveButtonStyle = mapOf("class" to "ui massive orange right labeled icon button")
 private val buttonStyle = mapOf("class" to "ui large orange right labeled icon button")
@@ -143,7 +143,11 @@ fun RouteReceiver.getRoutePaths(parameters: Parameters) {
         if (!parameters[pPlayerNameLength].isNullOrEmpty()) {
             val lengthParam = parameters[pPlayerNameLength]!!
             val outputDiv = browser.doc.getElementById("output")
-            PaginatedRecords(queryEngine.playerNamesByLength(lengthParam), outputDiv).renderTable()
+            PaginatedRecords(
+                queryEngine.playerNamesByLength(
+                    lengthParam
+                ), outputDiv
+            ).renderTable()
             browser.url.value = "/q/$playerNameLength/?$pPlayerNameLength=$lengthParam"
         }
 
@@ -163,7 +167,10 @@ fun RouteReceiver.getRoutePaths(parameters: Parameters) {
         if (parameters[pPlayerLastNameParam]?.isNotEmpty()!!) {
             val lastNameParam = parameters[pPlayerLastNameParam]!!
             val outputDiv = browser.doc.getElementById("names")
-            PaginatedRecords(queryEngine.playerNameSearch("%${lastNameParam.toLowerCase()}%"), outputDiv).renderTable()
+            PaginatedRecords(
+                queryEngine.playerNameSearch("%${lastNameParam.toLowerCase()}%"),
+                outputDiv
+            ).renderTable()
             browser.url.value = "/q/$playerLastNameSearchQuery/?$pPlayerLastNameParam=$lastNameParam"
         }
 
@@ -183,7 +190,14 @@ fun RouteReceiver.getRoutePaths(parameters: Parameters) {
             val useLast = parameters[pPlayerRegexLnameParam]!!
             val useCase = parameters[pPlayerRegexCaseSensitive]!!
             val outputEl = browser.doc.getElementById("names")
-            PaginatedRecords(queryEngine.playerNameRegexSearch(regex, useFirst.toBoolean(), useLast.toBoolean(), useCase.toBoolean()), outputEl).renderTable()
+            PaginatedRecords(
+                queryEngine.playerNameRegexSearch(
+                    regex,
+                    useFirst.toBoolean(),
+                    useLast.toBoolean(),
+                    useCase.toBoolean()
+                ), outputEl
+            ).renderTable()
         }
         div(fomantic.ui.hidden.divider)
         div(fomantic.ui.container.id("errors"))

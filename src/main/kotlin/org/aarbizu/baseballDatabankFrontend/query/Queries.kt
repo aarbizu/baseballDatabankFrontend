@@ -1,4 +1,4 @@
-package org.aarbizu.baseballDatabankFrontend
+package org.aarbizu.baseballDatabankFrontend.query
 
 abstract class Bind<T>(private val field: String, open val value: T) {
     override fun toString(): String {

@@ -1,4 +1,4 @@
-package org.aarbizu.baseballDatabankFrontend
+package org.aarbizu.baseballDatabankFrontend.records
 
 import java.sql.ResultSet
 
