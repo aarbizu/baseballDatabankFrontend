@@ -29,7 +29,9 @@ private val queryEngine = QueryEngine()
 private val crumbs = mutableListOf<Crumb>()
 
 fun RouteReceiver.databankRoutes(parameters: Parameters) {
-    defaultRoute(crumbs)
+    path("/") {
+        defaultRoute(crumbs)
+    }
     path("/q/begin") {
         renderNavMenu(Crumb("Begin", "/q/begin"), crumbs)
         div(fomantic.ui.hidden.divider)
