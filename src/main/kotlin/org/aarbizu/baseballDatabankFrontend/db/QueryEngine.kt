@@ -7,9 +7,6 @@ import java.sql.ResultSet
 import org.aarbizu.baseballDatabankFrontend.config.dbPassword
 import org.aarbizu.baseballDatabankFrontend.config.dbUrl
 import org.aarbizu.baseballDatabankFrontend.config.dbUser
-import org.aarbizu.baseballDatabankFrontend.query.Bind
-import org.aarbizu.baseballDatabankFrontend.query.IntBind
-import org.aarbizu.baseballDatabankFrontend.query.StrBind
 import org.aarbizu.baseballDatabankFrontend.query.playerLastNameSubstring
 import org.aarbizu.baseballDatabankFrontend.query.playerNameRegex
 import org.aarbizu.baseballDatabankFrontend.records.Player

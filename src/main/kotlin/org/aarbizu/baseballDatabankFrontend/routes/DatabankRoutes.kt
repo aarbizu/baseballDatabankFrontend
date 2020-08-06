@@ -1,4 +1,4 @@
-package org.aarbizu.baseballDatabankFrontend
+package org.aarbizu.baseballDatabankFrontend.routes
 
 import io.ktor.http.Parameters
 import kotlinx.coroutines.GlobalScope
@@ -11,7 +11,6 @@ import kweb.InputType
 import kweb.a
 import kweb.button
 import kweb.div
-import kweb.h1
 import kweb.i
 import kweb.id
 import kweb.input
@@ -24,96 +23,15 @@ import org.aarbizu.baseballDatabankFrontend.db.QueryEngine
 import org.aarbizu.baseballDatabankFrontend.records.PaginatedRecords
 import org.aarbizu.baseballDatabankFrontend.records.TableRecord
 
-private val massiveButtonStyle = mapOf("class" to "ui massive orange right labeled icon button")
-private val buttonStyle = mapOf("class" to "ui large orange right labeled icon button")
-private val baseballGlyphStyle = mapOf("class" to "baseball ball icon")
-private val subHeaderStyle = mapOf("class" to "sub header")
-private val homeIcon = mapOf("class" to "home icon")
-private val fieldButtonStyle = mapOf("class" to buttonStyle["class"] + " field")
-
-private const val playerNameLength = "player-name-by-len"
-private const val pPlayerNameLength = "name-length"
-
-private const val playerLastNameSearchQuery = "player-name"
-private const val pPlayerLastNameParam = "last-name"
-
-private const val playerNameRegex = "player-name-regex"
-private const val pPlayerRegexParam = "regex"
-private const val pPlayerRegexFnameParam = "regex-first-name"
-private const val pPlayerRegexLnameParam = "regex-last-name"
-private const val pPlayerRegexCaseSensitive = "regex-case-sensitive"
-
 private var debug = false
 
 private val queryEngine = QueryEngine()
 private val crumbs = mutableListOf<Crumb>()
 
-data class Crumb(val section: String, val url: String) {
-    fun isNotEmpty() = section.isNotBlank() && url.isNotBlank()
-    fun isEmpty() = !isNotEmpty()
-    companion object EmptyCrumb {
-        val empty = Crumb("", "")
-    }
-}
-
-private fun ElementCreator<*>.renderNavMenu(newCrumb: Crumb) {
-    div(fomantic.ui.attached.inverted.segment).new {
-        div(fomantic.ui.inverted.breadcrumb).new {
-            a(fomantic.section, href = "/").new {
-                div(fomantic.ui.item).new {
-                    i(homeIcon)
-                }
-            }
-            appendCrumb(newCrumb)
-        }
-    }
-}
-
-private fun ElementCreator<*>.appendCrumb(newCrumb: Crumb) {
-    if (newCrumb.isEmpty()) {
-        crumbs.clear()
-    }
-
-    if (!crumbs.contains(newCrumb) && newCrumb.isNotEmpty()) {
-        crumbs.add(newCrumb)
-    }
-
-    crumbs.forEach {
-        i(fomantic.right.chevron.icon.divider)
-        a(fomantic.section, href = it.url).text(it.section)
-    }
-}
-
-fun RouteReceiver.getRoutePaths(parameters: Parameters) {
-    path("/") {
-        renderNavMenu(Crumb.empty)
-        div(fomantic.ui.center.aligned.container).new {
-            div(fomantic.ui.hidden.divider)
-            div(fomantic.content).new {
-                h1(fomantic.ui.icon.header).new {
-                    i(baseballGlyphStyle)
-                    div(fomantic.content).text("Baseball Databank").new {
-                        div(subHeaderStyle).text("Historical baseball database derived from: ").new {
-                            a(href = "https://github.com/chadwickbureau/baseballdatabank")
-                                .text("The Chadwick Baseball Databank").tag
-                        }
-                    }
-                }
-                div(fomantic.content).new {
-                    a(href = "http://chadwick-bureau.com/")
-                        .text("Visit the Chadwick Baseball Bureau")
-                }
-                div(fomantic.ui.divider)
-                button(massiveButtonStyle).text("Get Started").on.click {
-                    browser.url.value = "/q/begin"
-                }.new {
-                    i(fomantic.ui.icon.right.arrow)
-                }
-            }
-        }
-    }
+fun RouteReceiver.databankRoutes(parameters: Parameters) {
+    defaultRoute(crumbs)
     path("/q/begin") {
-        renderNavMenu(Crumb("Begin", "/q/begin"))
+        renderNavMenu(Crumb("Begin", "/q/begin"), crumbs)
         div(fomantic.ui.hidden.divider)
         div(fomantic.ui.container).new {
             div(fomantic.ui.three.item.menu).new {
@@ -132,7 +50,13 @@ fun RouteReceiver.getRoutePaths(parameters: Parameters) {
         div(fomantic.ui.container.id("errors"))
     }
     path("/q/$playerNameLength/{lengthParam}") {
-        renderNavMenu(Crumb("Name Length", "/q/$playerNameLength/${parameters[playerNameLength]}"))
+        renderNavMenu(
+            Crumb(
+                "Name Length",
+                "/q/$playerNameLength/${parameters[playerNameLength]}"
+            ),
+            crumbs
+        )
         div(fomantic.ui.hidden.divider)
         div(fomantic.ui.container).new {
             generatePlayerNameLengthForm(queryEngine)
@@ -155,7 +79,13 @@ fun RouteReceiver.getRoutePaths(parameters: Parameters) {
         div(fomantic.ui.container.id("errors"))
     }
     path("/q/$playerLastNameSearchQuery/{nameParam}") {
-        renderNavMenu(Crumb("Last Name", "/q/$playerLastNameSearchQuery/${parameters[playerLastNameSearchQuery]}"))
+        renderNavMenu(
+            Crumb(
+                "Last Name",
+                "/q/$playerLastNameSearchQuery/${parameters[playerLastNameSearchQuery]}"
+            ),
+            crumbs
+        )
         div(fomantic.ui.hidden.divider)
         div(fomantic.ui.container).new {
             generatePlayerNameSearchForm(queryEngine)
@@ -178,7 +108,13 @@ fun RouteReceiver.getRoutePaths(parameters: Parameters) {
         div(fomantic.ui.container.id("errors"))
     }
     path("/q/$playerNameRegex/{regexParam...}") {
-        renderNavMenu(Crumb("Regex Search", "/q/$playerNameRegex/${parameters[playerNameRegex]}"))
+        renderNavMenu(
+            Crumb(
+                "Regex Search",
+                "/q/$playerNameRegex/${parameters[playerNameRegex]}"
+            ),
+            crumbs
+        )
         div(fomantic.ui.hidden.divider)
         div(fomantic.ui.container).new {
             generatePlayerNameRegexSearchForm(queryEngine)
@@ -275,7 +211,8 @@ private fun ElementCreator<*>.generatePlayerNameRegexSearchForm(queries: QueryEn
                     getInputAndRenderResult(
                         listOf(nameRegexInput!!, firstNameMatch!!, lastNameMatch!!, caseSensitive!!),
                         browser.doc.getElementById("names")
-                    ) { inputs -> queries.playerNameRegexSearch(
+                    ) { inputs ->
+                        queries.playerNameRegexSearch(
                             inputs[0],
                             inputs[1].isNotEmpty(),
                             inputs[2].isNotEmpty(),
@@ -287,7 +224,6 @@ private fun ElementCreator<*>.generatePlayerNameRegexSearchForm(queries: QueryEn
                             "$pPlayerRegexFnameParam=${firstNameMatch!!.getValue().await()}&" +
                             "$pPlayerRegexLnameParam=${lastNameMatch!!.getValue().await()}&" +
                             "$pPlayerRegexCaseSensitive=${caseSensitive!!.getValue().await()}"
-
                 }
             }
         }
@@ -315,9 +251,11 @@ private fun ElementCreator<*>.generatePlayerNameSearchForm(queries: QueryEngine)
             }
             button(fieldButtonStyle).text("Search").on.click {
                 GlobalScope.launch {
-                    getInputAndRenderResult(listOf(nameFragmentInput!!),
-                        browser.doc.getElementById("names")) {
-                        inputs -> queries.playerNameSearch("%${inputs[0].toLowerCase()}%")
+                    getInputAndRenderResult(
+                        listOf(nameFragmentInput!!),
+                        browser.doc.getElementById("names")
+                    ) { inputs ->
+                        queries.playerNameSearch("%${inputs[0].toLowerCase()}%")
                     }
                     browser.url.value = "/q/$playerLastNameSearchQuery/?$pPlayerLastNameParam=${nameFragmentInput!!.getValue().await()}"
                 }
@@ -348,9 +286,11 @@ private fun ElementCreator<*>.generatePlayerNameLengthForm(queries: QueryEngine)
             }
             button(fieldButtonStyle).text("Search").on.click {
                 GlobalScope.launch {
-                    getInputAndRenderResult(listOf(nameLengthInput!!),
-                        browser.doc.getElementById("output")) {
-                        inputs -> queries.playerNamesByLength(inputs[0])
+                    getInputAndRenderResult(
+                        listOf(nameLengthInput!!),
+                        browser.doc.getElementById("output")
+                    ) { inputs ->
+                        queries.playerNamesByLength(inputs[0])
                     }
                     browser.url.value = "/q/$playerNameLength/?$pPlayerNameLength=${nameLengthInput!!.getValue().await()}"
                 }
