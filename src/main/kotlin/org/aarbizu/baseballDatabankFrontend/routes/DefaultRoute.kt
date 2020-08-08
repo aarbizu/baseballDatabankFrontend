@@ -9,8 +9,12 @@ import kweb.i
 import kweb.new
 import kweb.plugins.fomanticUI.fomantic
 
-fun ElementCreator<*>.defaultRoute(crumbs: MutableList<Crumb>) {
-    renderNavMenu(Crumb.empty, crumbs)
+private fun getCrumb(): Crumb {
+    return Crumb.empty
+}
+
+fun ElementCreator<*>.handleDefaultRoute(crumbs: MutableList<Crumb>) {
+    renderNavMenu(getCrumb(), crumbs)
     div(fomantic.ui.center.aligned.container).new {
         div(fomantic.ui.hidden.divider)
         div(fomantic.content).new {

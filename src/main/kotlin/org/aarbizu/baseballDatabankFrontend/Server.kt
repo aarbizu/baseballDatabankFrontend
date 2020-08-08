@@ -17,7 +17,7 @@ import kweb.Kweb
 import kweb.plugins.fomanticUI.fomanticUIPlugin
 import kweb.respondKwebRender
 import kweb.route
-import org.aarbizu.baseballDatabankFrontend.routes.databankRoutes
+import org.aarbizu.baseballDatabankFrontend.routes.dispatch
 
 const val uriPrefix = "loc"
 
@@ -36,7 +36,7 @@ fun Application.module() {
                 val parameters = call.request.queryParameters
                 call.respondKwebRender {
                     route {
-                        databankRoutes(parameters)
+                        dispatch(parameters)
                     }
                 }
             }

@@ -1,11 +1,15 @@
 package org.aarbizu.baseballDatabankFrontend.routes
 
+import io.ktor.http.Parameters
+import kweb.Element
 import kweb.ElementCreator
 import kweb.a
 import kweb.div
 import kweb.i
 import kweb.new
 import kweb.plugins.fomanticUI.fomantic
+
+const val TOP_LEVEL_MENU_LOCATION = "/q/begin"
 
 val massiveButtonStyle = mapOf("class" to "ui massive orange right labeled icon button")
 val buttonStyle = mapOf("class" to "ui large orange right labeled icon button")
@@ -51,14 +55,20 @@ fun ElementCreator<*>.appendCrumb(newCrumb: Crumb, crumbs: MutableList<Crumb>) {
 }
 
 fun ElementCreator<*>.renderNavMenu(newCrumb: Crumb, crumbs: MutableList<Crumb>) {
-            div(fomantic.ui.attached.inverted.segment).new {
-                div(fomantic.ui.inverted.breadcrumb).new {
-                    a(fomantic.section, href = "/").new {
-                        div(fomantic.ui.item).new {
-                            i(homeIcon)
-                        }
-                    }
-                    appendCrumb(newCrumb, crumbs)
+    div(fomantic.ui.attached.inverted.segment).new {
+        div(fomantic.ui.inverted.breadcrumb).new {
+            a(fomantic.section, href = "/").new {
+                div(fomantic.ui.item).new {
+                    i(homeIcon)
                 }
             }
+            appendCrumb(newCrumb, crumbs)
+        }
+    }
+}
+
+fun ElementCreator<*>.debugParamsElement(parameters: Parameters): Element {
+    return if (debug) { div(fomantic.content).text(parameters.entries().mapIndexed { idx, entry ->
+        "$idx: ${entry.key}=${entry.value.map { it }}"
+    }.joinToString()) } else { div() }
 }
