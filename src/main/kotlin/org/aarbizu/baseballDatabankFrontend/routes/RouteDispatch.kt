@@ -1,62 +1,34 @@
 package org.aarbizu.baseballDatabankFrontend.routes
 
 import io.ktor.http.Parameters
-import kotlinx.coroutines.future.await
-import kweb.Element
-import kweb.InputElement
-import kweb.InputType
 import kweb.routing.RouteReceiver
 import org.aarbizu.baseballDatabankFrontend.db.QueryEngine
-import org.aarbizu.baseballDatabankFrontend.records.PaginatedRecords
-import org.aarbizu.baseballDatabankFrontend.records.TableRecord
 
 var debug = false
 
 private val queryEngine = QueryEngine()
 private val crumbs = mutableListOf<Crumb>()
 
+private val defaultRoute = DefaultRoute(crumbs)
+private val topLevelMenu = TopLevelMenu(crumbs)
+private val nameLengthSearch = SearchByNameLength(crumbs, queryEngine)
+private val lastNameSearch = SearchByPlayerLastName(crumbs, queryEngine)
+private val playerRegexSearch = SearchByPlayerNameRegex(crumbs, queryEngine)
+
 fun RouteReceiver.dispatch(parameters: Parameters) {
     path("/") {
-        handleDefaultRoute(crumbs)
+        defaultRoute.doRoute(this, parameters)
     }
     path(TOP_LEVEL_MENU_LOCATION) {
-        handleTopLevelMenu(crumbs)
+        topLevelMenu.doRoute(this, parameters)
     }
     path("/q/$playerNameLength/{lengthParam}") {
-        handleNameLengthSearch(crumbs, parameters, queryEngine)
+        nameLengthSearch.doRoute(this, parameters)
     }
     path("/q/$playerLastNameSearchQuery/{nameParam}") {
-        handleLastNameSearch(crumbs, parameters, queryEngine)
+        lastNameSearch.doRoute(this, parameters)
     }
     path("/q/$playerNameRegex/{regexParam...}") {
-        handlePlayerNameRegexSearch(crumbs, parameters, queryEngine)
+        playerRegexSearch.doRoute(this, parameters)
     }
-}
-
-suspend fun getInputAndRenderResult(
-    inputs: List<InputElement>,
-    outputElement: Element,
-    query: (inputs: List<String>) -> List<TableRecord>
-) {
-    val params = mutableListOf<String>()
-    inputs.forEach {
-        when (it.read.attribute("type").await()) {
-            InputType.text.name -> {
-                params.add(it.getValue().await())
-            }
-            InputType.checkbox.name -> {
-                params.add(it.read.attribute("checked").await().toString())
-            }
-            else -> params.add("unknown, id: ${it.id!!}")
-        }
-    }
-    getQueryResult(params, outputElement, query)
-}
-
-fun getQueryResult(
-    params: List<String>,
-    outputElement: Element,
-    query: (inputs: List<String>) -> List<TableRecord>
-) {
-    PaginatedRecords(query(params), outputElement).renderTable()
 }

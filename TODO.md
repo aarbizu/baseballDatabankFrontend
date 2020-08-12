@@ -14,5 +14,5 @@
     - [ ] ~~palindromes (infeasible, computationally)~~
     - [ ] supervocalic
     - [ ] stricy supervocalic (exactly one each of vowel)
-    
+- [ ] add player table column sort toggles. Don't re-query, just sort the result set and re-render
     

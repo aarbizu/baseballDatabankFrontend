@@ -1,12 +1,10 @@
 package org.aarbizu.baseballDatabankFrontend.routes
 
 import io.ktor.http.Parameters
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.future.await
-import kotlinx.coroutines.launch
 import kweb.ElementCreator
 import kweb.InputElement
 import kweb.InputType
+import kweb.WebBrowser
 import kweb.button
 import kweb.div
 import kweb.i
@@ -19,65 +17,89 @@ import kweb.state.KVar
 import org.aarbizu.baseballDatabankFrontend.db.QueryEngine
 import org.aarbizu.baseballDatabankFrontend.records.PaginatedRecords
 
-private fun getCrumb(parameters: Parameters): Crumb {
-    return Crumb("Last Name", "/q/$playerLastNameSearchQuery/${parameters[playerLastNameSearchQuery]}")
-}
+const val playerLastNameSearchQuery = "player-name"
+const val pPlayerLastNameParam = "last-name"
 
-fun ElementCreator<*>.handleLastNameSearch(crumbs: MutableList<Crumb>, parameters: Parameters, queryEngine: QueryEngine) {
-    renderNavMenu(getCrumb(parameters), crumbs)
-    div(fomantic.ui.hidden.divider)
-    div(fomantic.ui.container).new {
-        generatePlayerNameSearchForm(queryEngine)
-        debugParamsElement(parameters)
-    }
+class SearchByPlayerLastName(private val crumbs: MutableList<Crumb>, private val queryEngine: QueryEngine) : RouteHandler {
+    private val outputElementId = "names"
 
-    // TODO AA -- these blocks of handling GETs should, I think, be handled better by on.keypress handlers
-    //  in the input elements
-    if (parameters[pPlayerLastNameParam]?.isNotEmpty()!!) {
-        val lastNameParam = parameters[pPlayerLastNameParam]!!
-        val outputDiv = browser.doc.getElementById("names")
-        PaginatedRecords(
-            queryEngine.playerNameSearch("%${lastNameParam.toLowerCase()}%"),
-            outputDiv
-        ).renderTable()
-        browser.url.value = "/q/$playerLastNameSearchQuery/?$pPlayerLastNameParam=$lastNameParam"
-    }
-
-    div(fomantic.ui.hidden.divider)
-    div(fomantic.ui.container.id("errors"))
-}
-
-private fun ElementCreator<*>.generatePlayerNameSearchForm(queries: QueryEngine) {
-    val output = KVar("")
-    var nameFragmentInput: InputElement? = null
-
-    div(fomantic.ui.form).new {
-        div(fomantic.fields).new {
-            div(fomantic.six.wide.inline.field).new {
-                label().text("Last Name")
-                nameFragmentInput = input(
-                    type = InputType.text,
-                    name = pPlayerLastNameParam,
-                    initialValue = "",
-                    size = 32,
-                    placeholder = """ Surname, e.g."Bonds" """
-                )
+    override fun handleRoute(ec: ElementCreator<*>, parameters: Parameters) {
+        with(ec) {
+            div(fomantic.ui.hidden.divider)
+            div(fomantic.ui.container).new {
+                generatePlayerNameSearchForm(queryEngine)
+                debugParamsElement(parameters)
             }
-            button(fieldButtonStyle).text("Search").on.click {
-                GlobalScope.launch {
-                    getInputAndRenderResult(
+
+            handleQueryStringIfPresent(parameters, browser)
+
+            div(fomantic.ui.hidden.divider)
+            div(fomantic.ui.container.id("errors"))
+        }
+    }
+
+    private fun handleQueryStringIfPresent(parameters: Parameters, browser: WebBrowser) {
+        if (parameters[pPlayerLastNameParam]?.isNotEmpty()!!) {
+            val lastName = parameters[pPlayerLastNameParam]!!
+            val outputEl = browser.doc.getElementById(outputElementId)
+            PaginatedRecords(queryEngine.playerNameSearch(lastName), outputEl).renderTable()
+        }
+    }
+
+    private fun ElementCreator<*>.generatePlayerNameSearchForm(queries: QueryEngine) {
+        val output = KVar("")
+        var nameFragmentInput: InputElement? = null
+
+        div(fomantic.ui.form).new {
+            div(fomantic.fields).new {
+                div(fomantic.six.wide.inline.field).new {
+                    label().text("Last Name")
+                    nameFragmentInput = input(
+                        type = InputType.text,
+                        name = pPlayerLastNameParam,
+                        initialValue = "",
+                        size = 32,
+                        placeholder = """ Surname, e.g."Bonds" """
+                    )
+                    nameFragmentInput!!.on.keypress { ke ->
+                        if (ke.code == "Enter") {
+                            handleInput(
+                                listOf(nameFragmentInput!!),
+                                browser.doc.getElementById(outputElementId),
+                                browser.url
+                            ) { inputs ->
+                                queries.playerNameSearch("%${inputs[0].toLowerCase()}%")
+                            }
+                        }
+                    }
+                }
+
+                button(fieldButtonStyle).text("Search").on.click {
+                    handleInput(
                         listOf(nameFragmentInput!!),
-                        browser.doc.getElementById("names")
+                        browser.doc.getElementById(outputElementId),
+                        browser.url
                     ) { inputs ->
                         queries.playerNameSearch("%${inputs[0].toLowerCase()}%")
                     }
-                    browser.url.value = "/q/$playerLastNameSearchQuery/?$pPlayerLastNameParam=${nameFragmentInput!!.getValue().await()}"
+                }.new {
+                    i(baseballGlyphStyle)
                 }
-            }.new {
-                i(baseballGlyphStyle)
             }
         }
+        div(fomantic.ui.hidden.divider)
+        div(fomantic.content.id(outputElementId)).text(output)
     }
-    div(fomantic.ui.hidden.divider)
-    div(fomantic.content.id("names")).text(output)
+
+    override suspend fun updateUrl(url: KVar<String>, inputs: Map<String, String>) {
+        url.value = "/q/$playerLastNameSearchQuery/?$pPlayerLastNameParam=${inputs[pPlayerLastNameParam]}"
+    }
+
+    override fun getCrumb(parameters: Parameters): Crumb {
+        return Crumb("Last Name", "/q/$playerLastNameSearchQuery/?${parameters[playerLastNameSearchQuery]}")
+    }
+
+    override fun injectCrumbs(): MutableList<Crumb> {
+        return crumbs
+    }
 }
