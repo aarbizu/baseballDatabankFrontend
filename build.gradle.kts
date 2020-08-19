@@ -28,9 +28,9 @@ object DependencyVersions {
     const val postgres = "42.2.15"
     const val kotlinLogging= "1.8.3"
     const val kweb = "0.7.20"
-    const val kotlinxCoroutines = "1.3.8"
+    const val kotlinxCoroutines = "1.3.9"
     const val kotlinxCoroutinesDebug = "1.3.8"
-    const val ktor = "1.3.2"
+    const val ktor = "1.4.0"
     //const val okhttp = "4.8.0"
     const val gson = "2.8.6"
     const val guava = "29.0-jre"
@@ -61,7 +61,7 @@ dependencies {
     implementation("io.github.microutils:kotlin-logging:${DependencyVersions.kotlinLogging}")
 
     //Coroutines (chapter 8)
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-common:${DependencyVersions.kotlinxCoroutines}")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${DependencyVersions.kotlinxCoroutines}")
 
     // postgres
     implementation("org.postgresql:postgresql:${DependencyVersions.postgres}")
