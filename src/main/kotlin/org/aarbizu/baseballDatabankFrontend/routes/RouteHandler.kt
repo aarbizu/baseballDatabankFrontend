@@ -23,21 +23,21 @@ interface RouteHandler {
     fun injectCrumbs(): MutableList<Crumb>
 
     fun doRoute(ec: ElementCreator<*>, parameters: Parameters) {
-        with(ec) {
-            renderNavMenu(getCrumb(parameters), injectCrumbs())
-        }
+        renderNavMenu(ec, getCrumb(parameters), injectCrumbs())
         handleRoute(ec, parameters)
     }
 
-    fun ElementCreator<*>.renderNavMenu(newCrumb: Crumb, crumbs: MutableList<Crumb>) {
-        div(fomantic.ui.attached.inverted.segment).new {
-            div(fomantic.ui.inverted.breadcrumb).new {
-                a(fomantic.section, href = "/").new {
-                    div(fomantic.ui.item).new {
-                        i(homeIcon)
+    fun renderNavMenu(ec: ElementCreator<*>, newCrumb: Crumb, crumbs: MutableList<Crumb>) {
+        with(ec) {
+            div(fomantic.ui.attached.inverted.segment).new {
+                div(fomantic.ui.inverted.breadcrumb).new {
+                    a(fomantic.section, href = "/").new {
+                        div(fomantic.ui.item).new {
+                            i(homeIcon)
+                        }
                     }
+                    appendCrumb(newCrumb, crumbs)
                 }
-                appendCrumb(newCrumb, crumbs)
             }
         }
     }

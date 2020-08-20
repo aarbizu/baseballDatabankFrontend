@@ -2,35 +2,52 @@ package org.aarbizu.baseballDatabankFrontend
 
 import com.google.common.truth.Truth.assertThat
 import io.ktor.http.Parameters
+import io.mockk.MockKAnnotations
+import io.mockk.every
+import io.mockk.impl.annotations.MockK
+import io.mockk.junit5.MockKExtension
+import io.mockk.mockk
+import io.mockk.mockkStatic
+import kweb.Element
 import kweb.ElementCreator
+import kweb.WebBrowser
+import kweb.div
 import kweb.state.KVar
 import org.aarbizu.baseballDatabankFrontend.routes.Crumb
 import org.aarbizu.baseballDatabankFrontend.routes.RouteHandler
+import org.jsoup.nodes.Document
+import org.junit.Before
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
+import java.util.concurrent.atomic.AtomicReference
 
+@ExtendWith(MockKExtension::class)
 class RouteHandlerTest {
 
+    @Before
+    fun setUp() = MockKAnnotations.init(this, relaxUnitFun = true)
+
     @Test
-    fun `handler calls renderNavMenu() method`() {
+    fun `handler calls renderNavMenu() method`(@MockK(relaxed = true) ec: ElementCreator<*>, @MockK params: Parameters) {
+        val mockCrumb = mockk<Crumb>()
 
         val handler = object : RouteHandler {
             override fun handleRoute(ec: ElementCreator<*>, parameters: Parameters) {
-                TODO("Not yet implemented")
             }
 
             override fun getCrumb(parameters: Parameters): Crumb {
-                TODO("Not yet implemented")
+                return mockCrumb
             }
 
             override fun injectCrumbs(): MutableList<Crumb> {
-                TODO("Not yet implemented")
+                return mutableListOf()
             }
 
             override suspend fun updateUrl(url: KVar<String>, inputs: Map<String, String>) {
-                TODO("Not yet implemented")
             }
         }
 
         assertThat(handler).isNotNull()
+
     }
 }

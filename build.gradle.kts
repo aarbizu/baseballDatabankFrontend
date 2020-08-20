@@ -39,6 +39,7 @@ object DependencyVersions {
     const val truth = "1.0.1"
     const val junit = "5.7.0-RC1"
     const val junitPlatformConsole = "1.7.0-RC1"
+    const val mockk = "1.10.0"
 }
 
 dependencies {
@@ -79,6 +80,7 @@ dependencies {
     testImplementation("com.google.truth:truth:${DependencyVersions.truth}")
     testImplementation("org.junit.jupiter:junit-jupiter-api:${DependencyVersions.junit}")
     testImplementation("org.junit.jupiter:junit-jupiter-params:${DependencyVersions.junit}")
+    testImplementation("io.mockk:mockk:${DependencyVersions.mockk}")
 
     testRuntimeOnly("org.junit.platform:junit-platform-console:${DependencyVersions.junitPlatformConsole}")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${DependencyVersions.junit}")
