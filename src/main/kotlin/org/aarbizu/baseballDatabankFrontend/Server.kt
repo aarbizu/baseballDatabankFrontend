@@ -46,9 +46,9 @@ fun Application.module() {
 
 class Server {
     fun start() {
+        val port = System.getenv("PORT")?.toInt() ?: 8080
         embeddedServer(Netty,
-                8080,
-                watchPaths = listOf("baseballDatabankFrontend"),
+                port,
                 module = Application::module
         ).start()
     }

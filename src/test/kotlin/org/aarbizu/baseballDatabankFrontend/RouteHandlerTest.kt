@@ -3,23 +3,17 @@ package org.aarbizu.baseballDatabankFrontend
 import com.google.common.truth.Truth.assertThat
 import io.ktor.http.Parameters
 import io.mockk.MockKAnnotations
-import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
-import io.mockk.mockkStatic
-import kweb.Element
 import kweb.ElementCreator
-import kweb.WebBrowser
 import kweb.div
 import kweb.state.KVar
 import org.aarbizu.baseballDatabankFrontend.routes.Crumb
 import org.aarbizu.baseballDatabankFrontend.routes.RouteHandler
-import org.jsoup.nodes.Document
 import org.junit.Before
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import java.util.concurrent.atomic.AtomicReference
 
 @ExtendWith(MockKExtension::class)
 class RouteHandlerTest {
@@ -48,6 +42,5 @@ class RouteHandlerTest {
         }
 
         assertThat(handler).isNotNull()
-
     }
 }

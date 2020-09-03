@@ -1,6 +1,7 @@
 package org.aarbizu.baseballDatabankFrontend.db
 
 import com.google.common.base.Stopwatch
+import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.PreparedStatement
 import java.sql.ResultSet
@@ -16,21 +17,30 @@ import org.slf4j.LoggerFactory
 
 private val logger = LoggerFactory.getLogger("QueryEngine")
 
-object DB {
-    val conn by lazy {
+interface DBProvider {
+    fun getConnection(): Connection
+}
+
+object DB : DBProvider {
+    val conn: Connection by lazy {
         DriverManager.getConnection(dbUrl, dbUser, dbPassword)
+    }
+
+    override fun getConnection(): Connection {
+        return conn
     }
 }
 
-class QueryEngine {
-
+class QueryEngine(private val dbProvider: DBProvider) {
     companion object DbDriver {
         fun query(
-            statement: PreparedStatement,
+            dbProvider: DBProvider,
+            queryTemplate: String,
+            binds: List<Bind<*>>,
             extractor: (rs: ResultSet) -> List<TableRecord>
         ): List<TableRecord> {
             val timer = Stopwatch.createStarted()
-            val rs = statement.executeQuery()
+            val rs = statement(dbProvider, queryTemplate, binds).executeQuery()
             timer.reset()
             logger.info("exec query: $timer")
             timer.start()
@@ -40,8 +50,8 @@ class QueryEngine {
             return records
         }
 
-        fun statement(queryTemplate: String, binds: List<Bind<*>>): PreparedStatement {
-            val stmt = DB.conn.prepareStatement(queryTemplate)
+        fun statement(dbProvider: DBProvider, queryTemplate: String, binds: List<Bind<*>>): PreparedStatement {
+            val stmt = dbProvider.getConnection().prepareStatement(queryTemplate)
             var paramIndex = 1
             binds.forEach {
                 when (it::class) {
@@ -58,13 +68,12 @@ class QueryEngine {
 
     fun playerNameSearch(nameSubstring: String): List<TableRecord> {
         return query(
-            statement(
-                playerLastNameSubstring,
-                listOf(
-                    StrBind(
-                        "lnameSubstr",
-                        nameSubstring
-                    )
+            dbProvider,
+            playerLastNameSubstring,
+            listOf(
+                StrBind(
+                    "lnameSubstr",
+                    nameSubstring
                 )
             ),
             PlayerBasic.extract
@@ -73,13 +82,12 @@ class QueryEngine {
 
     fun playerNamesByLength(length: String): List<TableRecord> {
         return query(
-            statement(
-                org.aarbizu.baseballDatabankFrontend.query.playerNamesByLength,
-                listOf(
-                    IntBind(
-                        "lnameLength",
-                        length.toInt()
-                    )
+            dbProvider,
+            org.aarbizu.baseballDatabankFrontend.query.playerNamesByLength,
+            listOf(
+                IntBind(
+                    "lnameLength",
+                    length.toInt()
                 )
             ),
             Player.extract
@@ -88,14 +96,13 @@ class QueryEngine {
 
     fun playerNameRegexSearch(regex: String, matchFirst: Boolean, matchLast: Boolean, caseSensitive: Boolean): List<TableRecord> {
         return query(
-            statement(
-                playerNameRegex(
-                    matchFirst,
-                    matchLast,
-                    caseSensitive
-                ),
-                listOf(StrBind("nameRegex", regex))
+            dbProvider,
+            playerNameRegex(
+                matchFirst,
+                matchLast,
+                caseSensitive
             ),
+            listOf(StrBind("nameRegex", regex)),
             PlayerBasic.extract
         )
     }

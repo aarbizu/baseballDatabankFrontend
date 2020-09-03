@@ -2,11 +2,12 @@ package org.aarbizu.baseballDatabankFrontend.routes
 
 import io.ktor.http.Parameters
 import kweb.routing.RouteReceiver
+import org.aarbizu.baseballDatabankFrontend.db.DB
 import org.aarbizu.baseballDatabankFrontend.db.QueryEngine
 
 var debug = false
 
-private val queryEngine = QueryEngine()
+private val queryEngine = QueryEngine(DB)
 private val crumbs = mutableListOf<Crumb>()
 
 private val defaultRoute = DefaultRoute(crumbs)

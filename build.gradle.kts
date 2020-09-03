@@ -95,8 +95,7 @@ java {
 }
 
 application {
-    // Define the main class for the application.
-    mainClassName = "org.aarbizu.baseballDatabankFrontend.MainKt"
+    mainClass.set("org.aarbizu.baseballDatabankFrontend.MainKt")
 }
 
 spotless {
@@ -105,9 +104,15 @@ spotless {
     }
 }
 
-tasks.withType<Test> {
-    useJUnitPlatform()
-    testLogging {
-        events = setOf(PASSED, FAILED, SKIPPED)
+tasks {
+    test {
+        useJUnitPlatform()
+        testLogging {
+            events = setOf(PASSED, FAILED, SKIPPED)
+        }
+    }
+
+    task("stage") {
+        dependsOn("installDist")
     }
 }
