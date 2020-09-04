@@ -27,7 +27,7 @@ repositories {
 object DependencyVersions {
     const val postgres = "42.2.15"
     const val kotlinLogging= "1.8.3"
-    const val kweb = "0.7.20"
+    const val kweb = "0.7.22"
     const val kotlinxCoroutines = "1.3.9"
     const val kotlinxCoroutinesDebug = "1.3.8"
     const val ktor = "1.4.0"
