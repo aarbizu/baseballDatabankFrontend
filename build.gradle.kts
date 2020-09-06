@@ -1,5 +1,12 @@
 import org.gradle.api.tasks.testing.logging.TestLogEvent.*
 
+repositories {
+    jcenter()
+    gradlePluginPortal()
+    maven("https://jitpack.io")
+    mavenCentral()
+}
+
 plugins {
     // Apply the Kotlin JVM plugin to add support for Kotlin.
     kotlin("jvm") version "1.4.0"
@@ -17,16 +24,9 @@ plugins {
     id("com.github.ben-manes.versions") version "0.29.0"
 }
 
-repositories {
-    maven("https://jitpack.io")
-    mavenCentral()
-    // Use jcenter for resolving dependencies.
-    jcenter()
-}
-
 object DependencyVersions {
     const val postgres = "42.2.15"
-    //const val kotlinLogging= "1.8.3"
+    const val kotlinLogging= "1.8.3"
     const val kweb = "0.7.22"
     const val kotlinxCoroutines = "1.3.9"
     const val kotlinxCoroutinesDebug = "1.3.8"
@@ -59,7 +59,7 @@ dependencies {
     implementation("com.github.kwebio:kweb-core:${DependencyVersions.kweb}")
 
     // use KotlinLogging
-    //implementation("io.github.microutils:kotlin-logging:${DependencyVersions.kotlinLogging}")
+    implementation("io.github.microutils:kotlin-logging:${DependencyVersions.kotlinLogging}")
 
     //Coroutines (chapter 8)
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${DependencyVersions.kotlinxCoroutines}")
