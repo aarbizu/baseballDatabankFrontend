@@ -26,7 +26,7 @@ repositories {
 
 object DependencyVersions {
     const val postgres = "42.2.15"
-    const val kotlinLogging= "1.8.3"
+    //const val kotlinLogging= "1.8.3"
     const val kweb = "0.7.22"
     const val kotlinxCoroutines = "1.3.9"
     const val kotlinxCoroutinesDebug = "1.3.8"
@@ -59,7 +59,7 @@ dependencies {
     implementation("com.github.kwebio:kweb-core:${DependencyVersions.kweb}")
 
     // use KotlinLogging
-    implementation("io.github.microutils:kotlin-logging:${DependencyVersions.kotlinLogging}")
+    //implementation("io.github.microutils:kotlin-logging:${DependencyVersions.kotlinLogging}")
 
     //Coroutines (chapter 8)
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${DependencyVersions.kotlinxCoroutines}")
@@ -90,8 +90,8 @@ group = "org.aarbizu"
 version = "0.0.1"
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_13
-    targetCompatibility = JavaVersion.VERSION_13
+    sourceCompatibility = JavaVersion.VERSION_14
+    targetCompatibility = JavaVersion.VERSION_14
 }
 
 application {
