@@ -6,7 +6,7 @@ import java.sql.DriverManager
 import java.sql.PreparedStatement
 import java.sql.ResultSet
 import org.aarbizu.baseballDatabankFrontend.config.dbPassword
-import org.aarbizu.baseballDatabankFrontend.config.dbUrl
+import org.aarbizu.baseballDatabankFrontend.config.dbUri
 import org.aarbizu.baseballDatabankFrontend.config.dbUser
 import org.aarbizu.baseballDatabankFrontend.query.playerLastNameSubstring
 import org.aarbizu.baseballDatabankFrontend.query.playerNameRegex
@@ -23,7 +23,9 @@ interface DBProvider {
 
 object DB : DBProvider {
     val conn: Connection by lazy {
-        DriverManager.getConnection(dbUrl, dbUser, dbPassword)
+        val (user, pass) = dbUri.userInfo.split(":")
+        val dbUrl = "jdbc:postgresql://${dbUri.host}:${dbUri.port}${dbUri.path}"
+        DriverManager.getConnection(dbUrl, user, pass)
     }
 
     override fun getConnection(): Connection {
