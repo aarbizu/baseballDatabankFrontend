@@ -17,13 +17,6 @@ plugins {
     id("com.github.ben-manes.versions") version "0.29.0"
 }
 
-repositories {
-    jcenter()
-    gradlePluginPortal()
-    maven("https://jitpack.io")
-    mavenCentral()
-}
-
 object DependencyVersions {
     const val postgres = "42.2.15"
     const val kotlinLogging= "1.8.3"
@@ -84,6 +77,13 @@ dependencies {
 
     testRuntimeOnly("org.junit.platform:junit-platform-console:${DependencyVersions.junitPlatformConsole}")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${DependencyVersions.junit}")
+}
+
+repositories {
+    jcenter()
+    gradlePluginPortal()
+    maven("https://jitpack.io")
+    mavenCentral()
 }
 
 group = "org.aarbizu"
