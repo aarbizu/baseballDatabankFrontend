@@ -1,12 +1,5 @@
 import org.gradle.api.tasks.testing.logging.TestLogEvent.*
 
-repositories {
-    jcenter()
-    gradlePluginPortal()
-    maven("https://jitpack.io")
-    mavenCentral()
-}
-
 plugins {
     // Apply the Kotlin JVM plugin to add support for Kotlin.
     kotlin("jvm") version "1.4.0"
@@ -22,6 +15,13 @@ plugins {
 
     // versions
     id("com.github.ben-manes.versions") version "0.29.0"
+}
+
+repositories {
+    jcenter()
+    gradlePluginPortal()
+    maven("https://jitpack.io")
+    mavenCentral()
 }
 
 object DependencyVersions {
