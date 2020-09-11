@@ -1,7 +1,6 @@
 package org.aarbizu.baseballDatabankFrontend.routes
 
 import io.ktor.http.Parameters
-import kweb.Element
 import kweb.ElementCreator
 import kweb.a
 import kweb.div
@@ -41,12 +40,11 @@ fun ElementCreator<*>.appendCrumb(newCrumb: Crumb, crumbs: MutableList<Crumb>) {
     }
 }
 
-fun ElementCreator<*>.debugParamsElement(parameters: Parameters): Element {
-    return if (debug) {
+fun ElementCreator<*>.debugParamsElement(parameters: Parameters) =
+    if (debug) {
         div(fomantic.content).text(parameters.entries().mapIndexed { idx, entry ->
             "$idx: ${entry.key}=${entry.value.map { it }}"
         }.joinToString())
     } else {
         div()
     }
-}

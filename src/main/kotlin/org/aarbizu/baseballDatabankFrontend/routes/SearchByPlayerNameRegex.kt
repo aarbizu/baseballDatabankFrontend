@@ -158,13 +158,10 @@ class SearchByPlayerNameRegex(private val crumbs: MutableList<Crumb>, private va
         div(fomantic.content.id(outputElementId)).text(names)
     }
 
-    override fun getCrumb(parameters: Parameters): Crumb {
-        return Crumb("Regex Search", "/q/$playerNameRegex/${parameters[playerNameRegex]}")
-    }
+    override fun getCrumb(parameters: Parameters) =
+        Crumb("Regex Search", "/q/$playerNameRegex/${parameters[playerNameRegex]}")
 
-    override fun injectCrumbs(): MutableList<Crumb> {
-        return crumbs
-    }
+    override fun injectCrumbs() = crumbs
 
     override suspend fun updateUrl(url: KVar<String>, inputs: Map<String, String>) {
         url.value = "/q/$playerNameRegex/?$pPlayerRegexParam=${inputs[pPlayerRegexParam]}&" +

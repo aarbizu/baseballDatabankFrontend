@@ -26,9 +26,7 @@ object DB : DBProvider {
         DriverManager.getConnection(dbUrl, user, pass)
     }
 
-    override fun getConnection(): Connection {
-        return conn
-    }
+    override fun getConnection() = conn
 }
 
 class QueryEngine(private val dbProvider: DBProvider) {
@@ -41,12 +39,11 @@ class QueryEngine(private val dbProvider: DBProvider) {
         ): List<TableRecord> {
             val timer = Stopwatch.createStarted()
             val rs = statement(dbProvider, queryTemplate, binds).executeQuery()
-            timer.reset()
             logger.info("exec query: $timer")
+            timer.reset()
             timer.start()
             val records: List<TableRecord> = extractor.invoke(rs)
             logger.info("extract results: $timer")
-            timer.stop()
             return records
         }
 
@@ -57,45 +54,38 @@ class QueryEngine(private val dbProvider: DBProvider) {
                 when (it::class) {
                     IntBind::class -> stmt.setInt(paramIndex++, it.value as Int)
                     StrBind::class -> stmt.setString(paramIndex++, it.value as String)
-                    else -> {
-                        logger.info("unknown type, ${it::class} from $it")
-                    }
+                    else -> logger.info("unknown type, ${it::class} from $it")
                 }
             }
             return stmt
         }
     }
 
-    fun playerNameSearch(nameSubstring: String): List<TableRecord> {
-        return query(
-            dbProvider,
-            playerLastNameSubstring,
-            listOf(
-                StrBind(
-                    "lnameSubstr",
-                    nameSubstring
-                )
-            ),
-            PlayerBasic.extract
-        )
-    }
+    fun playerNameSearch(nameSubstring: String) = query(
+        dbProvider,
+        playerLastNameSubstring,
+        listOf(
+            StrBind(
+                "lnameSubstr",
+                nameSubstring
+            )
+        ),
+        PlayerBasic.extract
+    )
 
-    fun playerNamesByLength(length: String): List<TableRecord> {
-        return query(
-            dbProvider,
-            org.aarbizu.baseballDatabankFrontend.query.playerNamesByLength,
-            listOf(
-                IntBind(
-                    "lnameLength",
-                    length.toInt()
-                )
-            ),
-            Player.extract
-        )
-    }
+    fun playerNamesByLength(length: String) = query(
+        dbProvider,
+        org.aarbizu.baseballDatabankFrontend.query.playerNamesByLength,
+        listOf(
+            IntBind(
+                "lnameLength",
+                length.toInt()
+            )
+        ),
+        Player.extract
+    )
 
-    fun playerNameRegexSearch(regex: String, matchFirst: Boolean, matchLast: Boolean, caseSensitive: Boolean): List<TableRecord> {
-        return query(
+    fun playerNameRegexSearch(regex: String, matchFirst: Boolean, matchLast: Boolean, caseSensitive: Boolean) = query(
             dbProvider,
             playerNameRegex(
                 matchFirst,
@@ -105,5 +95,4 @@ class QueryEngine(private val dbProvider: DBProvider) {
             listOf(StrBind("nameRegex", regex)),
             PlayerBasic.extract
         )
-    }
 }

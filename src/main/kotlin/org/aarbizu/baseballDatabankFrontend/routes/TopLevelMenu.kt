@@ -11,13 +11,9 @@ import kweb.state.KVar
 
 class TopLevelMenu(private val crumbs: MutableList<Crumb>) : RouteHandler {
 
-    override fun getCrumb(parameters: Parameters): Crumb {
-        return Crumb("Begin", TOP_LEVEL_MENU_LOCATION)
-    }
+    override fun getCrumb(parameters: Parameters) = Crumb("Begin", TOP_LEVEL_MENU_LOCATION)
 
-    override fun injectCrumbs(): MutableList<Crumb> {
-        return crumbs
-    }
+    override fun injectCrumbs() = crumbs
 
     override suspend fun updateUrl(url: KVar<String>, inputs: Map<String, String>) = Unit // no-op here
 

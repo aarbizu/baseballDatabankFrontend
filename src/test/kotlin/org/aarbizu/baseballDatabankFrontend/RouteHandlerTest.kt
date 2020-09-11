@@ -28,13 +28,9 @@ class RouteHandlerTest {
             override fun handleRoute(ec: ElementCreator<*>, parameters: Parameters) {
             }
 
-            override fun getCrumb(parameters: Parameters): Crumb {
-                return mockCrumb
-            }
+            override fun getCrumb(parameters: Parameters) = mockCrumb
 
-            override fun injectCrumbs(): MutableList<Crumb> {
-                return mutableListOf()
-            }
+            override fun injectCrumbs() = mutableListOf<Crumb>()
 
             override suspend fun updateUrl(url: KVar<String>, inputs: Map<String, String>) {
             }

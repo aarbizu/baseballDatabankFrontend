@@ -95,11 +95,8 @@ class SearchByPlayerLastName(private val crumbs: MutableList<Crumb>, private val
         url.value = "/q/$playerLastNameSearchQuery/?$pPlayerLastNameParam=${inputs[pPlayerLastNameParam]}"
     }
 
-    override fun getCrumb(parameters: Parameters): Crumb {
-        return Crumb("Last Name", "/q/$playerLastNameSearchQuery/?${parameters[playerLastNameSearchQuery]}")
-    }
+    override fun getCrumb(parameters: Parameters) =
+        Crumb("Last Name", "/q/$playerLastNameSearchQuery/?${parameters[playerLastNameSearchQuery]}")
 
-    override fun injectCrumbs(): MutableList<Crumb> {
-        return crumbs
-    }
+    override fun injectCrumbs() = crumbs
 }

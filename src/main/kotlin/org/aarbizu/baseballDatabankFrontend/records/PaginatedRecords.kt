@@ -1,5 +1,7 @@
 package org.aarbizu.baseballDatabankFrontend.records
 
+import kotlin.math.max
+import kotlin.math.min
 import kweb.Element
 import kweb.div
 import kweb.new
@@ -17,29 +19,23 @@ class PaginatedRecords(
     private val pageSize: Int = 10
 ) {
     private val size = records.size
-    private var from: Int = 0
-    private var to: Int = if (size < pageSize) size else from + pageSize
+    private var from = 0
+    private var to = min(from + pageSize, size)
 
-    private fun nextPage(): Boolean {
-        var changed = true
-        if (to < size) {
-            from += pageSize
-            to = if (to + pageSize > size) size else to + pageSize
-        } else {
-            changed = false
-        }
-        return changed
+    private fun nextPage() = if (to < size) {
+        from += pageSize
+        to = min(to + pageSize, size)
+        true
+    } else {
+        false
     }
 
-    private fun prevPage(): Boolean {
-        var changed = true
-        if (from > 0) {
-            from = if (from - pageSize < 0) 0 else from - pageSize
-            to = if (to == size) from + pageSize else to - pageSize
-        } else {
-            changed = false
-        }
-        return changed
+    private fun prevPage() = if (from > 0) {
+        from = max(from - pageSize, 0)
+        to = if (to == size) from + pageSize else to - pageSize
+        true
+    } else {
+        false
     }
 
     fun renderTable() {

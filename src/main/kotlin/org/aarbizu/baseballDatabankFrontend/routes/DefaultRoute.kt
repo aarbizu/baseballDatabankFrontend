@@ -12,13 +12,9 @@ import kweb.plugins.fomanticUI.fomantic
 import kweb.state.KVar
 
 class DefaultRoute(private val crumbs: MutableList<Crumb>) : RouteHandler {
-    override fun getCrumb(parameters: Parameters): Crumb {
-        return Crumb.empty
-    }
+    override fun getCrumb(parameters: Parameters) = Crumb.empty
 
-    override fun injectCrumbs(): MutableList<Crumb> {
-        return crumbs
-    }
+    override fun injectCrumbs() = crumbs
 
     override fun handleRoute(ec: ElementCreator<*>, parameters: Parameters) {
         with(ec) {
