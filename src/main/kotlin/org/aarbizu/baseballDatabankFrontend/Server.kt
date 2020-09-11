@@ -12,12 +12,12 @@ import io.ktor.routing.routing
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.ktor.websocket.WebSockets
+import java.time.Duration
 import kweb.Kweb
 import kweb.plugins.fomanticUI.fomanticUIPlugin
 import kweb.respondKwebRender
 import kweb.route
 import org.aarbizu.baseballDatabankFrontend.routes.dispatch
-import java.time.Duration
 
 const val uriPrefix = "loc"
 

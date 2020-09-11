@@ -1,6 +1,10 @@
 package org.aarbizu.baseballDatabankFrontend.db
 
 import com.google.common.base.Stopwatch
+import java.sql.Connection
+import java.sql.DriverManager
+import java.sql.PreparedStatement
+import java.sql.ResultSet
 import org.aarbizu.baseballDatabankFrontend.config.dbUri
 import org.aarbizu.baseballDatabankFrontend.query.playerLastNameSubstring
 import org.aarbizu.baseballDatabankFrontend.query.playerNameRegex
@@ -8,10 +12,6 @@ import org.aarbizu.baseballDatabankFrontend.records.Player
 import org.aarbizu.baseballDatabankFrontend.records.PlayerBasic
 import org.aarbizu.baseballDatabankFrontend.records.TableRecord
 import org.slf4j.LoggerFactory
-import java.sql.Connection
-import java.sql.DriverManager
-import java.sql.PreparedStatement
-import java.sql.ResultSet
 
 private val logger = LoggerFactory.getLogger("QueryEngine")
 
