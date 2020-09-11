@@ -2,7 +2,7 @@ package org.aarbizu.baseballDatabankFrontend.records
 
 import java.sql.ResultSet
 
-abstract class TableRecord() {
+abstract class TableRecord {
     abstract fun headers(): List<String>
     abstract fun cells(): List<String>
 }

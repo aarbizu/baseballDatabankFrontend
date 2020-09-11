@@ -7,7 +7,6 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import kweb.ElementCreator
-import kweb.div
 import kweb.state.KVar
 import org.aarbizu.baseballDatabankFrontend.routes.Crumb
 import org.aarbizu.baseballDatabankFrontend.routes.RouteHandler

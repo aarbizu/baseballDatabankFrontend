@@ -1,4 +1,6 @@
-import org.gradle.api.tasks.testing.logging.TestLogEvent.*
+import org.gradle.api.tasks.testing.logging.TestLogEvent.FAILED
+import org.gradle.api.tasks.testing.logging.TestLogEvent.PASSED
+import org.gradle.api.tasks.testing.logging.TestLogEvent.SKIPPED
 
 plugins {
     // Apply the Kotlin JVM plugin to add support for Kotlin.
@@ -19,11 +21,12 @@ plugins {
 
 object DependencyVersions {
     const val postgres = "42.2.15"
-    const val kotlinLogging= "1.8.3"
+    const val kotlinLogging = "1.8.3"
     const val kweb = "0.7.22"
     const val kotlinxCoroutines = "1.3.9"
     const val kotlinxCoroutinesDebug = "1.3.8"
     const val ktor = "1.4.0"
+
     //const val okhttp = "4.8.0"
     const val gson = "2.8.6"
     const val guava = "29.0-jre"

@@ -90,7 +90,8 @@ class SearchByPlayerNameRegex(private val crumbs: MutableList<Crumb>, private va
                                 listOf(nameRegexInput!!, firstNameMatch!!, lastNameMatch!!, caseSensitive!!),
                                 browser.doc.getElementById(outputElementId),
                                 browser.url
-                            ) { inputs -> queries.playerNameRegexSearch(
+                            ) { inputs ->
+                                queries.playerNameRegexSearch(
                                     inputs[0],
                                     inputs[1].isNotEmpty(),
                                     inputs[2].isNotEmpty(),
@@ -141,7 +142,8 @@ class SearchByPlayerNameRegex(private val crumbs: MutableList<Crumb>, private va
                         listOf(nameRegexInput!!, firstNameMatch!!, lastNameMatch!!, caseSensitive!!),
                         browser.doc.getElementById(outputElementId),
                         browser.url
-                    ) { inputs -> queries.playerNameRegexSearch(
+                    ) { inputs ->
+                        queries.playerNameRegexSearch(
                             inputs[0],
                             inputs[1].isNotEmpty(),
                             inputs[2].isNotEmpty(),
@@ -166,8 +168,8 @@ class SearchByPlayerNameRegex(private val crumbs: MutableList<Crumb>, private va
 
     override suspend fun updateUrl(url: KVar<String>, inputs: Map<String, String>) {
         url.value = "/q/$playerNameRegex/?$pPlayerRegexParam=${inputs[pPlayerRegexParam]}&" +
-                    "$pPlayerRegexFnameParam=${inputs[pPlayerRegexFnameParam]}&" +
-                    "$pPlayerRegexLnameParam=${inputs[pPlayerRegexLnameParam]}&" +
-                    "$pPlayerRegexCaseSensitive=${inputs[pPlayerRegexCaseSensitive]}"
+            "$pPlayerRegexFnameParam=${inputs[pPlayerRegexFnameParam]}&" +
+            "$pPlayerRegexLnameParam=${inputs[pPlayerRegexLnameParam]}&" +
+            "$pPlayerRegexCaseSensitive=${inputs[pPlayerRegexCaseSensitive]}"
     }
 }
