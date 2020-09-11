@@ -1,6 +1,7 @@
 package org.aarbizu.baseballDatabankFrontend.db
 
 import com.google.common.base.Stopwatch
+import java.net.URI
 import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.PreparedStatement
@@ -19,11 +20,31 @@ interface DBProvider {
     fun getConnection(): Connection
 }
 
+data class DbConnectionParams(val uri: URI) {
+    val userinfo: String by lazy {
+        uri.userInfo
+    }
+
+    val user: String by lazy {
+        val (username, _) = userinfo.split(":")
+        username
+    }
+
+    val password: String by lazy {
+        val (_, passwd) = userinfo.split(":")
+        passwd
+    }
+
+    fun getJdbcUrl() = "jdbc:postgresql://${uri.host}:${uri.port}${uri.path}"
+}
+
 object DB : DBProvider {
+    private val connParams: DbConnectionParams by lazy {
+        DbConnectionParams(dbUri)
+    }
+
     private val conn: Connection by lazy {
-        val (user, pass) = dbUri.userInfo.split(":")
-        val dbUrl = "jdbc:postgresql://${dbUri.host}:${dbUri.port}${dbUri.path}"
-        DriverManager.getConnection(dbUrl, user, pass)
+        DriverManager.getConnection(connParams.getJdbcUrl(), connParams.user, connParams.password)
     }
 
     override fun getConnection() = conn
