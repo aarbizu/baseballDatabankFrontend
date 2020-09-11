@@ -1,7 +1,6 @@
 package org.aarbizu.baseballDatabankFrontend.routes
 
 import io.ktor.http.Parameters
-import kweb.Element
 import kweb.ElementCreator
 import kweb.a
 import kweb.div
@@ -20,6 +19,7 @@ val homeIcon = mapOf("class" to "home icon")
 data class Crumb(val section: String, val url: String) {
     fun isNotEmpty() = section.isNotBlank() && url.isNotBlank()
     fun isEmpty() = !isNotEmpty()
+
     companion object EmptyCrumb {
         val empty = Crumb("", "")
     }
@@ -40,8 +40,11 @@ fun ElementCreator<*>.appendCrumb(newCrumb: Crumb, crumbs: MutableList<Crumb>) {
     }
 }
 
-fun ElementCreator<*>.debugParamsElement(parameters: Parameters): Element {
-    return if (debug) { div(fomantic.content).text(parameters.entries().mapIndexed { idx, entry ->
-        "$idx: ${entry.key}=${entry.value.map { it }}"
-    }.joinToString()) } else { div() }
-}
+fun ElementCreator<*>.debugParamsElement(parameters: Parameters) =
+    if (debug) {
+        div(fomantic.content).text(parameters.entries().mapIndexed { idx, entry ->
+            "$idx: ${entry.key}=${entry.value.map { it }}"
+        }.joinToString())
+    } else {
+        div()
+    }

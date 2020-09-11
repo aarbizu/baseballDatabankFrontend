@@ -14,13 +14,9 @@ data class PlayerBasic(
     val finalgame: String
 ) : TableRecord() {
 
-    override fun headers(): List<String> {
-        return listOf("Name", "Born", "Debut", "Final Game")
-    }
+    override fun headers() = listOf("Name", "Born", "Debut", "Final Game")
 
-    override fun cells(): List<String> {
-        return listOf(name, born, debut, finalgame)
-    }
+    override fun cells() = listOf(name, born, debut, finalgame)
 
     companion object {
         val extract: (rs: ResultSet) -> List<TableRecord> = { rs ->
@@ -49,13 +45,9 @@ data class Player(
     val bbrefid: String
 ) : TableRecord() {
 
-    override fun headers(): List<String> {
-        return listOf("Name", "Born", "Debut", "Final Game", "Player Id", "bbref Id")
-    }
+    override fun headers() = listOf("Name", "Born", "Debut", "Final Game", "Player Id", "bbref Id")
 
-    override fun cells(): List<String> {
-        return listOf(name, born, debut, finalgame, playerId, bbrefid)
-    }
+    override fun cells() = listOf(name, born, debut, finalgame, playerId, bbrefid)
 
     companion object {
         val extract: (rs: ResultSet) -> List<TableRecord> = { rs ->

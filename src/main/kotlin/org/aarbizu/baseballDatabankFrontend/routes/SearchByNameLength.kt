@@ -23,13 +23,10 @@ const val pPlayerNameLength = "name-length"
 class SearchByNameLength(private val crumbs: MutableList<Crumb>, private val queryEngine: QueryEngine) : RouteHandler {
     private val outputFieldId = "output"
 
-    override fun getCrumb(parameters: Parameters): Crumb {
-        return Crumb("Name Length Search", "/q/$playerNameLength/${parameters[pPlayerNameLength]}")
-    }
+    override fun getCrumb(parameters: Parameters) =
+        Crumb("Name Length Search", "/q/$playerNameLength/${parameters[pPlayerNameLength]}")
 
-    override fun injectCrumbs(): MutableList<Crumb> {
-        return crumbs
-    }
+    override fun injectCrumbs() = crumbs
 
     override fun handleRoute(ec: ElementCreator<*>, parameters: Parameters) {
         with(ec) {
