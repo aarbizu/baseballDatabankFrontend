@@ -4,7 +4,7 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent.SKIPPED
 
 plugins {
     // Apply the Kotlin JVM plugin to add support for Kotlin.
-    kotlin("jvm") version "1.4.0"
+    kotlin("jvm") version "1.4.10"
 
     // Apply the application plugin to add support for building a CLI application.
     application
@@ -13,19 +13,19 @@ plugins {
     idea
 
     // spotless
-    id("com.diffplug.spotless") version "5.1.1"
+    id("com.diffplug.spotless") version "5.4.0"
 
     // versions
-    id("com.github.ben-manes.versions") version "0.29.0"
+    id("com.github.ben-manes.versions") version "0.31.0"
 }
 
 object DependencyVersions {
-    const val postgres = "42.2.15"
+    const val postgres = "42.2.16"
     const val kotlinLogging = "1.8.3"
-    const val kweb = "0.7.22"
+    const val kweb = "0.7.24"
     const val kotlinxCoroutines = "1.3.9"
-    const val kotlinxCoroutinesDebug = "1.3.8"
-    const val ktor = "1.4.0"
+    const val kotlinxCoroutinesDebug = "1.3.9"
+    const val ktor = "1.4.10"
 
     //const val okhttp = "4.8.0"
     const val gson = "2.8.6"
