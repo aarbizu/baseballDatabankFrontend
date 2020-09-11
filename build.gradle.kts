@@ -4,7 +4,7 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent.SKIPPED
 
 plugins {
     // Apply the Kotlin JVM plugin to add support for Kotlin.
-    kotlin("jvm") version "1.4.10"
+    kotlin("jvm") version "1.4.0"
 
     // Apply the application plugin to add support for building a CLI application.
     application
@@ -25,7 +25,7 @@ object DependencyVersions {
     const val kweb = "0.7.24"
     const val kotlinxCoroutines = "1.3.9"
     const val kotlinxCoroutinesDebug = "1.3.9"
-    const val ktor = "1.4.10"
+    const val ktor = "1.4.0"
 
     //const val okhttp = "4.8.0"
     const val gson = "2.8.6"
