@@ -5,9 +5,7 @@ import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.PreparedStatement
 import java.sql.ResultSet
-import org.aarbizu.baseballDatabankFrontend.config.dbPassword
 import org.aarbizu.baseballDatabankFrontend.config.dbUri
-import org.aarbizu.baseballDatabankFrontend.config.dbUser
 import org.aarbizu.baseballDatabankFrontend.query.playerLastNameSubstring
 import org.aarbizu.baseballDatabankFrontend.query.playerNameRegex
 import org.aarbizu.baseballDatabankFrontend.records.Player
@@ -22,7 +20,7 @@ interface DBProvider {
 }
 
 object DB : DBProvider {
-    val conn: Connection by lazy {
+    private val conn: Connection by lazy {
         val (user, pass) = dbUri.userInfo.split(":")
         val dbUrl = "jdbc:postgresql://${dbUri.host}:${dbUri.port}${dbUri.path}"
         DriverManager.getConnection(dbUrl, user, pass)
@@ -52,7 +50,7 @@ class QueryEngine(private val dbProvider: DBProvider) {
             return records
         }
 
-        fun statement(dbProvider: DBProvider, queryTemplate: String, binds: List<Bind<*>>): PreparedStatement {
+        private fun statement(dbProvider: DBProvider, queryTemplate: String, binds: List<Bind<*>>): PreparedStatement {
             val stmt = dbProvider.getConnection().prepareStatement(queryTemplate)
             var paramIndex = 1
             binds.forEach {
