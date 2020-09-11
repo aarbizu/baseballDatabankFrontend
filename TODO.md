@@ -13,12 +13,12 @@
     - [ ] players (reg/postseason)
     - [ ] teams (reg/postseason)
     - [ ] managers (reg/postseason)
-- checkbox modifiers to superlative queries, e.g. top HR hitters whose names are:
+- checkbox modifiers to superlative queries, e.g., top HR hitters whose names are:
     - [ ] ~~palindromes (infeasible, computationally)~~
     - [ ] supervocalic
     - [ ] strict supervocalic (exactly one each of vowel)
 - [ ] add player table column sort toggles. Don't re-query, just sort the result set and re-render
-- [ ] top level menu: add hover text over each item to have a description/example of usage
+- [ ] top-level menu: add hover text over each item to have a description/example of usage
 - [ ] work on deployment code
     - [ ] use gitpages? heroku?
     

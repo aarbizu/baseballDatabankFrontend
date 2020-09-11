@@ -20,7 +20,7 @@ interface DBProvider {
 }
 
 object DB : DBProvider {
-    val conn: Connection by lazy {
+    private val conn: Connection by lazy {
         val (user, pass) = dbUri.userInfo.split(":")
         val dbUrl = "jdbc:postgresql://${dbUri.host}:${dbUri.port}${dbUri.path}"
         DriverManager.getConnection(dbUrl, user, pass)
@@ -47,7 +47,7 @@ class QueryEngine(private val dbProvider: DBProvider) {
             return records
         }
 
-        fun statement(dbProvider: DBProvider, queryTemplate: String, binds: List<Bind<*>>): PreparedStatement {
+        private fun statement(dbProvider: DBProvider, queryTemplate: String, binds: List<Bind<*>>): PreparedStatement {
             val stmt = dbProvider.getConnection().prepareStatement(queryTemplate)
             var paramIndex = 1
             binds.forEach {

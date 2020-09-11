@@ -26,12 +26,12 @@ val playerLastNameSubstring = """
 
 fun playerNameRegex(first: Boolean = true, last: Boolean = true, caseSensitive: Boolean = false): String {
     val nameClauseColumn = if (first && last) {
-            "namefirst || ' ' || namelast"
-        } else if (first) {
-            "namefirst"
-        } else {
-            "namelast"
-        }
+        "namefirst || ' ' || namelast"
+    } else if (first) {
+        "namefirst"
+    } else {
+        "namelast"
+    }
 
     return """
         SELECT 
@@ -40,6 +40,12 @@ fun playerNameRegex(first: Boolean = true, last: Boolean = true, caseSensitive: 
             COALESCE(debut, 'unknown') as debut,
             COALESCE(finalgame, 'unknown') as finalgame
         FROM people
-        WHERE $nameClauseColumn ${ if (caseSensitive) { "~" } else { "~*" }} ?
+        WHERE $nameClauseColumn ${
+        if (caseSensitive) {
+            "~"
+        } else {
+            "~*"
+        }
+    } ?
     """.trimIndent()
 }

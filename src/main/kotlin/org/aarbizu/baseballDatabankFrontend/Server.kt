@@ -48,8 +48,8 @@ class Server {
     fun start() {
         val port = System.getenv("PORT")?.toInt() ?: 8080
         embeddedServer(Netty,
-                port,
-                module = Application::module
+            port,
+            module = Application::module
         ).start()
     }
 }
