@@ -2,15 +2,16 @@ package org.aarbizu.baseballDatabankFrontend
 
 import com.google.common.truth.Truth.assertThat
 import io.mockk.junit5.MockKExtension
+import java.net.URI
+import java.sql.Connection
+import java.sql.DriverManager
+import java.sql.ResultSet
 import org.aarbizu.baseballDatabankFrontend.config.getDbUri
 import org.aarbizu.baseballDatabankFrontend.db.DBProvider
-import java.net.URI
-import java.sql.DriverManager
 import org.aarbizu.baseballDatabankFrontend.db.DbConnectionParams
 import org.aarbizu.baseballDatabankFrontend.db.QueryEngine
 import org.aarbizu.baseballDatabankFrontend.db.StrBind
 import org.aarbizu.baseballDatabankFrontend.records.TableRecord
-import org.junit.Before
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -19,8 +20,6 @@ import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
 import util.setupTestDatabase
 import util.upsertPlayer
-import java.sql.Connection
-import java.sql.ResultSet
 
 @Testcontainers
 @ExtendWith(MockKExtension::class)
@@ -34,7 +33,7 @@ class BasicTest {
         @JvmStatic
         @BeforeAll
         fun initTestDb() {
-            setupTestDatabase(postgres);
+            setupTestDatabase(postgres)
         }
     }
 

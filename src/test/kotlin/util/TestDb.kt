@@ -1,7 +1,7 @@
 package util
 
-import org.testcontainers.containers.PostgreSQLContainer
 import java.sql.DriverManager
+import org.testcontainers.containers.PostgreSQLContainer
 
 fun setupTestDatabase(db: PostgreSQLContainer<*>) {
     DriverManager.getConnection(db.jdbcUrl, db.username, db.password).use {
@@ -25,7 +25,6 @@ fun upsertPlayerSql(id: String, gamesPlayed: Int, position: Int): String {
         VALUES ('$id', '$gamesPlayed', '$position')
     """.trimIndent()
 }
-
 
 val createTableSql = """
     DROP TABLE IF EXISTS players;
