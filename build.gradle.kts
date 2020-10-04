@@ -22,7 +22,7 @@ plugins {
 object DependencyVersions {
     const val postgres = "42.2.16"
     const val kotlinLogging = "1.8.3"
-    const val kweb = "0.7.24"
+    const val kweb = "0.7.25"
     const val kotlinxCoroutines = "1.3.9"
     const val kotlinxCoroutinesDebug = "1.3.9"
     const val ktor = "1.4.0"
@@ -36,6 +36,7 @@ object DependencyVersions {
     const val junit = "5.7.0-RC1"
     const val junitPlatformConsole = "1.7.0-RC1"
     const val mockk = "1.10.0"
+    const val testContainers = "1.14.3"
 }
 
 dependencies {
@@ -77,6 +78,9 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-api:${DependencyVersions.junit}")
     testImplementation("org.junit.jupiter:junit-jupiter-params:${DependencyVersions.junit}")
     testImplementation("io.mockk:mockk:${DependencyVersions.mockk}")
+    testImplementation("org.testcontainers:testcontainers:${DependencyVersions.testContainers}")
+    testImplementation("org.testcontainers:junit-jupiter:${DependencyVersions.testContainers}")
+    testImplementation("org.testcontainers:postgresql:${DependencyVersions.testContainers}")
 
     testRuntimeOnly("org.junit.platform:junit-platform-console:${DependencyVersions.junitPlatformConsole}")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${DependencyVersions.junit}")

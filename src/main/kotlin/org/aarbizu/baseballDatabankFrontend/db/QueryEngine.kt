@@ -26,13 +26,11 @@ data class DbConnectionParams(val uri: URI) {
     }
 
     val user: String by lazy {
-        val (username, _) = userinfo.split(":")
-        username
+        userinfo.split(":")[0]
     }
 
     val password: String by lazy {
-        val (_, passwd) = userinfo.split(":")
-        passwd
+        userinfo.split(":")[1]
     }
 
     fun getJdbcUrl() = "jdbc:postgresql://${uri.host}:${uri.port}${uri.path}"
