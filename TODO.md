@@ -9,14 +9,16 @@
     - [ ] review [kotlin utest best practices](https://phauer.com/2018/best-practices-unit-testing-kotlin/#change-the-lifecycle-default-for-every-test-class)
 - [ ] add linking from bbrefid to the bbref site
 - [x] add the ability to query player name by regex (first, last, full name)
-- [ ] process the db to build some static content pages
+- [ ] process the db to build some static content pages (not sure I want to try and recreate bbref, though)
     - [ ] players (reg/postseason)
     - [ ] teams (reg/postseason)
     - [ ] managers (reg/postseason)
-- checkbox modifiers to superlative queries, e.g., top HR hitters whose names are:
-    - [ ] ~~palindromes (infeasible, computationally)~~
+- checkbox filters to superlative queries, e.g., top HR hitters whose names are:
+    - [ ] palindromes (infeasible, computationally via regex... but maybe doable with string ops)
     - [ ] supervocalic
     - [ ] strict supervocalic (exactly one each of vowel)
+- [ ] basic leaderboards for counting stats (apply checkbox modifiers, eventually)
+- [ ] basic leaderboards for career rate stats (filterable, as above)
 - [ ] add player table column sort toggles. Don't re-query, just sort the result set and re-render
 - [ ] top-level menu: add hover text over each item to have a description/example of usage
 - [ ] work on deployment code

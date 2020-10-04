@@ -13,19 +13,19 @@ plugins {
     idea
 
     // spotless
-    id("com.diffplug.spotless") version "5.4.0"
+    id("com.diffplug.spotless") version "5.6.1"
 
     // versions
-    id("com.github.ben-manes.versions") version "0.31.0"
+    id("com.github.ben-manes.versions") version "0.33.0"
 }
 
 object DependencyVersions {
     const val postgres = "42.2.16"
-    const val kotlinLogging = "1.8.3"
-    const val kweb = "0.7.24"
+    const val kotlinLogging = "2.0.3"
+    const val kweb = "0.7.32"
     const val kotlinxCoroutines = "1.3.9"
     const val kotlinxCoroutinesDebug = "1.3.9"
-    const val ktor = "1.4.0"
+    const val ktor = "1.4.1"
 
     //const val okhttp = "4.8.0"
     const val gson = "2.8.6"
@@ -33,9 +33,10 @@ object DependencyVersions {
     const val systemRules = "1.19.0"
     const val slf4j = "2.0.0-alpha1"
     const val truth = "1.0.1"
-    const val junit = "5.7.0-RC1"
+    const val junit = "5.7.0"
     const val junitPlatformConsole = "1.7.0-RC1"
-    const val mockk = "1.10.0"
+    const val mockk = "1.10.2"
+    const val testContainers = "1.14.3"
 }
 
 dependencies {
@@ -77,6 +78,9 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-api:${DependencyVersions.junit}")
     testImplementation("org.junit.jupiter:junit-jupiter-params:${DependencyVersions.junit}")
     testImplementation("io.mockk:mockk:${DependencyVersions.mockk}")
+    testImplementation("org.testcontainers:testcontainers:${DependencyVersions.testContainers}")
+    testImplementation("org.testcontainers:junit-jupiter:${DependencyVersions.testContainers}")
+    testImplementation("org.testcontainers:postgresql:${DependencyVersions.testContainers}")
 
     testRuntimeOnly("org.junit.platform:junit-platform-console:${DependencyVersions.junitPlatformConsole}")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${DependencyVersions.junit}")
