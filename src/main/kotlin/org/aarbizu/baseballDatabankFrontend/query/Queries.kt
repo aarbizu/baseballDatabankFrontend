@@ -1,5 +1,7 @@
 package org.aarbizu.baseballDatabankFrontend.query
 
+// COALESCE returns first non-null argument
+
 val playerNamesByLength = """
     SELECT
         COALESCE(namegiven, 'unknown') || ' ' || COALESCE(namelast, 'unknown') as name,
@@ -18,7 +20,9 @@ val playerLastNameSubstring = """
         COALESCE(namegiven, 'unknown') || ' ' || COALESCE(namelast, 'unknown') as name,
         COALESCE(birthyear, 0) || '-' || COALESCE(birthmonth, 0) || '-' || COALESCE(birthday, 0) as born,
         COALESCE(debut, 'unknown') as debut,
-        COALESCE(finalgame, 'unknown') as finalgame
+        COALESCE(finalgame, 'unknown') as finalgame,
+        COALESCE(playerid, 'unknown') as playerid,
+        COALESCE(bbrefid, 'unknown') as bbrefid
     FROM people
     WHERE LOWER(namelast) LIKE ?
     ORDER BY LENGTH(namelast) ASC
@@ -38,7 +42,9 @@ fun playerNameRegex(first: Boolean = true, last: Boolean = true, caseSensitive: 
             namefirst || ' ' || namelast as name,
             COALESCE(birthyear, 0) || '-' || COALESCE(birthmonth, 0) || '-' || COALESCE(birthday, 0) as born,
             COALESCE(debut, 'unknown') as debut,
-            COALESCE(finalgame, 'unknown') as finalgame
+            COALESCE(finalgame, 'unknown') as finalgame,
+            COALESCE(playerid, 'unknown') as playerid,
+            COALESCE(bbrefid, 'unknown') as bbrefid
         FROM people
         WHERE $nameClauseColumn ${
         if (caseSensitive) {

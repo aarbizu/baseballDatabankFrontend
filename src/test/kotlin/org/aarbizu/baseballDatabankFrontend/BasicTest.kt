@@ -6,6 +6,8 @@ import java.net.URI
 import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.ResultSet
+import kweb.ElementCreator
+import kweb.TrElement
 import org.aarbizu.baseballDatabankFrontend.config.getDbUri
 import org.aarbizu.baseballDatabankFrontend.db.DBProvider
 import org.aarbizu.baseballDatabankFrontend.db.DbConnectionParams
@@ -87,6 +89,10 @@ class BasicTest {
     data class TestPlayerRecord(val id: String, val games: Int, val pos: Int) : TableRecord() {
         override fun headers() = listOf("id", "games", "pos")
         override fun cells() = listOf(id, games.toString(), pos.toString())
+        override fun render(tr: ElementCreator<TrElement>) {
+            TODO("Not yet implemented")
+        }
+
         companion object {
             val extract: (rs: ResultSet) -> List<TableRecord> = { rs ->
                 val records = mutableListOf<TestPlayerRecord>()

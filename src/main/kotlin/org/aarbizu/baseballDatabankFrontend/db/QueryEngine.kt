@@ -10,7 +10,6 @@ import org.aarbizu.baseballDatabankFrontend.config.dbUri
 import org.aarbizu.baseballDatabankFrontend.query.playerLastNameSubstring
 import org.aarbizu.baseballDatabankFrontend.query.playerNameRegex
 import org.aarbizu.baseballDatabankFrontend.records.Player
-import org.aarbizu.baseballDatabankFrontend.records.PlayerBasic
 import org.aarbizu.baseballDatabankFrontend.records.TableRecord
 import org.slf4j.LoggerFactory
 
@@ -89,7 +88,7 @@ class QueryEngine(private val dbProvider: DBProvider) {
                 nameSubstring
             )
         ),
-        PlayerBasic.extract
+        Player.extract
     )
 
     fun playerNamesByLength(length: String) = query(
@@ -112,6 +111,6 @@ class QueryEngine(private val dbProvider: DBProvider) {
                 caseSensitive
             ),
             listOf(StrBind("nameRegex", regex)),
-            PlayerBasic.extract
+            Player.extract
         )
 }
