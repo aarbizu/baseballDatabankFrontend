@@ -56,9 +56,7 @@ class PaginatedRecords(
                         records.subList(from, to).forEach { row ->
                             tr().new {
                                 td().text("${recNum++}")
-                                row.cells().forEach { cell ->
-                                    td().text(cell)
-                                }
+                                row.render(this)
                             }
                         }
                     }
