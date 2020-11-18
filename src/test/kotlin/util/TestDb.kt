@@ -4,17 +4,17 @@ import java.sql.DriverManager
 import org.testcontainers.containers.PostgreSQLContainer
 
 fun setupTestDatabase(db: PostgreSQLContainer<*>) {
-    DriverManager.getConnection(db.jdbcUrl, db.username, db.password).use {
-        conn -> conn.createStatement().use {
-            stmt -> stmt.execute(createTableSql)
+    DriverManager.getConnection(db.jdbcUrl, db.username, db.password).use { conn ->
+        conn.createStatement().use { stmt ->
+            stmt.execute(createTableSql)
         }
     }
 }
 
 fun upsertPlayer(db: PostgreSQLContainer<*>, id: String, gamesPlayed: Int, position: Int) {
-    DriverManager.getConnection(db.jdbcUrl, db.username, db.password).use {
-        conn -> conn.createStatement().use {
-            stmt -> stmt.execute(upsertPlayerSql(id, gamesPlayed, position))
+    DriverManager.getConnection(db.jdbcUrl, db.username, db.password).use { conn ->
+        conn.createStatement().use { stmt ->
+            stmt.execute(upsertPlayerSql(id, gamesPlayed, position))
         }
     }
 }
