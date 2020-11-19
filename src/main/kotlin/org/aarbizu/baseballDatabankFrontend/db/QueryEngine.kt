@@ -104,13 +104,13 @@ class QueryEngine(private val dbProvider: DBProvider) {
     )
 
     fun playerNameRegexSearch(regex: String, matchFirst: Boolean, matchLast: Boolean, caseSensitive: Boolean) = query(
-            dbProvider,
-            playerNameRegex(
-                matchFirst,
-                matchLast,
-                caseSensitive
-            ),
-            listOf(StrBind("nameRegex", regex)),
-            Player.extract
-        )
+        dbProvider,
+        playerNameRegex(
+            matchFirst,
+            matchLast,
+            caseSensitive
+        ),
+        listOf(StrBind("nameRegex", regex)),
+        Player.extract
+    )
 }

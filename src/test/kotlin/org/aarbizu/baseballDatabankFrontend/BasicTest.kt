@@ -75,14 +75,13 @@ class BasicTest {
 
     @Test
     fun `simple connection to test container`() {
-        DriverManager.getConnection(postgres.jdbcUrl, postgres.username, postgres.password).use {
-            conn ->
-                conn.createStatement().use { stmt ->
-                    stmt.executeQuery("SELECT 1").use { resultSet ->
-                        resultSet.next()
-                        assertThat(resultSet.getInt(1)).isEqualTo(1)
-                    }
+        DriverManager.getConnection(postgres.jdbcUrl, postgres.username, postgres.password).use { conn ->
+            conn.createStatement().use { stmt ->
+                stmt.executeQuery("SELECT 1").use { resultSet ->
+                    resultSet.next()
+                    assertThat(resultSet.getInt(1)).isEqualTo(1)
                 }
+            }
         }
     }
 
