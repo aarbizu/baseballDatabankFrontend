@@ -76,7 +76,8 @@ class SearchByNameLength(private val crumbs: MutableList<Crumb>, private val que
                             handleInput(
                                 listOf(nameLengthInput!!),
                                 browser.doc.getElementById(outputFieldId),
-                                browser.url
+                                browser.url,
+                                browser
                             ) { inputs ->
                                 queries.playerNamesByLength(inputs[0])
                             }
@@ -87,7 +88,8 @@ class SearchByNameLength(private val crumbs: MutableList<Crumb>, private val que
                     handleInput(
                         listOf(nameLengthInput!!),
                         browser.doc.getElementById(outputFieldId),
-                        browser.url
+                        browser.url,
+                        browser
                     ) { inputs ->
                         queries.playerNamesByLength(inputs[0])
                     }

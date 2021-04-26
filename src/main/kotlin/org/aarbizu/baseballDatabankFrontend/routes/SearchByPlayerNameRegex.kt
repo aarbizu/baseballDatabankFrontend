@@ -89,7 +89,8 @@ class SearchByPlayerNameRegex(private val crumbs: MutableList<Crumb>, private va
                             handleInput(
                                 listOf(nameRegexInput!!, firstNameMatch!!, lastNameMatch!!, caseSensitive!!),
                                 browser.doc.getElementById(outputElementId),
-                                browser.url
+                                browser.url,
+                                browser
                             ) { inputs ->
                                 queries.playerNameRegexSearch(
                                     inputs[0],
@@ -141,7 +142,8 @@ class SearchByPlayerNameRegex(private val crumbs: MutableList<Crumb>, private va
                     handleInput(
                         listOf(nameRegexInput!!, firstNameMatch!!, lastNameMatch!!, caseSensitive!!),
                         browser.doc.getElementById(outputElementId),
-                        browser.url
+                        browser.url,
+                        browser
                     ) { inputs ->
                         queries.playerNameRegexSearch(
                             inputs[0],

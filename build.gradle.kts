@@ -1,10 +1,14 @@
 import org.gradle.api.tasks.testing.logging.TestLogEvent.FAILED
 import org.gradle.api.tasks.testing.logging.TestLogEvent.PASSED
 import org.gradle.api.tasks.testing.logging.TestLogEvent.SKIPPED
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
+val compileKotlin: KotlinCompile by tasks
+compileKotlin.kotlinOptions.useIR = true
 
 plugins {
     // Apply the Kotlin JVM plugin to add support for Kotlin.
-    kotlin("jvm") version "1.4.10"
+    kotlin("jvm") version "1.4.31"
 
     // Apply the application plugin to add support for building a CLI application.
     application
@@ -13,30 +17,30 @@ plugins {
     idea
 
     // spotless
-    id("com.diffplug.spotless") version "5.8.2"
+    id("com.diffplug.spotless") version "5.12.4"
 
     // versions
-    id("com.github.ben-manes.versions") version "0.36.0"
+    id("com.github.ben-manes.versions") version "0.38.0"
 }
 
 object DependencyVersions {
-    const val postgres = "42.2.18"
-    const val kotlinLogging = "2.0.3"
-    const val kweb = "0.7.33"
-    const val kotlinxCoroutines = "1.4.1"
-    const val kotlinxCoroutinesDebug = "1.4.1"
-    const val ktor = "1.4.2"
+    const val postgres = "42.2.20"
+    const val kotlinLogging = "2.0.6"
+    const val kweb = "0.8.9"
+    const val kotlinxCoroutines = "1.4.3"
+    const val kotlinxCoroutinesDebug = "1.4.3"
+    const val ktor = "1.4.3"
 
     //const val okhttp = "4.8.0"
     const val gson = "2.8.6"
-    const val guava = "30.0-jre"
+    const val guava = "30.1.1-jre"
     const val systemRules = "1.19.0"
     const val slf4j = "2.0.0-alpha1"
-    const val truth = "1.1"
+    const val truth = "1.1.2"
     const val junit = "5.7.0"
     const val junitPlatformConsole = "1.7.0"
-    const val mockk = "1.10.2"
-    const val testContainers = "1.15.0"
+    const val mockk = "1.11.0"
+    const val testContainers = "1.15.3"
 }
 
 dependencies {
@@ -87,7 +91,6 @@ dependencies {
 }
 
 repositories {
-    jcenter()
     gradlePluginPortal()
     maven("https://jitpack.io")
     mavenCentral()
@@ -97,8 +100,8 @@ group = "org.aarbizu"
 version = "0.0.1"
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_14
-    targetCompatibility = JavaVersion.VERSION_14
+    sourceCompatibility = JavaVersion.VERSION_15
+    targetCompatibility = JavaVersion.VERSION_15
 }
 
 application {
