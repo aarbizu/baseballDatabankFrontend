@@ -66,7 +66,8 @@ class SearchByPlayerLastName(private val crumbs: MutableList<Crumb>, private val
                             handleInput(
                                 listOf(nameFragmentInput!!),
                                 browser.doc.getElementById(outputElementId),
-                                browser.url
+                                browser.url,
+                                browser
                             ) { inputs ->
                                 queries.playerNameSearch("%${inputs[0].toLowerCase()}%")
                             }
@@ -78,7 +79,8 @@ class SearchByPlayerLastName(private val crumbs: MutableList<Crumb>, private val
                     handleInput(
                         listOf(nameFragmentInput!!),
                         browser.doc.getElementById(outputElementId),
-                        browser.url
+                        browser.url,
+                        browser
                     ) { inputs ->
                         queries.playerNameSearch("%${inputs[0].toLowerCase()}%")
                     }
