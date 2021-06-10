@@ -17,26 +17,26 @@ plugins {
     idea
 
     // spotless
-    id("com.diffplug.spotless") version "5.12.4"
+    id("com.diffplug.spotless") version "5.12.5"
 
     // versions
-    id("com.github.ben-manes.versions") version "0.38.0"
+    id("com.github.ben-manes.versions") version "0.39.0"
 }
 
 object DependencyVersions {
     const val postgres = "42.2.20"
-    const val kotlinLogging = "2.0.6"
-    const val kweb = "0.8.9"
+    const val kotlinLogging = "2.0.8"
+    const val kweb = "0.10.0"
     const val kotlinxCoroutines = "1.4.3"
     const val kotlinxCoroutinesDebug = "1.4.3"
     const val ktor = "1.4.3"
 
     //const val okhttp = "4.8.0"
-    const val gson = "2.8.6"
+    const val gson = "2.8.7"
     const val guava = "30.1.1-jre"
     const val systemRules = "1.19.0"
     const val slf4j = "2.0.0-alpha1"
-    const val truth = "1.1.2"
+    const val truth = "1.1.3"
     const val junit = "5.7.0"
     const val junitPlatformConsole = "1.7.0"
     const val mockk = "1.11.0"
