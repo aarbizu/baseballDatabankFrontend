@@ -1,6 +1,7 @@
 package org.aarbizu.baseballDatabankFrontend.routes
 
 import io.ktor.http.Parameters
+import kotlinx.serialization.json.JsonPrimitive
 import kweb.ElementCreator
 import kweb.InputElement
 import kweb.InputType
@@ -81,7 +82,7 @@ class SearchByPlayerNameRegex(private val crumbs: MutableList<Crumb>, private va
                         initialValue = "",
                         size = 32,
                         placeholder = """ Regex, e.g. '.(?:na){2}.*' """.trim(),
-                        attributes = mutableMapOf("id" to regexFieldId)
+                        attributes = mutableMapOf("id" to JsonPrimitive(regexFieldId))
                     )
                     nameRegexInput?.value = nameRegex
                     nameRegexInput!!.on.keypress { ke ->

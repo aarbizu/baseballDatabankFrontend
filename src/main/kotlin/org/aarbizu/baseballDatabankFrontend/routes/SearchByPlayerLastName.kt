@@ -69,7 +69,7 @@ class SearchByPlayerLastName(private val crumbs: MutableList<Crumb>, private val
                                 browser.url,
                                 browser
                             ) { inputs ->
-                                queries.playerNameSearch("%${inputs[0].toLowerCase()}%")
+                                queries.playerNameSearch("%${inputs[0].lowercase()}%")
                             }
                         }
                     }
@@ -82,7 +82,7 @@ class SearchByPlayerLastName(private val crumbs: MutableList<Crumb>, private val
                         browser.url,
                         browser
                     ) { inputs ->
-                        queries.playerNameSearch("%${inputs[0].toLowerCase()}%")
+                        queries.playerNameSearch("%${inputs[0].lowercase()}%")
                     }
                 }.new {
                     i(baseballGlyphStyle)

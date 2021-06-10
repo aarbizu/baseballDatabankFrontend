@@ -1,8 +1,11 @@
 package org.aarbizu.baseballDatabankFrontend.routes
 
+import com.google.gson.JsonElement
 import io.ktor.http.Parameters
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonPrimitive
 import kweb.Element
 import kweb.ElementCreator
 import kweb.InputElement
@@ -58,7 +61,7 @@ interface RouteHandler {
     // is there a bug in ElementReader?? name doesn't get used in the library call
     suspend fun getAttrib(browser: WebBrowser, elementId: String, name: String) : Any {
         return browser.callJsFunctionWithResult(
-            "return document.getElementById({}).getAttribute({})", elementId, name).toString()
+            "return document.getElementById({}).getAttribute({})", JsonPrimitive(elementId), JsonPrimitive(name)).toString()
     }
 
     suspend fun updateUrl(url: KVar<String>, inputs: Map<String, String>)

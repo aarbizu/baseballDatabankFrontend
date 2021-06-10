@@ -1,5 +1,6 @@
 package org.aarbizu.baseballDatabankFrontend.records
 
+import kotlinx.serialization.json.JsonPrimitive
 import kotlin.math.max
 import kotlin.math.min
 import kweb.Element
@@ -62,14 +63,14 @@ class PaginatedRecords(
                     }
                 }
                 div(fomantic.ui.compact.menu).new {
-                    div(mapOf("class" to "link item", "id" to "previous-item")).text("Prev").on.click {
+                    div(mapOf("class" to JsonPrimitive("link item"), "id" to JsonPrimitive("previous-item"))).text("Prev").on.click {
                         if (prevPage()) {
                             renderTable()
                             browser.doc.getElementById("next-item").removeClasses("disabled")
                             if (from == 0) browser.doc.getElementById("previous-item").addClasses("disabled")
                         }
                     }
-                    div(mapOf("class" to "link item", "id" to "next-item")).text("Next").on.click {
+                    div(mapOf("class" to JsonPrimitive("link item"), "id" to JsonPrimitive("next-item"))).text("Next").on.click {
                         if (nextPage()) {
                             renderTable()
                             browser.doc.getElementById("previous-item").removeClasses("disabled")
