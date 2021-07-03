@@ -2,11 +2,11 @@ package org.aarbizu.baseballDatabankFrontend.routes
 
 import kotlinx.serialization.json.JsonPrimitive
 import kweb.ElementCreator
-import kweb.InputElement
 import kweb.InputType
 import kweb.WebBrowser
 import kweb.button
 import kweb.div
+import kweb.i
 import kweb.id
 import kweb.input
 import kweb.label
@@ -43,15 +43,16 @@ class SearchByPlayerNameRegex(private val crumbs: MutableList<Crumb>, private va
 
     private fun handleQueryStringIfPresent(parameters: Map<String, KVar<String>>, browser: WebBrowser) {
         if (parameters[pPlayerRegexParam]?.value?.isNotEmpty()!!) {
-            val regex = parameters[pPlayerRegexParam]!!.toString()
-            val useFirst = parameters[pPlayerRegexFnameParam]!!.toString()
-            val useLast = parameters[pPlayerRegexLnameParam]!!.toString()
-            val useCase = parameters[pPlayerRegexCaseSensitive]!!.toString()
+            val regexEnc = parameters[pPlayerRegexParam]?.value
+            val regexDec = java.net.URLDecoder.decode(regexEnc, "utf-8")
+            val useFirst = parameters[pPlayerRegexFnameParam]?.value.toString()
+            val useLast = parameters[pPlayerRegexLnameParam]?.value.toString()
+            val useCase = parameters[pPlayerRegexCaseSensitive]?.value.toString()
             val outputEl = browser.doc.getElementById(outputElementId)
 
             PaginatedRecords(
                 queryEngine.playerNameRegexSearch(
-                    regex,
+                    regexDec,
                     useFirst.toBoolean(),
                     useLast.toBoolean(),
                     useCase.toBoolean()
@@ -62,41 +63,36 @@ class SearchByPlayerNameRegex(private val crumbs: MutableList<Crumb>, private va
 
     private fun ElementCreator<*>.generatePlayerNameRegexSearchForm(queries: QueryEngine) {
         val names = KVar("")
-        var nameRegexInput: InputElement? = null
-        var firstNameMatch: InputElement? = null
-        var lastNameMatch: InputElement? = null
-        var caseSensitive: InputElement? = null
+        var firstNameMatch: KVar<Boolean>? = null
+        var lastNameMatch: KVar<Boolean>? = null
+        var caseSensitive: KVar<Boolean>? = null
         val nameRegex = KVar("")
-        var useFirstName = true
-        var useLastName = true
-        var isCaseSensitive = true
 
         div(fomantic.ui.form).new {
             div(fomantic.fields).new {
                 div(fomantic.inline.field).new {
                     label().text("Name Regex")
-                    nameRegexInput = input(
+                    val nameRegexElement = input(
                         type = InputType.text,
                         name = pPlayerRegexParam,
                         initialValue = "",
                         size = 32,
-                        placeholder = """ Regex, e.g. '.(?:na){2}.*' """.trim(),
+                        placeholder = """ .(?:na){2}.* """.trim(),
                         attributes = mutableMapOf("id" to JsonPrimitive(regexFieldId))
                     )
-                    nameRegexInput?.value = nameRegex
-                    nameRegexInput?.on?.keypress { ke ->
+                    nameRegexElement.value = nameRegex
+                    nameRegexElement.on.keypress { ke ->
                         if (ke.code == "Enter") {
                             handleInput(
-                                listOf(nameRegexInput!!, firstNameMatch!!, lastNameMatch!!, caseSensitive!!),
-                                browser.doc.getElementById(outputElementId),
-                                browser.url,
+                                arrayOf(nameRegex, firstNameMatch!!, lastNameMatch!!, caseSensitive!!),
+                                outputElementId,
                                 browser
                             ) { inputs ->
                                 queries.playerNameRegexSearch(
                                     inputs[0],
-                                    inputs[1].isNotEmpty(),
-                                    inputs[2].isNotEmpty(),
-                                    inputs[3].isNotEmpty()
+                                    inputs[1].toBoolean(),
+                                    inputs[2].toBoolean(),
+                                    inputs[3].toBoolean()
                                 )
                             }
                         }
@@ -104,54 +100,46 @@ class SearchByPlayerNameRegex(private val crumbs: MutableList<Crumb>, private va
                 }
                 div(fomantic.inline.field).new {
                     label().text("First Name")
-                    firstNameMatch = input(
+                    val firstNameMatchEl = input(
                         type = InputType.checkbox,
-                        name = pPlayerRegexFnameParam
+                        name = pPlayerRegexFnameParam,
+                        initialValue = "true"
                     )
-                    firstNameMatch?.checked(useFirstName)
-                    firstNameMatch?.on?.click {
-                        useFirstName = !useFirstName
-                        firstNameMatch?.checked(useFirstName)
-                    }
+                    firstNameMatch = firstNameMatchEl.checked(true)
                 }
                 div(fomantic.inline.field).new {
                     label().text("Last Name")
-                    lastNameMatch = input(
+                    val lastNameMatchEl = input(
                         type = InputType.checkbox,
-                        name = pPlayerRegexLnameParam
+                        name = pPlayerRegexLnameParam,
+                        initialValue = "true"
                     )
-                    lastNameMatch?.checked(useLastName)
-                    lastNameMatch?.on?.click {
-                        useLastName = !useLastName
-                        lastNameMatch?.checked(useLastName)
-                    }
+                    lastNameMatch = lastNameMatchEl.checked(true)
                 }
                 div(fomantic.inline.field).new {
                     label().text("Case sensitive")
-                    caseSensitive = input(
+                    val caseSensitiveEl = input(
                         type = InputType.checkbox,
-                        name = pPlayerRegexCaseSensitive
+                        name = pPlayerRegexCaseSensitive,
+                        initialValue = "true"
                     )
-                    caseSensitive?.checked(isCaseSensitive)
-                    caseSensitive?.on?.click {
-                        isCaseSensitive = !isCaseSensitive
-                        caseSensitive?.checked(isCaseSensitive)
-                    }
+                    caseSensitive = caseSensitiveEl.checked(true)
                 }
                 button(fieldButtonStyle).text("Search").on.click {
                     handleInput(
-                        listOf(nameRegexInput, firstNameMatch, lastNameMatch, caseSensitive),
-                        browser.doc.getElementById(outputElementId),
-                        browser.url,
+                        arrayOf(nameRegex, firstNameMatch!!, lastNameMatch!!, caseSensitive!!),
+                        outputElementId,
                         browser
                     ) { inputs ->
                         queries.playerNameRegexSearch(
                             inputs[0],
-                            inputs[1].isNotEmpty(),
-                            inputs[2].isNotEmpty(),
-                            inputs[3].isNotEmpty()
+                            inputs[1].toBoolean(),
+                            inputs[2].toBoolean(),
+                            inputs[3].toBoolean()
                         )
                     }
+                }.new {
+                    i(baseballGlyphStyle)
                 }
             }
         }
@@ -165,11 +153,12 @@ class SearchByPlayerNameRegex(private val crumbs: MutableList<Crumb>, private va
 
     override fun injectCrumbs() = crumbs
 
-    override suspend fun updateUrl(url: KVar<String>, inputs: Map<String, String>) {
+    override fun updateUrl(url: KVar<String>, inputs: Array<KVar<*>>) {
+        val encRegex = java.net.URLEncoder.encode(inputs[0].value.toString(), "utf-8")
         url.value =
-            "/q/$playerNameRegex/$pPlayerRegexParam=${inputs[pPlayerRegexParam]}/" +
-            "$pPlayerRegexFnameParam=${inputs[pPlayerRegexFnameParam]}/" +
-            "$pPlayerRegexLnameParam=${inputs[pPlayerRegexLnameParam]}/" +
-            "$pPlayerRegexCaseSensitive=${inputs[pPlayerRegexCaseSensitive]}"
+            "/q/$playerNameRegex/$encRegex/" +
+            "${inputs[1].value}/" +
+            "${inputs[2].value}/" +
+            "${inputs[3].value}"
     }
 }

@@ -14,7 +14,7 @@ class TopLevelMenu(private val crumbs: MutableList<Crumb>) : RouteHandler {
 
     override fun injectCrumbs() = crumbs
 
-    override suspend fun updateUrl(url: KVar<String>, inputs: Map<String, String>) = Unit // no-op here
+    override fun updateUrl(url: KVar<String>, inputs: Array<KVar<*>>) = Unit // no-op here
 
     override fun handleRoute(ec: ElementCreator<*>, params: Map<String, KVar<String>>) {
         with(ec) {

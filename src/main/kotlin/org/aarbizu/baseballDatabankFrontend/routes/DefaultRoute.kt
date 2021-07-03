@@ -44,5 +44,5 @@ class DefaultRoute(private val crumbs: MutableList<Crumb>) : RouteHandler {
         }
     }
 
-    override suspend fun updateUrl(url: KVar<String>, inputs: Map<String, String>) = Unit // no-op here
+    override fun updateUrl(url: KVar<String>, inputs: Array<KVar<*>>) = Unit // no-op here
 }

@@ -1,14 +1,8 @@
 package org.aarbizu.baseballDatabankFrontend.routes
 
 import io.ktor.http.Parameters
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.serialization.json.JsonPrimitive
-import kotlinx.serialization.json.jsonPrimitive
 import kweb.Element
 import kweb.ElementCreator
-import kweb.InputElement
-import kweb.InputType
 import kweb.WebBrowser
 import kweb.a
 import kweb.div
@@ -44,55 +38,33 @@ interface RouteHandler {
         }
     }
 
+    fun paramKVarToPair(kvar: KVar<String>?): Pair<String, String>? {
+        kvar?.value.toString().let {
+            return if (it.contains("=")) {
+                val fieldArray = it.split("=").toTypedArray()
+                Pair(fieldArray[0], fieldArray[1])
+            } else { null }
+        }
+    }
+
     fun handleInput(
-        inputs: List<InputElement?>,
-        outputElement: Element,
-        url: KVar<String>,
+        kvars: Array<KVar<*>>,
+        outputElementId: String,
         browser: WebBrowser,
         query: (inputs: List<String>) -> List<TableRecord>
     ) {
-        GlobalScope.launch {
-            val capturedInputs = getInputAndRenderResult(inputs, outputElement, browser, query)
-            updateUrl(url, capturedInputs)
-        }
+        getQueryResult(kvars.map { it.value.toString() }.toList(), getElementById(browser, outputElementId), query)
+        updateUrl(browser.url, kvars)
     }
 
-    // is there a bug in ElementReader?? name doesn't get used in the library call
-    suspend fun getAttrib(browser: WebBrowser, elementId: String, name: String): String {
-        return browser.callJsFunctionWithResult(
-            "return document.getElementById({}).getAttribute({})", JsonPrimitive(elementId), JsonPrimitive(name)).jsonPrimitive.content
-    }
-
-    suspend fun updateUrl(url: KVar<String>, inputs: Map<String, String>)
-
-    suspend fun getInputAndRenderResult(
-        inputs: List<InputElement?>,
-        outputElement: Element,
+    fun getElementById(
         browser: WebBrowser,
-        query: (inputs: List<String>) -> List<TableRecord>
-    ): Map<String, String> {
-        val params = mutableMapOf<String, String>()
-        inputs.forEach {
-            it?.let {
-                when (getAttrib(browser, it.id, "type")) {
-                    InputType.text.name -> {
-                        val textValue = it.getValue()
-                        val pName = getAttrib(browser, it.id, "name")
-                        params[pName] = textValue
-                    }
-                    InputType.checkbox.name -> {
-                        val checkValue = getAttrib(browser, it.id, "checked")
-                        val pName = getAttrib(browser, it.id, "name")
-                        params[pName] = checkValue
-                    }
-                    else -> params[getAttrib(browser, it.id, "name")] =
-                        "unknown input, id: ${it.id}, ${it.element.id}"
-                }
-            }
-        }
-        getQueryResult(params.values.toList(), outputElement, query)
-        return params
+        id: String
+    ): Element {
+        return browser.doc.getElementById(id)
     }
+
+    fun updateUrl(url: KVar<String>, inputs: Array<KVar<*>>)
 
     fun getQueryResult(
         params: List<String>,
