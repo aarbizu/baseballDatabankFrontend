@@ -1,6 +1,5 @@
 package org.aarbizu.baseballDatabankFrontend.routes
 
-import io.ktor.http.Parameters
 import kweb.ElementCreator
 import kweb.a
 import kweb.button
@@ -12,11 +11,11 @@ import kweb.plugins.fomanticUI.fomantic
 import kweb.state.KVar
 
 class DefaultRoute(private val crumbs: MutableList<Crumb>) : RouteHandler {
-    override fun getCrumb(parameters: Parameters) = Crumb.empty
+    override fun getCrumb() = Crumb.empty
 
     override fun injectCrumbs() = crumbs
 
-    override fun handleRoute(ec: ElementCreator<*>, parameters: Parameters) {
+    override fun handleRoute(ec: ElementCreator<*>, params: Map<String, KVar<String>>) {
         with(ec) {
             div(fomantic.ui.center.aligned.container).new {
                 div(fomantic.ui.hidden.divider)

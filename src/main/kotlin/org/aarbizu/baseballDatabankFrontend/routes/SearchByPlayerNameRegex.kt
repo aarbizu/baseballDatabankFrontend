@@ -1,6 +1,6 @@
 package org.aarbizu.baseballDatabankFrontend.routes
 
-import io.ktor.http.Parameters
+import kotlinx.serialization.json.JsonPrimitive
 import kweb.ElementCreator
 import kweb.InputElement
 import kweb.InputType
@@ -26,27 +26,27 @@ const val regexFieldId = "regex-field"
 class SearchByPlayerNameRegex(private val crumbs: MutableList<Crumb>, private val queryEngine: QueryEngine) : RouteHandler {
     private val outputElementId = "names"
 
-    override fun handleRoute(ec: ElementCreator<*>, parameters: Parameters) {
+    override fun handleRoute(ec: ElementCreator<*>, params: Map<String, KVar<String>>) {
         with(ec) {
             div(fomantic.ui.hidden.divider)
             div(fomantic.ui.container).new {
                 generatePlayerNameRegexSearchForm(queryEngine)
-                debugParamsElement(parameters)
+                debugParamsElement(params)
             }
 
-            handleQueryStringIfPresent(parameters, browser)
+            handleQueryStringIfPresent(params, browser)
 
             div(fomantic.ui.hidden.divider)
             div(fomantic.ui.container.id("errors"))
         }
     }
 
-    private fun handleQueryStringIfPresent(parameters: Parameters, browser: WebBrowser) {
-        if (parameters[pPlayerRegexParam]?.isNotEmpty()!!) {
-            val regex = parameters[pPlayerRegexParam]!!
-            val useFirst = parameters[pPlayerRegexFnameParam]!!
-            val useLast = parameters[pPlayerRegexLnameParam]!!
-            val useCase = parameters[pPlayerRegexCaseSensitive]!!
+    private fun handleQueryStringIfPresent(parameters: Map<String, KVar<String>>, browser: WebBrowser) {
+        if (parameters[pPlayerRegexParam]?.value?.isNotEmpty()!!) {
+            val regex = parameters[pPlayerRegexParam]!!.toString()
+            val useFirst = parameters[pPlayerRegexFnameParam]!!.toString()
+            val useLast = parameters[pPlayerRegexLnameParam]!!.toString()
+            val useCase = parameters[pPlayerRegexCaseSensitive]!!.toString()
             val outputEl = browser.doc.getElementById(outputElementId)
 
             PaginatedRecords(
@@ -81,10 +81,10 @@ class SearchByPlayerNameRegex(private val crumbs: MutableList<Crumb>, private va
                         initialValue = "",
                         size = 32,
                         placeholder = """ Regex, e.g. '.(?:na){2}.*' """.trim(),
-                        attributes = mutableMapOf("id" to regexFieldId)
+                        attributes = mutableMapOf("id" to JsonPrimitive(regexFieldId))
                     )
                     nameRegexInput?.value = nameRegex
-                    nameRegexInput!!.on.keypress { ke ->
+                    nameRegexInput?.on?.keypress { ke ->
                         if (ke.code == "Enter") {
                             handleInput(
                                 listOf(nameRegexInput!!, firstNameMatch!!, lastNameMatch!!, caseSensitive!!),
@@ -108,10 +108,10 @@ class SearchByPlayerNameRegex(private val crumbs: MutableList<Crumb>, private va
                         type = InputType.checkbox,
                         name = pPlayerRegexFnameParam
                     )
-                    firstNameMatch!!.checked(useFirstName)
-                    firstNameMatch!!.on.click {
+                    firstNameMatch?.checked(useFirstName)
+                    firstNameMatch?.on?.click {
                         useFirstName = !useFirstName
-                        firstNameMatch!!.checked(useFirstName)
+                        firstNameMatch?.checked(useFirstName)
                     }
                 }
                 div(fomantic.inline.field).new {
@@ -120,10 +120,10 @@ class SearchByPlayerNameRegex(private val crumbs: MutableList<Crumb>, private va
                         type = InputType.checkbox,
                         name = pPlayerRegexLnameParam
                     )
-                    lastNameMatch!!.checked(useLastName)
-                    lastNameMatch!!.on.click {
+                    lastNameMatch?.checked(useLastName)
+                    lastNameMatch?.on?.click {
                         useLastName = !useLastName
-                        lastNameMatch!!.checked(useLastName)
+                        lastNameMatch?.checked(useLastName)
                     }
                 }
                 div(fomantic.inline.field).new {
@@ -132,15 +132,15 @@ class SearchByPlayerNameRegex(private val crumbs: MutableList<Crumb>, private va
                         type = InputType.checkbox,
                         name = pPlayerRegexCaseSensitive
                     )
-                    caseSensitive!!.checked(isCaseSensitive)
-                    caseSensitive!!.on.click {
+                    caseSensitive?.checked(isCaseSensitive)
+                    caseSensitive?.on?.click {
                         isCaseSensitive = !isCaseSensitive
-                        caseSensitive!!.checked(isCaseSensitive)
+                        caseSensitive?.checked(isCaseSensitive)
                     }
                 }
                 button(fieldButtonStyle).text("Search").on.click {
                     handleInput(
-                        listOf(nameRegexInput!!, firstNameMatch!!, lastNameMatch!!, caseSensitive!!),
+                        listOf(nameRegexInput, firstNameMatch, lastNameMatch, caseSensitive),
                         browser.doc.getElementById(outputElementId),
                         browser.url,
                         browser
@@ -160,15 +160,16 @@ class SearchByPlayerNameRegex(private val crumbs: MutableList<Crumb>, private va
         div(fomantic.content.id(outputElementId)).text(names)
     }
 
-    override fun getCrumb(parameters: Parameters) =
-        Crumb("Regex Search", "/q/$playerNameRegex/${parameters[playerNameRegex]}")
+    override fun getCrumb() =
+        Crumb("Regex Search", "/q/$playerNameRegex")
 
     override fun injectCrumbs() = crumbs
 
     override suspend fun updateUrl(url: KVar<String>, inputs: Map<String, String>) {
-        url.value = "/q/$playerNameRegex/?$pPlayerRegexParam=${inputs[pPlayerRegexParam]}&" +
-            "$pPlayerRegexFnameParam=${inputs[pPlayerRegexFnameParam]}&" +
-            "$pPlayerRegexLnameParam=${inputs[pPlayerRegexLnameParam]}&" +
+        url.value =
+            "/q/$playerNameRegex/$pPlayerRegexParam=${inputs[pPlayerRegexParam]}/" +
+            "$pPlayerRegexFnameParam=${inputs[pPlayerRegexFnameParam]}/" +
+            "$pPlayerRegexLnameParam=${inputs[pPlayerRegexLnameParam]}/" +
             "$pPlayerRegexCaseSensitive=${inputs[pPlayerRegexCaseSensitive]}"
     }
 }

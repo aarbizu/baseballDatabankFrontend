@@ -8,7 +8,7 @@ compileKotlin.kotlinOptions.useIR = true
 
 plugins {
     // Apply the Kotlin JVM plugin to add support for Kotlin.
-    kotlin("jvm") version "1.4.31"
+    kotlin("jvm") version "1.5.20"
 
     // Apply the application plugin to add support for building a CLI application.
     application
@@ -17,29 +17,29 @@ plugins {
     idea
 
     // spotless
-    id("com.diffplug.spotless") version "5.12.4"
+    id("com.diffplug.spotless") version "5.14.0"
 
     // versions
-    id("com.github.ben-manes.versions") version "0.38.0"
+    id("com.github.ben-manes.versions") version "0.39.0"
 }
 
 object DependencyVersions {
-    const val postgres = "42.2.20"
-    const val kotlinLogging = "2.0.6"
-    const val kweb = "0.8.9"
-    const val kotlinxCoroutines = "1.4.3"
-    const val kotlinxCoroutinesDebug = "1.4.3"
-    const val ktor = "1.4.3"
+    const val postgres = "42.2.22"
+    const val kotlinLogging = "2.0.8"
+    const val kweb = "0.10.5"
+    const val kotlinxCoroutines = "1.5.0"
+    const val kotlinxCoroutinesDebug = "1.5.0"
+    const val ktor = "1.6.1"
 
     //const val okhttp = "4.8.0"
-    const val gson = "2.8.6"
+    const val gson = "2.8.7"
     const val guava = "30.1.1-jre"
     const val systemRules = "1.19.0"
     const val slf4j = "2.0.0-alpha1"
-    const val truth = "1.1.2"
+    const val truth = "1.1.3"
     const val junit = "5.7.0"
     const val junitPlatformConsole = "1.7.0"
-    const val mockk = "1.11.0"
+    const val mockk = "1.12.0"
     const val testContainers = "1.15.3"
 }
 
@@ -47,8 +47,8 @@ dependencies {
     // Align versions of all Kotlin components
     implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
 
-    // Use the Kotlin JDK 8 standard library.
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+    // Use the Kotlin 1.5.0 standard library.
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.5.20")
 
     // use ktor
     implementation("io.ktor:ktor-server-core:${DependencyVersions.ktor}")

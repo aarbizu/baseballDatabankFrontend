@@ -1,20 +1,21 @@
 package org.aarbizu.baseballDatabankFrontend.routes
 
-import io.ktor.http.Parameters
+import kotlinx.serialization.json.JsonPrimitive
 import kweb.ElementCreator
 import kweb.a
 import kweb.div
 import kweb.i
 import kweb.plugins.fomanticUI.fomantic
+import kweb.state.KVar
 
 const val TOP_LEVEL_MENU_LOCATION = "/q/begin"
 
-val massiveButtonStyle = mapOf("class" to "ui massive orange right labeled icon button")
-val buttonStyle = mapOf("class" to "ui large orange right labeled icon button")
-val baseballGlyphStyle = mapOf("class" to "baseball ball icon")
-val subHeaderStyle = mapOf("class" to "sub header")
-val fieldButtonStyle = mapOf("class" to buttonStyle["class"] + " field")
-val homeIcon = mapOf("class" to "home icon")
+val massiveButtonStyle = mapOf("class" to JsonPrimitive("ui massive orange right labeled icon button"))
+val buttonStyle = mapOf("class" to JsonPrimitive("ui large orange right labeled icon button"))
+val baseballGlyphStyle = mapOf("class" to JsonPrimitive("baseball ball icon"))
+val subHeaderStyle = mapOf("class" to JsonPrimitive("sub header"))
+val fieldButtonStyle = mapOf("class" to JsonPrimitive(buttonStyle["class"].toString() + " field"))
+val homeIcon = mapOf("class" to JsonPrimitive("home icon"))
 
 data class Crumb(val section: String, val url: String) {
     fun isNotEmpty() = section.isNotBlank() && url.isNotBlank()
@@ -40,9 +41,9 @@ fun ElementCreator<*>.appendCrumb(newCrumb: Crumb, crumbs: MutableList<Crumb>) {
     }
 }
 
-fun ElementCreator<*>.debugParamsElement(parameters: Parameters) =
+fun ElementCreator<*>.debugParamsElement(parameters: Map<String, KVar<String>>) =
     if (debug) {
-        div(fomantic.content).text(parameters.entries().mapIndexed { idx, entry ->
+        div(fomantic.content).text(parameters.entries.mapIndexed { idx, entry ->
             "$idx: ${entry.key}=${entry.value.map { it }}"
         }.joinToString())
     } else {

@@ -1,6 +1,5 @@
 package org.aarbizu.baseballDatabankFrontend.routes
 
-import io.ktor.http.Parameters
 import kweb.ElementCreator
 import kweb.InputElement
 import kweb.InputType
@@ -23,24 +22,29 @@ const val pPlayerLastNameParam = "last-name"
 class SearchByPlayerLastName(private val crumbs: MutableList<Crumb>, private val queryEngine: QueryEngine) : RouteHandler {
     private val outputElementId = "names"
 
-    override fun handleRoute(ec: ElementCreator<*>, parameters: Parameters) {
+    override fun handleRoute(ec: ElementCreator<*>, params: Map<String, KVar<String>>) {
         with(ec) {
             div(fomantic.ui.hidden.divider)
             div(fomantic.ui.container).new {
                 generatePlayerNameSearchForm(queryEngine)
-                debugParamsElement(parameters)
+                debugParamsElement(params)
             }
 
-            handleQueryStringIfPresent(parameters, browser)
+            handleQueryStringIfPresent(params, browser)
 
             div(fomantic.ui.hidden.divider)
             div(fomantic.ui.container.id("errors"))
         }
     }
 
-    private fun handleQueryStringIfPresent(parameters: Parameters, browser: WebBrowser) {
-        if (parameters[pPlayerLastNameParam]?.isNotEmpty()!!) {
-            val lastName = parameters[pPlayerLastNameParam]!!
+    /**
+     * Since this method grabs the inputs directly from the URL, it doesn't need to use 'suspend fun' methods
+     * to read from the KVars.  Just call the inner record retrieval routines.
+     */
+    private fun handleQueryStringIfPresent(parameters: Map<String, KVar<String>>, browser: WebBrowser) {
+        if (parameters[pPlayerLastNameParam]?.value?.isNotEmpty()!!) {
+            val lastName = parameters[pPlayerLastNameParam]?.value.toString()
+                .let { if (it.contains("=")) it.split("=")[1] else "" }
             val outputEl = browser.doc.getElementById(outputElementId)
             PaginatedRecords(queryEngine.playerNameSearch(lastName), outputEl).renderTable()
         }
@@ -61,15 +65,15 @@ class SearchByPlayerLastName(private val crumbs: MutableList<Crumb>, private val
                         size = 32,
                         placeholder = """ Surname, e.g."Bonds" """
                     )
-                    nameFragmentInput!!.on.keypress { ke ->
+                    nameFragmentInput?.on?.keypress { ke ->
                         if (ke.code == "Enter") {
                             handleInput(
-                                listOf(nameFragmentInput!!),
+                                listOf(nameFragmentInput),
                                 browser.doc.getElementById(outputElementId),
                                 browser.url,
                                 browser
                             ) { inputs ->
-                                queries.playerNameSearch("%${inputs[0].toLowerCase()}%")
+                                queries.playerNameSearch(inputs[0].lowercase())
                             }
                         }
                     }
@@ -77,12 +81,12 @@ class SearchByPlayerLastName(private val crumbs: MutableList<Crumb>, private val
 
                 button(fieldButtonStyle).text("Search").on.click {
                     handleInput(
-                        listOf(nameFragmentInput!!),
+                        listOf(nameFragmentInput),
                         browser.doc.getElementById(outputElementId),
                         browser.url,
                         browser
                     ) { inputs ->
-                        queries.playerNameSearch("%${inputs[0].toLowerCase()}%")
+                        queries.playerNameSearch(inputs[0])
                     }
                 }.new {
                     i(baseballGlyphStyle)
@@ -94,11 +98,11 @@ class SearchByPlayerLastName(private val crumbs: MutableList<Crumb>, private val
     }
 
     override suspend fun updateUrl(url: KVar<String>, inputs: Map<String, String>) {
-        url.value = "/q/$playerLastNameSearchQuery/?$pPlayerLastNameParam=${inputs[pPlayerLastNameParam]}"
+        url.value = "/q/$playerLastNameSearchQuery/$pPlayerLastNameParam=${inputs[pPlayerLastNameParam]}"
     }
 
-    override fun getCrumb(parameters: Parameters) =
-        Crumb("Last Name", "/q/$playerLastNameSearchQuery/?${parameters[playerLastNameSearchQuery]}")
+    override fun getCrumb() =
+        Crumb("Last Name", "/q/$playerLastNameSearchQuery")
 
     override fun injectCrumbs() = crumbs
 }

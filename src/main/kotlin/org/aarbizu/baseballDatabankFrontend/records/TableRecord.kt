@@ -1,6 +1,7 @@
 package org.aarbizu.baseballDatabankFrontend.records
 
 import java.sql.ResultSet
+import kotlinx.serialization.json.JsonPrimitive
 import kweb.ElementCreator
 import kweb.TrElement
 import kweb.a
@@ -65,7 +66,7 @@ data class Player(
         cells().forEach { cell ->
             when (cell) {
                 bbrefid -> tr.td().new {
-                    a(mapOf("target" to "_blank"), href = bbrefid).text(playerId)
+                    a(mapOf("target" to JsonPrimitive("_blank")), href = bbrefid).text(playerId)
                 }
                 else -> tr.td().text(cell)
             }
