@@ -32,7 +32,7 @@ fun Application.module() {
         plugins = listOf(fomanticUIPlugin)
         routing {
             // trace { logger.info(it.buildText()) }
-            get("/{$uriPrefix...}") {
+            get("{...}") {
                 val parameters = call.request.queryParameters
                 call.respondKwebRender {
                     route {

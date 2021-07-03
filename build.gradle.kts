@@ -26,7 +26,7 @@ plugins {
 object DependencyVersions {
     const val postgres = "42.2.20"
     const val kotlinLogging = "2.0.8"
-    const val kweb = "0.10.0"
+    const val kweb = "0.10.3"
     const val kotlinxCoroutines = "1.4.3"
     const val kotlinxCoroutinesDebug = "1.4.3"
     const val ktor = "1.4.3"

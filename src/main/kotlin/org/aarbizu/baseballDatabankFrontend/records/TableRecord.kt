@@ -1,7 +1,7 @@
 package org.aarbizu.baseballDatabankFrontend.records
 
-import kotlinx.serialization.json.JsonPrimitive
 import java.sql.ResultSet
+import kotlinx.serialization.json.JsonPrimitive
 import kweb.ElementCreator
 import kweb.TrElement
 import kweb.a

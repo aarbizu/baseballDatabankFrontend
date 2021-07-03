@@ -1,8 +1,8 @@
 package org.aarbizu.baseballDatabankFrontend.records
 
-import kotlinx.serialization.json.JsonPrimitive
 import kotlin.math.max
 import kotlin.math.min
+import kotlinx.serialization.json.JsonPrimitive
 import kweb.Element
 import kweb.div
 import kweb.new

@@ -85,7 +85,7 @@ class QueryEngine(private val dbProvider: DBProvider) {
         listOf(
             StrBind(
                 "lnameSubstr",
-                nameSubstring
+                "%${nameSubstring.lowercase()}%"
             )
         ),
         Player.extract

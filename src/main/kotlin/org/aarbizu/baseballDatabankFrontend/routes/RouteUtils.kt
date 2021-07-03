@@ -1,12 +1,12 @@
 package org.aarbizu.baseballDatabankFrontend.routes
 
-import io.ktor.http.Parameters
 import kotlinx.serialization.json.JsonPrimitive
 import kweb.ElementCreator
 import kweb.a
 import kweb.div
 import kweb.i
 import kweb.plugins.fomanticUI.fomantic
+import kweb.state.KVar
 
 const val TOP_LEVEL_MENU_LOCATION = "/q/begin"
 
@@ -41,9 +41,9 @@ fun ElementCreator<*>.appendCrumb(newCrumb: Crumb, crumbs: MutableList<Crumb>) {
     }
 }
 
-fun ElementCreator<*>.debugParamsElement(parameters: Parameters) =
+fun ElementCreator<*>.debugParamsElement(parameters: Map<String, KVar<String>>) =
     if (debug) {
-        div(fomantic.content).text(parameters.entries().mapIndexed { idx, entry ->
+        div(fomantic.content).text(parameters.entries.mapIndexed { idx, entry ->
             "$idx: ${entry.key}=${entry.value.map { it }}"
         }.joinToString())
     } else {

@@ -1,14 +1,16 @@
 ### TODO
 
 - [x] player name search (last name substring)
-- [x] refactor QueryRoutes to have individual form/query using an interface
+- ~~[ ] refactor QueryRoutes to have individual form/query using an interface~~
 - ~~[ ] (WIP) use the ktor param parsing to handle form submits, etc~~
     - [ ] actually KVars should be usable for all of this: keep tinkering
+    - [x] just go with the <String,KVar> map instead of Parameters in route dispatch
 - [x] add tests
     - [x] play around with mockK for mocking
     - [x] review [kotlin utest best practices](https://phauer.com/2018/best-practices-unit-testing-kotlin/#change-the-lifecycle-default-for-every-test-class)
 - [ ] add linking from bbrefid to the bbref site
 - [x] add the ability to query player name by regex (first, last, full name)
+    - [ ] rework the uri pattern, maybe use mulitiple '/' segs, i.e. "/regex/fname.pattern/lname.pattern/case.sense/et al."
 - [ ] process the db to build some static content pages (not sure I want to try to recreate bbref, though)
     - [ ] players (reg/postseason)
     - [ ] teams (reg/postseason)

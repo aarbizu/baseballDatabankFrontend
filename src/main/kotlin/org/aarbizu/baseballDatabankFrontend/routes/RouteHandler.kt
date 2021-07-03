@@ -1,11 +1,10 @@
 package org.aarbizu.baseballDatabankFrontend.routes
 
-import com.google.gson.JsonElement
 import io.ktor.http.Parameters
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.jsonPrimitive
 import kweb.Element
 import kweb.ElementCreator
 import kweb.InputElement
@@ -21,13 +20,13 @@ import org.aarbizu.baseballDatabankFrontend.records.PaginatedRecords
 import org.aarbizu.baseballDatabankFrontend.records.TableRecord
 
 interface RouteHandler {
-    fun handleRoute(ec: ElementCreator<*>, parameters: Parameters)
-    fun getCrumb(parameters: Parameters): Crumb
+    fun handleRoute(ec: ElementCreator<*>, params: Map<String, KVar<String>>)
+    fun getCrumb(): Crumb
     fun injectCrumbs(): MutableList<Crumb>
 
-    fun doRoute(ec: ElementCreator<*>, parameters: Parameters) {
-        renderNavMenu(ec, getCrumb(parameters), injectCrumbs())
-        handleRoute(ec, parameters)
+    fun doRoute(ec: ElementCreator<*>, parameters: Parameters, params: Map<String, KVar<String>>) {
+        renderNavMenu(ec, getCrumb(), injectCrumbs())
+        handleRoute(ec, params)
     }
 
     fun renderNavMenu(ec: ElementCreator<*>, newCrumb: Crumb, crumbs: MutableList<Crumb>) {
@@ -46,7 +45,7 @@ interface RouteHandler {
     }
 
     fun handleInput(
-        inputs: List<InputElement>,
+        inputs: List<InputElement?>,
         outputElement: Element,
         url: KVar<String>,
         browser: WebBrowser,
@@ -59,34 +58,36 @@ interface RouteHandler {
     }
 
     // is there a bug in ElementReader?? name doesn't get used in the library call
-    suspend fun getAttrib(browser: WebBrowser, elementId: String, name: String) : Any {
+    suspend fun getAttrib(browser: WebBrowser, elementId: String, name: String): String {
         return browser.callJsFunctionWithResult(
-            "return document.getElementById({}).getAttribute({})", JsonPrimitive(elementId), JsonPrimitive(name)).toString()
+            "return document.getElementById({}).getAttribute({})", JsonPrimitive(elementId), JsonPrimitive(name)).jsonPrimitive.content
     }
 
     suspend fun updateUrl(url: KVar<String>, inputs: Map<String, String>)
 
     suspend fun getInputAndRenderResult(
-        inputs: List<InputElement>,
+        inputs: List<InputElement?>,
         outputElement: Element,
         browser: WebBrowser,
         query: (inputs: List<String>) -> List<TableRecord>
     ): Map<String, String> {
         val params = mutableMapOf<String, String>()
         inputs.forEach {
-            when (getAttrib(browser, it.id, "type")) {
-                InputType.text.name -> {
-                    val textValue = it.getValue()
-                    val pName = getAttrib(browser, it.id, "name").toString()
-                    params[pName] = textValue
+            it?.let {
+                when (getAttrib(browser, it.id, "type")) {
+                    InputType.text.name -> {
+                        val textValue = it.getValue()
+                        val pName = getAttrib(browser, it.id, "name")
+                        params[pName] = textValue
+                    }
+                    InputType.checkbox.name -> {
+                        val checkValue = getAttrib(browser, it.id, "checked")
+                        val pName = getAttrib(browser, it.id, "name")
+                        params[pName] = checkValue
+                    }
+                    else -> params[getAttrib(browser, it.id, "name")] =
+                        "unknown input, id: ${it.id}, ${it.element.id}"
                 }
-                InputType.checkbox.name -> {
-                    val checkValue = getAttrib(browser, it.id, "checked").toString()
-                    val pName = getAttrib(browser, it.id, "name").toString()
-                    params[pName] = checkValue
-                }
-                else -> params[getAttrib(browser, it.id, "name").toString()] =
-                    "unknown input, id: ${it.id}, ${it.element.id}"
             }
         }
         getQueryResult(params.values.toList(), outputElement, query)
