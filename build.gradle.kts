@@ -8,7 +8,7 @@ compileKotlin.kotlinOptions.useIR = true
 
 plugins {
     // Apply the Kotlin JVM plugin to add support for Kotlin.
-    kotlin("jvm") version "1.5.0"
+    kotlin("jvm") version "1.5.20"
 
     // Apply the application plugin to add support for building a CLI application.
     application
@@ -17,18 +17,18 @@ plugins {
     idea
 
     // spotless
-    id("com.diffplug.spotless") version "5.12.5"
+    id("com.diffplug.spotless") version "5.14.0"
 
     // versions
     id("com.github.ben-manes.versions") version "0.39.0"
 }
 
 object DependencyVersions {
-    const val postgres = "42.2.20"
+    const val postgres = "42.2.22"
     const val kotlinLogging = "2.0.8"
-    const val kweb = "0.10.3"
-    const val kotlinxCoroutines = "1.4.3"
-    const val kotlinxCoroutinesDebug = "1.4.3"
+    const val kweb = "0.10.5"
+    const val kotlinxCoroutines = "1.5.0"
+    const val kotlinxCoroutinesDebug = "1.5.0"
     const val ktor = "1.4.3"
 
     //const val okhttp = "4.8.0"
@@ -39,7 +39,7 @@ object DependencyVersions {
     const val truth = "1.1.3"
     const val junit = "5.7.0"
     const val junitPlatformConsole = "1.7.0"
-    const val mockk = "1.11.0"
+    const val mockk = "1.12.0"
     const val testContainers = "1.15.3"
 }
 
@@ -48,7 +48,7 @@ dependencies {
     implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
 
     // Use the Kotlin 1.5.0 standard library.
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.5.0")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.5.20")
 
     // use ktor
     implementation("io.ktor:ktor-server-core:${DependencyVersions.ktor}")
