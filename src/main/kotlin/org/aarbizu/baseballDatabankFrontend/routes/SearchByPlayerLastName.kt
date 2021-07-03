@@ -1,7 +1,6 @@
 package org.aarbizu.baseballDatabankFrontend.routes
 
 import kweb.ElementCreator
-import kweb.InputElement
 import kweb.InputType
 import kweb.WebBrowser
 import kweb.button
@@ -42,35 +41,35 @@ class SearchByPlayerLastName(private val crumbs: MutableList<Crumb>, private val
      * to read from the KVars.  Just call the inner record retrieval routines.
      */
     private fun handleQueryStringIfPresent(parameters: Map<String, KVar<String>>, browser: WebBrowser) {
-        if (parameters[pPlayerLastNameParam]?.value?.isNotEmpty()!!) {
-            val lastName = parameters[pPlayerLastNameParam]?.value.toString()
-                .let { if (it.contains("=")) it.split("=")[1] else "" }
+        parameters[pPlayerLastNameParam]?.also { param ->
+            val lastName = param.value
             val outputEl = browser.doc.getElementById(outputElementId)
             PaginatedRecords(queryEngine.playerNameSearch(lastName), outputEl).renderTable()
+            browser.url.value = "/q/$playerLastNameSearchQuery/$lastName"
         }
     }
 
     private fun ElementCreator<*>.generatePlayerNameSearchForm(queries: QueryEngine) {
         val output = KVar("")
-        var nameFragmentInput: InputElement? = null
+        var nameVar = KVar("")
 
         div(fomantic.ui.form).new {
             div(fomantic.fields).new {
                 div(fomantic.six.wide.inline.field).new {
                     label().text("Last Name")
-                    nameFragmentInput = input(
+                    val nameTextBox = input(
                         type = InputType.text,
                         name = pPlayerLastNameParam,
                         initialValue = "",
                         size = 32,
                         placeholder = """ Surname, e.g."Bonds" """
                     )
-                    nameFragmentInput?.on?.keypress { ke ->
+                    nameTextBox.setValue(nameVar)
+                    nameTextBox.on.keypress { ke ->
                         if (ke.code == "Enter") {
                             handleInput(
-                                listOf(nameFragmentInput),
-                                browser.doc.getElementById(outputElementId),
-                                browser.url,
+                                arrayOf(nameVar),
+                                outputElementId,
                                 browser
                             ) { inputs ->
                                 queries.playerNameSearch(inputs[0].lowercase())
@@ -81,9 +80,8 @@ class SearchByPlayerLastName(private val crumbs: MutableList<Crumb>, private val
 
                 button(fieldButtonStyle).text("Search").on.click {
                     handleInput(
-                        listOf(nameFragmentInput),
-                        browser.doc.getElementById(outputElementId),
-                        browser.url,
+                        arrayOf(nameVar),
+                        outputElementId,
                         browser
                     ) { inputs ->
                         queries.playerNameSearch(inputs[0])
@@ -97,8 +95,8 @@ class SearchByPlayerLastName(private val crumbs: MutableList<Crumb>, private val
         div(fomantic.content.id(outputElementId)).text(output)
     }
 
-    override suspend fun updateUrl(url: KVar<String>, inputs: Map<String, String>) {
-        url.value = "/q/$playerLastNameSearchQuery/$pPlayerLastNameParam=${inputs[pPlayerLastNameParam]}"
+    override fun updateUrl(url: KVar<String>, inputs: Array<KVar<*>>) {
+        url.value = "/q/$playerLastNameSearchQuery/${inputs[0].value}"
     }
 
     override fun getCrumb() =
