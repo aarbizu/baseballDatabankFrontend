@@ -29,7 +29,7 @@ object DependencyVersions {
     const val kweb = "0.10.5"
     const val kotlinxCoroutines = "1.5.0"
     const val kotlinxCoroutinesDebug = "1.5.0"
-    const val ktor = "1.4.3"
+    const val ktor = "1.6.1"
 
     //const val okhttp = "4.8.0"
     const val gson = "2.8.7"

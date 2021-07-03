@@ -35,7 +35,7 @@ class SearchByNameLength(private val crumbs: MutableList<Crumb>, private val que
                 debugParamsElement(params)
             }
 
-            params["lengthParam"]?.value?.let { handleQueryStringIfPresent(it, browser) }
+            params[pPlayerNameLength]?.value?.let { handleQueryStringIfPresent(it, browser) }
 
             div(fomantic.ui.hidden.divider)
             div(fomantic.ui.container.id("errors"))
@@ -84,7 +84,7 @@ class SearchByNameLength(private val crumbs: MutableList<Crumb>, private val que
                 }
                 button(fieldButtonStyle).text("Search").on.click {
                     handleInput(
-                        listOf(nameLengthInput),
+                        listOf(nameLengthInput!!),
                         browser.doc.getElementById(outputFieldId),
                         browser.url,
                         browser

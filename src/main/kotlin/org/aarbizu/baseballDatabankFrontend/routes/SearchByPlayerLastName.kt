@@ -44,7 +44,7 @@ class SearchByPlayerLastName(private val crumbs: MutableList<Crumb>, private val
     private fun handleQueryStringIfPresent(parameters: Map<String, KVar<String>>, browser: WebBrowser) {
         if (parameters[pPlayerLastNameParam]?.value?.isNotEmpty()!!) {
             val lastName = parameters[pPlayerLastNameParam]?.value.toString()
-                .let { if (it.contains("=")) it.split("=")[1] else ""  }
+                .let { if (it.contains("=")) it.split("=")[1] else "" }
             val outputEl = browser.doc.getElementById(outputElementId)
             PaginatedRecords(queryEngine.playerNameSearch(lastName), outputEl).renderTable()
         }
