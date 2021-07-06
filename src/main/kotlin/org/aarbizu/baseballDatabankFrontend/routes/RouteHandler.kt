@@ -38,15 +38,6 @@ interface RouteHandler {
         }
     }
 
-    fun paramKVarToPair(kvar: KVar<String>?): Pair<String, String>? {
-        kvar?.value.toString().let {
-            return if (it.contains("=")) {
-                val fieldArray = it.split("=").toTypedArray()
-                Pair(fieldArray[0], fieldArray[1])
-            } else { null }
-        }
-    }
-
     fun handleInput(
         kvars: Array<KVar<*>>,
         outputElementId: String,

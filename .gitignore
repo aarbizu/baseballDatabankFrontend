@@ -8,7 +8,13 @@
 *.iml
 *.ipr
 /out/
+/.ideaDataSources/
 
 .env*
 
 .java-version
+
+### sql
+.meta
+
+/dataSources/

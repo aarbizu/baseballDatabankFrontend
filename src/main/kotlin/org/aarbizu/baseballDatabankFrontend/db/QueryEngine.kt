@@ -7,9 +7,11 @@ import java.sql.DriverManager
 import java.sql.PreparedStatement
 import java.sql.ResultSet
 import org.aarbizu.baseballDatabankFrontend.config.dbUri
-import org.aarbizu.baseballDatabankFrontend.query.playerLastNameSubstring
-import org.aarbizu.baseballDatabankFrontend.query.playerNameRegex
+import org.aarbizu.baseballDatabankFrontend.query.playerLastNameSubstringSql
+import org.aarbizu.baseballDatabankFrontend.query.playerNameRegexSql
+import org.aarbizu.baseballDatabankFrontend.query.playerNamesByLengthSql
 import org.aarbizu.baseballDatabankFrontend.records.Player
+import org.aarbizu.baseballDatabankFrontend.records.PlayerWithLinks
 import org.aarbizu.baseballDatabankFrontend.records.TableRecord
 import org.slf4j.LoggerFactory
 
@@ -81,7 +83,7 @@ class QueryEngine(private val dbProvider: DBProvider) {
 
     fun playerNameSearch(nameSubstring: String) = query(
         dbProvider,
-        playerLastNameSubstring,
+        playerLastNameSubstringSql,
         listOf(
             StrBind(
                 "lnameSubstr",
@@ -93,19 +95,19 @@ class QueryEngine(private val dbProvider: DBProvider) {
 
     fun playerNamesByLength(length: String) = query(
         dbProvider,
-        org.aarbizu.baseballDatabankFrontend.query.playerNamesByLength,
+        playerNamesByLengthSql,
         listOf(
             IntBind(
                 "lnameLength",
                 length.toInt()
             )
         ),
-        Player.extract
+        PlayerWithLinks.extract
     )
 
     fun playerNameRegexSearch(regex: String, matchFirst: Boolean, matchLast: Boolean, caseSensitive: Boolean) = query(
         dbProvider,
-        playerNameRegex(
+        playerNameRegexSql(
             matchFirst,
             matchLast,
             caseSensitive

@@ -1,5 +1,6 @@
 package org.aarbizu.baseballDatabankFrontend.routes
 
+import kweb.DivElement
 import kweb.ElementCreator
 import kweb.InputType
 import kweb.WebBrowser
@@ -18,7 +19,10 @@ import org.aarbizu.baseballDatabankFrontend.records.PaginatedRecords
 const val playerNameLength = "player-name-by-len"
 const val pPlayerNameLength = "name-length"
 
-class SearchByNameLength(private val crumbs: MutableList<Crumb>, private val queryEngine: QueryEngine) : RouteHandler {
+class SearchByNameLength(
+    private val crumbs: MutableList<Crumb>,
+    private val queryEngine: QueryEngine
+) : RouteHandler {
     private val outputFieldId = "output"
 
     override fun getCrumb() =
@@ -30,7 +34,7 @@ class SearchByNameLength(private val crumbs: MutableList<Crumb>, private val que
         with(ec) {
             div(fomantic.ui.hidden.divider)
             div(fomantic.ui.container).new {
-                generatePlayerNameLengthForm(queryEngine, params["lengthParam"]?.value)
+                generatePlayerNameLengthForm(queryEngine, params[pPlayerNameLength]?.value)
                 debugParamsElement(params)
             }
 
@@ -45,9 +49,7 @@ class SearchByNameLength(private val crumbs: MutableList<Crumb>, private val que
         if (lengthParam.isNotEmpty()) {
             val outputDiv = browser.doc.getElementById(outputFieldId)
             PaginatedRecords(
-                queryEngine.playerNamesByLength(
-                    lengthParam
-                ), outputDiv
+                queryEngine.playerNamesByLength(lengthParam), outputDiv
             ).renderTable()
             browser.url.value = "/q/$playerNameLength/$lengthParam"
         }
@@ -64,27 +66,19 @@ class SearchByNameLength(private val crumbs: MutableList<Crumb>, private val que
                     val inputElem = input(
                         type = InputType.text,
                         name = pPlayerNameLength,
-                        initialValue = lengthValue ?: "",
                         size = 15,
                         placeholder = "14"
                     )
+                    nameLengthVar.value = lengthValue ?: ""
                     inputElem.setValue(nameLengthVar)
                     inputElem.on.keypress { ke ->
                         if (ke.code == "Enter") {
-                            handleInput(
-                                arrayOf(nameLengthVar),
-                                outputFieldId,
-                                browser
-                            ) { inputs -> queries.playerNamesByLength(inputs[0]) }
+                            getPlayersWithNameLength(nameLengthVar, queries)
                         }
                     }
                 }
                 button(fieldButtonStyle).text("Search").on.click {
-                    handleInput(
-                        arrayOf(nameLengthVar),
-                        outputFieldId,
-                        browser
-                    ) { inputs -> queries.playerNamesByLength(inputs[0]) }
+                    getPlayersWithNameLength(nameLengthVar, queries)
                 }.new {
                     i(baseballGlyphStyle)
                 }
@@ -92,6 +86,17 @@ class SearchByNameLength(private val crumbs: MutableList<Crumb>, private val que
         }
         div(fomantic.ui.hidden.divider)
         div(fomantic.content.id(outputFieldId)).text(output)
+    }
+
+    private fun ElementCreator<DivElement>.getPlayersWithNameLength(
+        nameLengthVar: KVar<String>,
+        queries: QueryEngine
+    ) {
+        handleInput(
+            arrayOf(nameLengthVar),
+            outputFieldId,
+            browser
+        ) { inputs -> queries.playerNamesByLength(inputs[0]) }
     }
 
     override fun updateUrl(url: KVar<String>, inputs: Array<KVar<*>>) {
