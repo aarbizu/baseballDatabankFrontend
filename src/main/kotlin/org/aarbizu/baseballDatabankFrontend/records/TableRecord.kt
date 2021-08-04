@@ -68,7 +68,8 @@ data class PlayerWithLinks(
     override fun cells() = listOf(name)
 
     override fun render(tr: ElementCreator<TrElement>) {
-        cells()[0].also {
+
+        cells().forEach { name ->
             tr.td().new {
                 a(mapOf("target" to JsonPrimitive("_blank")), href = decorateBbrefId(bbrefId)).text(name)
                 if (bbrefId == playerId) {

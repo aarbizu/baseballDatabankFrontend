@@ -51,7 +51,7 @@ class SearchByPlayerLastName(private val crumbs: MutableList<Crumb>, private val
 
     private fun ElementCreator<*>.generatePlayerNameSearchForm(queries: QueryEngine) {
         val output = KVar("")
-        var nameVar = KVar("")
+        val nameVar = KVar("")
 
         div(fomantic.ui.form).new {
             div(fomantic.fields).new {
