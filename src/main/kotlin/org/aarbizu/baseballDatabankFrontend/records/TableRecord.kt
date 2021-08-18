@@ -142,3 +142,35 @@ data class Player(
         }
     }
 }
+
+data class SinglePlayerStat(
+    val name: String,
+    val year: String,
+    val value: Int,
+    val statName: String
+) : TableRecord() {
+    override fun headers() = listOf("Name", "Year", statName)
+
+    override fun cells() = listOf(name, year, value.toString())
+
+    override fun render(tr: ElementCreator<TrElement>) {
+        cells().forEach { tr.td().text(it) }
+    }
+}
+
+fun singlePlayerStatExtract(colName: String, statDisplayName: String): (rs: ResultSet) -> List<TableRecord> {
+    return { rs: ResultSet ->
+        val records = mutableListOf<SinglePlayerStat>()
+        while (rs.next()) {
+            records.add(
+                SinglePlayerStat(
+                    rs.getString("year"),
+                    rs.getString("playername"),
+                    rs.getInt(colName),
+                    statDisplayName
+                )
+            )
+        }
+        records
+    }
+}

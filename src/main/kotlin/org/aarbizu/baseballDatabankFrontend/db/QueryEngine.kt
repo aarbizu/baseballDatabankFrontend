@@ -10,9 +10,11 @@ import org.aarbizu.baseballDatabankFrontend.config.dbUri
 import org.aarbizu.baseballDatabankFrontend.query.playerLastNameSubstringSql
 import org.aarbizu.baseballDatabankFrontend.query.playerNameRegexSql
 import org.aarbizu.baseballDatabankFrontend.query.playerNamesByLengthSql
+import org.aarbizu.baseballDatabankFrontend.query.singleSeasonHrTotalsSql
 import org.aarbizu.baseballDatabankFrontend.records.Player
 import org.aarbizu.baseballDatabankFrontend.records.PlayerWithLinks
 import org.aarbizu.baseballDatabankFrontend.records.TableRecord
+import org.aarbizu.baseballDatabankFrontend.records.singlePlayerStatExtract
 import org.slf4j.LoggerFactory
 
 private val logger = LoggerFactory.getLogger("QueryEngine")
@@ -114,5 +116,12 @@ class QueryEngine(private val dbProvider: DBProvider) {
         ),
         listOf(StrBind("nameRegex", regex)),
         Player.extract
+    )
+
+    fun singleSeasonHrTotals(firstOnly: Boolean = true) = query(
+        dbProvider,
+        singleSeasonHrTotalsSql(firstOnly),
+        emptyList(),
+        singlePlayerStatExtract("season_hr", "HR")
     )
 }

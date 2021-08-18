@@ -26,10 +26,10 @@ object DependencyVersions {
     const val kotlin = "1.5.21"
     const val postgres = "42.2.23"
     const val kotlinLogging = "2.0.10"
-    const val kweb = "0.10.13"
+    const val kweb = "0.10.14"
     const val kotlinxCoroutines = "1.5.1"
     const val kotlinxCoroutinesDebug = "1.5.1"
-    const val ktor = "1.6.1"
+    const val ktor = "1.6.2"
 
     //const val okhttp = "4.8.0"
     const val gson = "2.8.7"

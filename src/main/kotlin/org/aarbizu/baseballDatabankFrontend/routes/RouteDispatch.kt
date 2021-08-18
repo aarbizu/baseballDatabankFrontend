@@ -15,34 +15,35 @@ private val topLevelMenu = TopLevelMenu(crumbs)
 private val nameLengthSearch = SearchByNameLength(crumbs, queryEngine)
 private val lastNameSearch = SearchByPlayerLastName(crumbs, queryEngine)
 private val playerRegexSearch = SearchByPlayerNameRegex(crumbs, queryEngine)
+private val listSingleSeasonHrLeaders = ListSingleSeasonHRLeaders(crumbs, queryEngine)
 
 /**
  * @see <a href="https://ktor.io/docs/routing-in-ktor.html#wildcard">ktor.io/routing</a>
  */
 fun RouteReceiver.dispatch(parameters: Parameters) {
     path("/") {
-        defaultRoute.doRoute(this, parameters, it)
+        defaultRoute.doRoute(this, it)
     }
     path(TOP_LEVEL_MENU_LOCATION) {
-        topLevelMenu.doRoute(this, parameters, it)
+        topLevelMenu.doRoute(this, it)
     }
 
     // TODO i'd like for there to be a better way of handling this, but
-    // the same param qualifiers in kweb aren't in effect as they are in
-    // io.ktor.routing.PathSegmentSelectorBuilder.parseParameter(java.lang.String)
+    //  the same param qualifiers in kweb aren't in effect as they are in
+    //  io.ktor.routing.PathSegmentSelectorBuilder.parseParameter(java.lang.String)
 
     path("/q/$playerNameLength") {
-        nameLengthSearch.doRoute(this, parameters, it)
+        nameLengthSearch.doRoute(this, it)
     }
     path("/q/$playerNameLength/{$pPlayerNameLength}") {
-        nameLengthSearch.doRoute(this, parameters, it)
+        nameLengthSearch.doRoute(this, it)
     }
 
     path("/q/$playerLastNameSearchQuery/{$pPlayerLastNameParam}") {
-        lastNameSearch.doRoute(this, parameters, it)
+        lastNameSearch.doRoute(this, it)
     }
     path("/q/$playerLastNameSearchQuery") {
-        lastNameSearch.doRoute(this, parameters, it)
+        lastNameSearch.doRoute(this, it)
     }
 
     path(
@@ -51,9 +52,13 @@ fun RouteReceiver.dispatch(parameters: Parameters) {
         "{$pPlayerRegexLnameParam}/" +
         "{$pPlayerRegexCaseSensitive}"
     ) {
-        playerRegexSearch.doRoute(this, parameters, it)
+        playerRegexSearch.doRoute(this, it)
     }
     path("/q/$playerNameRegex") {
-        playerRegexSearch.doRoute(this, parameters, it)
+        playerRegexSearch.doRoute(this, it)
+    }
+
+    path("/q/$singleSeasonHrLeaders") {
+        listSingleSeasonHrLeaders.doRoute(this, it)
     }
 }

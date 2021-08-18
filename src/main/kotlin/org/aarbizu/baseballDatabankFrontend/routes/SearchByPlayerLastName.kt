@@ -18,7 +18,10 @@ import org.aarbizu.baseballDatabankFrontend.records.PaginatedRecords
 const val playerLastNameSearchQuery = "player-name"
 const val pPlayerLastNameParam = "last-name"
 
-class SearchByPlayerLastName(private val crumbs: MutableList<Crumb>, private val queryEngine: QueryEngine) : RouteHandler {
+class SearchByPlayerLastName(
+    private val crumbs: MutableList<Crumb>,
+    private val queryEngine: QueryEngine
+) : RouteHandler {
     private val outputElementId = "names"
 
     override fun handleRoute(ec: ElementCreator<*>, params: Map<String, KVar<String>>) {

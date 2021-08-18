@@ -55,3 +55,16 @@ fun playerNameRegexSql(first: Boolean = true, last: Boolean = true, caseSensitiv
     } ?
     """.trimIndent()
 }
+
+fun singleSeasonHrTotalsSql(firstOnly: Boolean = true): String {
+    val firstNameField = if (firstOnly) { "namefirst" } else { "namegiven" }
+    return """
+        SELECT b.yearid AS year, 
+               COALESCE(p.$firstNameField, 'unknown') || ' ' || COALESCE(p.namelast, 'unknown') AS playername,
+               SUM(b.hr) AS season_hr
+        FROM batting b, people p
+        WHERE b.playerid = p.playerid
+        GROUP BY playername, yearid
+        ORDER BY season_hr desc;
+    """.trimIndent()
+}
