@@ -2,7 +2,7 @@ package org.aarbizu.baseballDatabankFrontend.query
 
 // COALESCE returns first non-null argument
 
-val playerNamesByLength = """
+val playerNamesByLengthSql = """
     SELECT
         COALESCE(namegiven, 'unknown') || ' ' || COALESCE(namelast, 'unknown') as name,
         COALESCE(birthyear, 0) || '-' || COALESCE(birthmonth, 0) || '-' || COALESCE(birthday, 0) as born,
@@ -15,7 +15,7 @@ val playerNamesByLength = """
     ORDER BY playerid
 """.trimIndent()
 
-val playerLastNameSubstring = """
+val playerLastNameSubstringSql = """
     SELECT
         COALESCE(namegiven, 'unknown') || ' ' || COALESCE(namelast, 'unknown') as name,
         COALESCE(birthyear, 0) || '-' || COALESCE(birthmonth, 0) || '-' || COALESCE(birthday, 0) as born,
@@ -28,7 +28,7 @@ val playerLastNameSubstring = """
     ORDER BY LENGTH(namelast) ASC
 """.trimIndent()
 
-fun playerNameRegex(first: Boolean = true, last: Boolean = true, caseSensitive: Boolean = false): String {
+fun playerNameRegexSql(first: Boolean = true, last: Boolean = true, caseSensitive: Boolean = false): String {
     val nameClauseColumn = if (first && last) {
         "namefirst || ' ' || namelast"
     } else if (first) {
@@ -53,5 +53,18 @@ fun playerNameRegex(first: Boolean = true, last: Boolean = true, caseSensitive: 
             "~*"
         }
     } ?
+    """.trimIndent()
+}
+
+fun singleSeasonHrTotalsSql(firstOnly: Boolean = true): String {
+    val firstNameField = if (firstOnly) { "namefirst" } else { "namegiven" }
+    return """
+        SELECT b.yearid AS year, 
+               COALESCE(p.$firstNameField, 'unknown') || ' ' || COALESCE(p.namelast, 'unknown') AS playername,
+               SUM(b.hr) AS season_hr
+        FROM batting b, people p
+        WHERE b.playerid = p.playerid
+        GROUP BY playername, yearid
+        ORDER BY season_hr desc;
     """.trimIndent()
 }

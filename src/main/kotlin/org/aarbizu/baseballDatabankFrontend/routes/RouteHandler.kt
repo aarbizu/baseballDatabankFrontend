@@ -1,6 +1,5 @@
 package org.aarbizu.baseballDatabankFrontend.routes
 
-import io.ktor.http.Parameters
 import kweb.Element
 import kweb.ElementCreator
 import kweb.WebBrowser
@@ -18,7 +17,7 @@ interface RouteHandler {
     fun getCrumb(): Crumb
     fun injectCrumbs(): MutableList<Crumb>
 
-    fun doRoute(ec: ElementCreator<*>, parameters: Parameters, params: Map<String, KVar<String>>) {
+    fun doRoute(ec: ElementCreator<*>, params: Map<String, KVar<String>>) {
         renderNavMenu(ec, getCrumb(), injectCrumbs())
         handleRoute(ec, params)
     }
@@ -35,15 +34,6 @@ interface RouteHandler {
                     appendCrumb(newCrumb, crumbs)
                 }
             }
-        }
-    }
-
-    fun paramKVarToPair(kvar: KVar<String>?): Pair<String, String>? {
-        kvar?.value.toString().let {
-            return if (it.contains("=")) {
-                val fieldArray = it.split("=").toTypedArray()
-                Pair(fieldArray[0], fieldArray[1])
-            } else { null }
         }
     }
 

@@ -31,6 +31,13 @@ class TopLevelMenu(private val crumbs: MutableList<Crumb>) : RouteHandler {
                         browser.url.value = "/q/$playerNameRegex"
                     }
                 }
+                div(fomantic.ui.three.item.menu).new {
+                    a(fomantic.ui.item).text("Single Season HR Leaders").on.click {
+                        browser.url.value = "/q/$singleSeasonHrLeaders"
+                    }
+                    a(fomantic.ui.three.item.menu).new { a(fomantic.ui.item).text("TBD") }
+                    a(fomantic.ui.three.item.menu).new { a(fomantic.ui.item).text("TBD") }
+                }
             }
             div(fomantic.ui.hidden.divider)
             div(fomantic.ui.container.id("errors"))

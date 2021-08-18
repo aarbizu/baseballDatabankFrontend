@@ -63,9 +63,9 @@ class SearchByPlayerNameRegex(private val crumbs: MutableList<Crumb>, private va
 
     private fun ElementCreator<*>.generatePlayerNameRegexSearchForm(queries: QueryEngine) {
         val names = KVar("")
-        var firstNameMatch: KVar<Boolean>? = null
-        var lastNameMatch: KVar<Boolean>? = null
-        var caseSensitive: KVar<Boolean>? = null
+        lateinit var firstNameMatch: KVar<Boolean>
+        lateinit var lastNameMatch: KVar<Boolean>
+        lateinit var caseSensitive: KVar<Boolean>
         val nameRegex = KVar("")
 
         div(fomantic.ui.form).new {
@@ -84,7 +84,7 @@ class SearchByPlayerNameRegex(private val crumbs: MutableList<Crumb>, private va
                     nameRegexElement.on.keypress { ke ->
                         if (ke.code == "Enter") {
                             handleInput(
-                                arrayOf(nameRegex, firstNameMatch!!, lastNameMatch!!, caseSensitive!!),
+                                arrayOf(nameRegex, firstNameMatch, lastNameMatch, caseSensitive),
                                 outputElementId,
                                 browser
                             ) { inputs ->
@@ -127,7 +127,7 @@ class SearchByPlayerNameRegex(private val crumbs: MutableList<Crumb>, private va
                 }
                 button(fieldButtonStyle).text("Search").on.click {
                     handleInput(
-                        arrayOf(nameRegex, firstNameMatch!!, lastNameMatch!!, caseSensitive!!),
+                        arrayOf(nameRegex, firstNameMatch, lastNameMatch, caseSensitive),
                         outputElementId,
                         browser
                     ) { inputs ->

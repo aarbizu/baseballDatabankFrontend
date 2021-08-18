@@ -6,12 +6,21 @@ import kweb.ElementCreator
 import kweb.TrElement
 import kweb.a
 import kweb.new
+import kweb.plugins.fomanticUI.fomantic
+import kweb.span
 import kweb.td
 
 abstract class TableRecord {
     abstract fun headers(): List<String>
     abstract fun cells(): List<String>
     abstract fun render(tr: ElementCreator<TrElement>)
+}
+
+private const val bbrefUri = "https://www.baseball-reference.com/players"
+private const val bbrefSuffix = ".shtml"
+
+private fun decorateBbrefId(bbrefid: String): String {
+    return "$bbrefUri/${bbrefid[0]}/$bbrefid$bbrefSuffix"
 }
 
 data class PlayerBasic(
@@ -49,6 +58,47 @@ data class PlayerBasic(
     }
 }
 
+data class PlayerWithLinks(
+    val name: String,
+    val playerId: String,
+    val bbrefId: String
+) : TableRecord() {
+    override fun headers() = listOf("Name")
+
+    override fun cells() = listOf(name)
+
+    override fun render(tr: ElementCreator<TrElement>) {
+
+        cells().forEach { name ->
+            tr.td().new {
+                a(mapOf("target" to JsonPrimitive("_blank")), href = decorateBbrefId(bbrefId)).text(name)
+                if (bbrefId == playerId) {
+                    span(fomantic.ui.small.text).text(" [$bbrefId]")
+                } else {
+                    span(fomantic.ui.small.text).text(" [bbref: $bbrefId]")
+                    span(fomantic.ui.small.text).text(" [db: $playerId]")
+                }
+            }
+        }
+    }
+
+    companion object {
+        val extract: (rs: ResultSet) -> List<TableRecord> = { rs ->
+            val records = mutableListOf<PlayerWithLinks>()
+            while (rs.next()) {
+                records.add(
+                    PlayerWithLinks(
+                        rs.getString("name"),
+                        rs.getString("bbrefid"),
+                        rs.getString("playerid")
+                    )
+                )
+            }
+            records
+        }
+    }
+}
+
 data class Player(
     val name: String,
     val born: String,
@@ -66,7 +116,7 @@ data class Player(
         cells().forEach { cell ->
             when (cell) {
                 bbrefid -> tr.td().new {
-                    a(mapOf("target" to JsonPrimitive("_blank")), href = bbrefid).text(playerId)
+                    a(mapOf("target" to JsonPrimitive("_blank")), href = decorateBbrefId(bbrefid)).text(playerId)
                 }
                 else -> tr.td().text(cell)
             }
@@ -74,8 +124,6 @@ data class Player(
     }
 
     companion object {
-        private const val bbrefUri = "https://www.baseball-reference.com/players"
-        private const val bbrefSuffix = ".shtml"
         val extract: (rs: ResultSet) -> List<TableRecord> = { rs ->
             val records = mutableListOf<Player>()
             while (rs.next()) {
@@ -86,15 +134,43 @@ data class Player(
                         rs.getString("debut"),
                         rs.getString("finalgame"),
                         rs.getString("playerid"),
-                        decorateBbrefId(rs.getString("bbrefid"))
+                        rs.getString("bbrefid")
                     )
                 )
             }
             records
         }
+    }
+}
 
-        fun decorateBbrefId(bbrefid: String): String {
-            return "$bbrefUri/${bbrefid[0]}/$bbrefid$bbrefSuffix"
+data class SinglePlayerStat(
+    val name: String,
+    val year: String,
+    val value: Int,
+    val statName: String
+) : TableRecord() {
+    override fun headers() = listOf("Name", "Year", statName)
+
+    override fun cells() = listOf(name, year, value.toString())
+
+    override fun render(tr: ElementCreator<TrElement>) {
+        cells().forEach { tr.td().text(it) }
+    }
+}
+
+fun singlePlayerStatExtract(colName: String, statDisplayName: String): (rs: ResultSet) -> List<TableRecord> {
+    return { rs: ResultSet ->
+        val records = mutableListOf<SinglePlayerStat>()
+        while (rs.next()) {
+            records.add(
+                SinglePlayerStat(
+                    rs.getString("year"),
+                    rs.getString("playername"),
+                    rs.getInt(colName),
+                    statDisplayName
+                )
+            )
         }
+        records
     }
 }
