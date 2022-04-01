@@ -64,6 +64,7 @@ class QueryEngine(private val dbProvider: DBProvider) {
             logger.info("exec query: $timer")
             timer.reset()
             timer.start()
+            //TODO -- caching here, based on a hash of binds and queryTemplate.
             val records: List<TableRecord> = extractor.invoke(rs)
             logger.info("extract results: $timer")
             return records
