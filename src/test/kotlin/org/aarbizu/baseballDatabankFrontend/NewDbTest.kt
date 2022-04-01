@@ -43,6 +43,6 @@ class NewDbTest {
 
     @Test
     fun `try to import bbdb csv`() {
-        TODO("write this test")
+       // TODO("write this test")
     }
 }
