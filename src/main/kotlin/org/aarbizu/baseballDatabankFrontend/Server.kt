@@ -13,7 +13,6 @@ import io.ktor.routing.routing
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.ktor.websocket.WebSockets
-import java.time.Duration
 import kweb.Kweb
 import kweb.plugins.fomanticUI.fomanticUIPlugin
 import kweb.respondKwebRender
@@ -21,6 +20,7 @@ import kweb.route
 import org.aarbizu.baseballDatabankFrontend.db.DB
 import org.aarbizu.baseballDatabankFrontend.routes.handleRoutes
 import org.slf4j.LoggerFactory
+import java.time.Duration
 
 fun Application.module() {
     install(DefaultHeaders)
@@ -55,7 +55,8 @@ class Server {
         log.info("database init complete in {}", timer.toString())
 
         val port = System.getenv("PORT")?.toInt() ?: 8080
-        embeddedServer(Netty,
+        embeddedServer(
+            Netty,
             port,
             module = Application::module
         ).start()

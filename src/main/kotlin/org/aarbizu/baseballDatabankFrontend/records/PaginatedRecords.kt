@@ -1,7 +1,5 @@
 package org.aarbizu.baseballDatabankFrontend.records
 
-import kotlin.math.max
-import kotlin.math.min
 import kotlinx.serialization.json.JsonPrimitive
 import kweb.Element
 import kweb.div
@@ -13,6 +11,8 @@ import kweb.td
 import kweb.th
 import kweb.thead
 import kweb.tr
+import kotlin.math.max
+import kotlin.math.min
 
 class PaginatedRecords(
     private val records: List<TableRecord>,

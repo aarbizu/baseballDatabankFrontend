@@ -1,11 +1,6 @@
 package org.aarbizu.baseballDatabankFrontend.db
 
 import com.google.common.base.Stopwatch
-import java.net.URI
-import java.sql.Connection
-import java.sql.DriverManager
-import java.sql.PreparedStatement
-import java.sql.ResultSet
 import org.aarbizu.baseballDatabankFrontend.config.dbUri
 import org.aarbizu.baseballDatabankFrontend.query.playerLastNameSubstringSql
 import org.aarbizu.baseballDatabankFrontend.query.playerNameRegexSql
@@ -16,6 +11,11 @@ import org.aarbizu.baseballDatabankFrontend.records.PlayerWithLinks
 import org.aarbizu.baseballDatabankFrontend.records.TableRecord
 import org.aarbizu.baseballDatabankFrontend.records.singlePlayerStatExtract
 import org.slf4j.LoggerFactory
+import java.net.URI
+import java.sql.Connection
+import java.sql.DriverManager
+import java.sql.PreparedStatement
+import java.sql.ResultSet
 
 private val logger = LoggerFactory.getLogger("QueryEngine")
 
@@ -52,7 +52,7 @@ object DB : DBProvider {
     override fun getConnection() = conn
 
     override fun init() {
-        //TODO("migrate to initializing in-memory db from csv files")
+        // TODO("migrate to initializing in-memory db from csv files")
     }
 }
 
@@ -69,7 +69,7 @@ class QueryEngine(private val dbProvider: DBProvider) {
             logger.info("exec query: $timer")
             timer.reset()
             timer.start()
-            //TODO -- caching here, based on a hash of binds and queryTemplate.
+            // TODO -- caching here, based on a hash of binds and queryTemplate.
             val records: List<TableRecord> = extractor.invoke(rs)
             logger.info("extract results: $timer")
             return records

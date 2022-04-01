@@ -47,11 +47,11 @@ fun playerNameRegexSql(first: Boolean = true, last: Boolean = true, caseSensitiv
             COALESCE(bbrefid, 'unknown') as bbrefid
         FROM people
         WHERE $nameClauseColumn ${
-        if (caseSensitive) {
-            "~"
-        } else {
-            "~*"
-        }
+    if (caseSensitive) {
+        "~"
+    } else {
+        "~*"
+    }
     } ?
     """.trimIndent()
 }

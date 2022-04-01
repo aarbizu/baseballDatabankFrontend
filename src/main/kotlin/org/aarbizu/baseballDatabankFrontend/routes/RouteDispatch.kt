@@ -47,9 +47,9 @@ fun RouteReceiver.handleRoutes() {
 
     path(
         "/q/$playerNameRegex/{$pPlayerRegexParam}/" +
-        "{$pPlayerRegexFnameParam}/" +
-        "{$pPlayerRegexLnameParam}/" +
-        "{$pPlayerRegexCaseSensitive}"
+            "{$pPlayerRegexFnameParam}/" +
+            "{$pPlayerRegexLnameParam}/" +
+            "{$pPlayerRegexCaseSensitive}"
     ) {
         playerRegexSearch.doRoute(this, it)
     }

@@ -38,11 +38,10 @@ class NewDbTest {
         }
 
         assertThat(records.lastIndex).isEqualTo(0)
-
     }
 
     @Test
     fun `try to import bbdb csv`() {
-       // TODO("write this test")
+        // TODO("write this test")
     }
 }
