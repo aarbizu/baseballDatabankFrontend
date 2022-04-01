@@ -2,10 +2,6 @@ package org.aarbizu.baseballDatabankFrontend
 
 import com.google.common.truth.Truth.assertThat
 import io.mockk.junit5.MockKExtension
-import java.net.URI
-import java.sql.Connection
-import java.sql.DriverManager
-import java.sql.ResultSet
 import kweb.ElementCreator
 import kweb.TrElement
 import org.aarbizu.baseballDatabankFrontend.config.getDbUri
@@ -22,6 +18,10 @@ import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
 import util.setupTestDatabase
 import util.upsertPlayer
+import java.net.URI
+import java.sql.Connection
+import java.sql.DriverManager
+import java.sql.ResultSet
 
 @Testcontainers
 @ExtendWith(MockKExtension::class)
