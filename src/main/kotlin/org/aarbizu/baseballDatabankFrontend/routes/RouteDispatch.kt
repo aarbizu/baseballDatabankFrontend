@@ -1,6 +1,5 @@
 package org.aarbizu.baseballDatabankFrontend.routes
 
-import io.ktor.http.Parameters
 import kweb.routing.RouteReceiver
 import org.aarbizu.baseballDatabankFrontend.db.DB
 import org.aarbizu.baseballDatabankFrontend.db.QueryEngine
@@ -20,7 +19,7 @@ private val listSingleSeasonHrLeaders = ListSingleSeasonHRLeaders(crumbs, queryE
 /**
  * @see <a href="https://ktor.io/docs/routing-in-ktor.html#wildcard">ktor.io/routing</a>
  */
-fun RouteReceiver.dispatch(parameters: Parameters) {
+fun RouteReceiver.handleRoutes() {
     path("/") {
         defaultRoute.doRoute(this, it)
     }

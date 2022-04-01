@@ -1,5 +1,6 @@
 package org.aarbizu.baseballDatabankFrontend
 
+import com.google.common.base.Stopwatch
 import io.ktor.application.Application
 import io.ktor.application.call
 import io.ktor.application.install
@@ -17,7 +18,9 @@ import kweb.Kweb
 import kweb.plugins.fomanticUI.fomanticUIPlugin
 import kweb.respondKwebRender
 import kweb.route
-import org.aarbizu.baseballDatabankFrontend.routes.dispatch
+import org.aarbizu.baseballDatabankFrontend.db.DB
+import org.aarbizu.baseballDatabankFrontend.routes.handleRoutes
+import org.slf4j.LoggerFactory
 
 fun Application.module() {
     install(DefaultHeaders)
@@ -34,7 +37,7 @@ fun Application.module() {
                 val parameters = call.request.queryParameters
                 call.respondKwebRender {
                     route {
-                        dispatch(parameters)
+                        handleRoutes()
                     }
                 }
             }
@@ -44,6 +47,13 @@ fun Application.module() {
 
 class Server {
     fun start() {
+
+        val log = LoggerFactory.getLogger(this.javaClass)
+        log.info("Iniitializing database...")
+        val timer = Stopwatch.createStarted()
+        DB.init()
+        log.info("database init complete in {}", timer.toString())
+
         val port = System.getenv("PORT")?.toInt() ?: 8080
         embeddedServer(Netty,
             port,

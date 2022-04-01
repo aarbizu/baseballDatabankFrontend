@@ -16,7 +16,7 @@ plugins {
     idea
 
     // spotless
-    id("com.diffplug.spotless") version "6.3.0"
+    id("com.diffplug.spotless") version "6.4.1"
 
     // versions
     id("com.github.ben-manes.versions") version "0.42.0"
@@ -29,8 +29,6 @@ object DependencyVersions {
     const val kweb = "0.11.2"
     const val kotlinxCoroutines = "1.6.0"
     const val ktor = "1.6.8"
-
-    //const val okhttp = "4.8.0"
     const val gson = "2.9.0"
     const val guava = "31.1-jre"
     const val systemRules = "1.19.0"

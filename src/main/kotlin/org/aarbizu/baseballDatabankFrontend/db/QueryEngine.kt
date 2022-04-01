@@ -21,6 +21,7 @@ private val logger = LoggerFactory.getLogger("QueryEngine")
 
 interface DBProvider {
     fun getConnection(): Connection
+    fun init()
 }
 
 data class DbConnectionParams(val uri: URI) {
@@ -49,6 +50,10 @@ object DB : DBProvider {
     }
 
     override fun getConnection() = conn
+
+    override fun init() {
+        //TODO("migrate to initializing in-memory db from csv files")
+    }
 }
 
 class QueryEngine(private val dbProvider: DBProvider) {
