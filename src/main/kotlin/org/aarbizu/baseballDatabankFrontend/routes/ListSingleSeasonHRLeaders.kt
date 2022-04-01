@@ -29,7 +29,7 @@ class ListSingleSeasonHRLeaders(
         val output = KVar("")
         div(fomantic.content.id(outputElementId)).text(output)
 
-        // todo add a radio button to toggle between first name onnly and first+middle
+        // todo add a radio button to toggle between first name only and first+middle
         handleInput(arrayOf(), outputElementId, browser) { queryEngine.singleSeasonHrTotals(true) }
     }
 

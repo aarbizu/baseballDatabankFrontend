@@ -7,7 +7,7 @@ val compileKotlin: KotlinCompile by tasks
 
 plugins {
     // Apply the Kotlin JVM plugin to add support for Kotlin.
-    kotlin("jvm") version "1.5.21"
+    kotlin("jvm") version "1.6.10"
 
     // Apply the application plugin to add support for building a CLI application.
     application
@@ -16,31 +16,30 @@ plugins {
     idea
 
     // spotless
-    id("com.diffplug.spotless") version "5.14.2"
+    id("com.diffplug.spotless") version "6.3.0"
 
     // versions
-    id("com.github.ben-manes.versions") version "0.39.0"
+    id("com.github.ben-manes.versions") version "0.42.0"
 }
 
 object DependencyVersions {
-    const val kotlin = "1.5.21"
-    const val postgres = "42.2.23"
-    const val kotlinLogging = "2.0.10"
-    const val kweb = "0.10.14"
-    const val kotlinxCoroutines = "1.5.1"
-    const val kotlinxCoroutinesDebug = "1.5.1"
-    const val ktor = "1.6.2"
+    const val kotlin = "1.6.0"
+    const val postgres = "42.3.3"
+    const val kotlinLogging = "2.1.21"
+    const val kweb = "0.11.2"
+    const val kotlinxCoroutines = "1.6.0"
+    const val ktor = "1.6.8"
 
     //const val okhttp = "4.8.0"
-    const val gson = "2.8.7"
-    const val guava = "30.1.1-jre"
+    const val gson = "2.9.0"
+    const val guava = "31.1-jre"
     const val systemRules = "1.19.0"
     const val slf4j = "1.7.31"
     const val truth = "1.1.3"
-    const val junit = "5.7.0"
-    const val junitPlatformConsole = "1.7.0"
-    const val mockk = "1.12.0"
-    const val testContainers = "1.16.0"
+    const val junit = "5.8.2"
+    const val junitPlatformConsole = "1.8.2"
+    const val mockk = "1.12.3"
+    const val testContainers = "1.16.3"
 }
 
 dependencies {
@@ -74,8 +73,9 @@ dependencies {
     implementation("org.slf4j:slf4j-simple:${DependencyVersions.slf4j}")
     implementation("com.google.code.gson:gson:${DependencyVersions.gson}")
     implementation("com.google.guava:guava:${DependencyVersions.guava}")
+    implementation("com.h2database:h2:2.1.210")
 
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-debug:${DependencyVersions.kotlinxCoroutinesDebug}")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-debug:${DependencyVersions.kotlinxCoroutines}")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:${DependencyVersions.kotlin}")
     testImplementation("com.github.stefanbirkner:system-rules:${DependencyVersions.systemRules}")
     testImplementation("com.google.truth:truth:${DependencyVersions.truth}")

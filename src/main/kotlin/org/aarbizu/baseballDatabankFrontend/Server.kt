@@ -19,8 +19,6 @@ import kweb.respondKwebRender
 import kweb.route
 import org.aarbizu.baseballDatabankFrontend.routes.dispatch
 
-const val uriPrefix = "loc"
-
 fun Application.module() {
     install(DefaultHeaders)
     install(CallLogging)
