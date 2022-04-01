@@ -56,7 +56,8 @@ class SearchByPlayerNameRegex(private val crumbs: MutableList<Crumb>, private va
                     useFirst.toBoolean(),
                     useLast.toBoolean(),
                     useCase.toBoolean()
-                ), outputEl
+                ),
+                outputEl
             ).renderTable()
         }
     }

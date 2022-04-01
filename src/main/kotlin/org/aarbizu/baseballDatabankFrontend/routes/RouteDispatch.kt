@@ -48,9 +48,9 @@ fun RouteReceiver.dispatch(parameters: Parameters) {
 
     path(
         "/q/$playerNameRegex/{$pPlayerRegexParam}/" +
-        "{$pPlayerRegexFnameParam}/" +
-        "{$pPlayerRegexLnameParam}/" +
-        "{$pPlayerRegexCaseSensitive}"
+            "{$pPlayerRegexFnameParam}/" +
+            "{$pPlayerRegexLnameParam}/" +
+            "{$pPlayerRegexCaseSensitive}"
     ) {
         playerRegexSearch.doRoute(this, it)
     }

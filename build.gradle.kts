@@ -29,8 +29,6 @@ object DependencyVersions {
     const val kweb = "0.11.2"
     const val kotlinxCoroutines = "1.6.0"
     const val ktor = "1.6.8"
-
-    //const val okhttp = "4.8.0"
     const val gson = "2.9.0"
     const val guava = "31.1-jre"
     const val systemRules = "1.19.0"
@@ -40,6 +38,7 @@ object DependencyVersions {
     const val junitPlatformConsole = "1.8.2"
     const val mockk = "1.12.3"
     const val testContainers = "1.16.3"
+    const val h2db = "2.1.210"
 }
 
 dependencies {
@@ -73,7 +72,7 @@ dependencies {
     implementation("org.slf4j:slf4j-simple:${DependencyVersions.slf4j}")
     implementation("com.google.code.gson:gson:${DependencyVersions.gson}")
     implementation("com.google.guava:guava:${DependencyVersions.guava}")
-    implementation("com.h2database:h2:2.1.210")
+    implementation("com.h2database:h2:${DependencyVersions.h2db}")
 
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-debug:${DependencyVersions.kotlinxCoroutines}")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:${DependencyVersions.kotlin}")

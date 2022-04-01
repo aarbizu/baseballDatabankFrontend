@@ -38,7 +38,6 @@ class NewDbTest {
         }
 
         assertThat(records.lastIndex).isEqualTo(0)
-
     }
 
     @Test

@@ -1,7 +1,7 @@
 package util
 
-import java.sql.DriverManager
 import org.testcontainers.containers.PostgreSQLContainer
+import java.sql.DriverManager
 
 fun setupTestDatabase(db: PostgreSQLContainer<*>) {
     DriverManager.getConnection(db.jdbcUrl, db.username, db.password).use { conn ->

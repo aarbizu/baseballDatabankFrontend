@@ -43,9 +43,11 @@ fun ElementCreator<*>.appendCrumb(newCrumb: Crumb, crumbs: MutableList<Crumb>) {
 
 fun ElementCreator<*>.debugParamsElement(parameters: Map<String, KVar<String>>) =
     if (debug) {
-        div(fomantic.content).text(parameters.entries.mapIndexed { idx, entry ->
-            "$idx: ${entry.key}=${entry.value.map { it }}"
-        }.joinToString())
+        div(fomantic.content).text(
+            parameters.entries.mapIndexed { idx, entry ->
+                "$idx: ${entry.key}=${entry.value.map { it }}"
+            }.joinToString()
+        )
     } else {
         div()
     }

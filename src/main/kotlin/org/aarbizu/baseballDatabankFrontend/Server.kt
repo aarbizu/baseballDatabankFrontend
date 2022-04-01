@@ -12,12 +12,12 @@ import io.ktor.routing.routing
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.ktor.websocket.WebSockets
-import java.time.Duration
 import kweb.Kweb
 import kweb.plugins.fomanticUI.fomanticUIPlugin
 import kweb.respondKwebRender
 import kweb.route
 import org.aarbizu.baseballDatabankFrontend.routes.dispatch
+import java.time.Duration
 
 fun Application.module() {
     install(DefaultHeaders)
@@ -45,7 +45,8 @@ fun Application.module() {
 class Server {
     fun start() {
         val port = System.getenv("PORT")?.toInt() ?: 8080
-        embeddedServer(Netty,
+        embeddedServer(
+            Netty,
             port,
             module = Application::module
         ).start()

@@ -1,6 +1,5 @@
 package org.aarbizu.baseballDatabankFrontend.records
 
-import java.sql.ResultSet
 import kotlinx.serialization.json.JsonPrimitive
 import kweb.ElementCreator
 import kweb.TrElement
@@ -9,6 +8,7 @@ import kweb.new
 import kweb.plugins.fomanticUI.fomantic
 import kweb.span
 import kweb.td
+import java.sql.ResultSet
 
 abstract class TableRecord {
     abstract fun headers(): List<String>
