@@ -34,7 +34,6 @@ fun Application.module() {
         routing {
             // trace { logger.info(it.buildText()) }
             get("{...}") {
-                val parameters = call.request.queryParameters
                 call.respondKwebRender {
                     route {
                         handleRoutes()
