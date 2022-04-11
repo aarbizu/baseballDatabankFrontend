@@ -3,7 +3,7 @@ package org.aarbizu.baseballDatabankFrontend
 import com.google.common.truth.Truth.assertThat
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
-import org.aarbizu.baseballDatabankFrontend.db.DB
+import org.aarbizu.baseballDatabankFrontend.config.ServerConfig
 import org.aarbizu.baseballDatabankFrontend.db.DBProvider
 import org.aarbizu.baseballDatabankFrontend.db.DataLoader
 import org.aarbizu.baseballDatabankFrontend.records.TableRecord
@@ -17,6 +17,9 @@ import java.sql.ResultSet
 
 @ExtendWith(MockKExtension::class)
 class NewDbTest {
+    @MockK
+    lateinit var dbmock: DBProvider
+
     private val extractor: (rs: ResultSet) -> List<TableRecord> = { rs ->
         val records = mutableListOf<TestPlayerRecord>()
         while (rs.next()) {
@@ -30,10 +33,6 @@ class NewDbTest {
         }
         records
     }
-
-
-    @MockK
-    lateinit var dbmock: DBProvider
 
     @Test
     fun `try h2 in-mem db`() {
@@ -117,7 +116,7 @@ class NewDbTest {
     fun `list all csv files`() {
         var fileCount = 0
         val expectedFileCount = 28 // as of 4/3/2022, when copied from baseballdatabank repo
-        DataLoader(dbmock).getCsvFiles().forEach {
+        DataLoader(dbmock, ServerConfig.csvHome).getCsvFiles().forEach {
             assertThat(it.isFile && it.extension == "csv")
             assertThat(it.canRead())
             fileCount += 1
@@ -127,10 +126,10 @@ class NewDbTest {
 
     @Test
     fun `test initializing db`() {
-        val dataLoader = DataLoader(DB)
+        val dataLoader = DataLoader(ServerConfig.db, ServerConfig.csvHome)
         dataLoader.loadAllFiles()
         dataLoader.buildIndexes()
-        DB.getConnection().use {
+        ServerConfig.db.getConnection().use {
             it.createStatement().use { stmt ->
                 val rs = stmt.executeQuery(
                     """

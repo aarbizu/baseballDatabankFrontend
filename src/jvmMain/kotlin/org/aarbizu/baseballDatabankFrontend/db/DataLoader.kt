@@ -1,10 +1,9 @@
 package org.aarbizu.baseballDatabankFrontend.db
 
-import org.aarbizu.baseballDatabankFrontend.config.csvHome
 import org.slf4j.LoggerFactory
 import java.io.File
 
-class DataLoader(private val db: DBProvider) {
+class DataLoader(private val db: DBProvider, private val csvHome: String) {
     private val log = LoggerFactory.getLogger(this.javaClass)
 
     private val fileLoaders = mapOf(
