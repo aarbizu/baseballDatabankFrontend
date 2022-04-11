@@ -1,7 +1,7 @@
 package org.aarbizu.baseballDatabankFrontend.db
 
 import com.google.common.base.Stopwatch
-import org.aarbizu.baseballDatabankFrontend.config.dbUri
+import org.aarbizu.baseballDatabankFrontend.config.jdbcUrl
 import org.aarbizu.baseballDatabankFrontend.query.playerLastNameSubstringSql
 import org.aarbizu.baseballDatabankFrontend.query.playerNameRegexSql
 import org.aarbizu.baseballDatabankFrontend.query.playerNamesByLengthSql
@@ -10,10 +10,11 @@ import org.aarbizu.baseballDatabankFrontend.records.Player
 import org.aarbizu.baseballDatabankFrontend.records.PlayerWithLinks
 import org.aarbizu.baseballDatabankFrontend.records.TableRecord
 import org.aarbizu.baseballDatabankFrontend.records.singlePlayerStatExtract
+import org.h2.jdbcx.JdbcConnectionPool
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.net.URI
 import java.sql.Connection
-import java.sql.DriverManager
 import java.sql.PreparedStatement
 import java.sql.ResultSet
 
@@ -21,7 +22,6 @@ private val logger = LoggerFactory.getLogger("QueryEngine")
 
 interface DBProvider {
     fun getConnection(): Connection
-    fun init()
 }
 
 data class DbConnectionParams(val uri: URI) {
@@ -41,18 +41,12 @@ data class DbConnectionParams(val uri: URI) {
 }
 
 object DB : DBProvider {
-    private val connParams: DbConnectionParams by lazy {
-        DbConnectionParams(dbUri)
-    }
+    private val connPool = JdbcConnectionPool.create(jdbcUrl, "stats", "stats")
 
-    private val conn: Connection by lazy {
-        DriverManager.getConnection(connParams.getJdbcUrl(), connParams.user, connParams.password)
-    }
-
-    override fun getConnection() = conn
-
-    override fun init() {
-        // TODO("migrate to initializing in-memory db from csv files")
+    override fun getConnection(): Connection = connPool.connection
+    fun stats() {
+        val statlog = LoggerFactory.getLogger("DB")
+        statlog.info("active connections: ${connPool.activeConnections}");
     }
 }
 
@@ -65,18 +59,22 @@ class QueryEngine(private val dbProvider: DBProvider) {
             extractor: (rs: ResultSet) -> List<TableRecord>
         ): List<TableRecord> {
             val timer = Stopwatch.createStarted()
-            val rs = statement(dbProvider, queryTemplate, binds).executeQuery()
-            logger.info("exec query: $timer")
-            timer.reset()
-            timer.start()
-            // TODO -- caching here, based on a hash of binds and queryTemplate.
-            val records: List<TableRecord> = extractor.invoke(rs)
-            logger.info("extract results: $timer")
+            var records: List<TableRecord>
+            dbProvider.getConnection().use {
+                val rs = statement(it, queryTemplate, binds).executeQuery()
+                logger.info("exec query: $timer")
+                timer.reset()
+                timer.start()
+                // TODO -- caching here, based on a hash of binds and queryTemplate.
+                records = extractor.invoke(rs)
+                logger.info("extract results: $timer")
+            }
+            DB.stats()
             return records
         }
 
-        private fun statement(dbProvider: DBProvider, queryTemplate: String, binds: List<Bind<*>>): PreparedStatement {
-            val stmt = dbProvider.getConnection().prepareStatement(queryTemplate)
+        private fun statement(conn: Connection, queryTemplate: String, binds: List<Bind<*>>): PreparedStatement {
+            val stmt = conn.prepareStatement(queryTemplate)
             var paramIndex = 1
             binds.forEach {
                 when (it::class) {

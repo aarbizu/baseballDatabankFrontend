@@ -44,10 +44,6 @@ class BasicTest {
             override fun getConnection(): Connection {
                 return DriverManager.getConnection(postgres.jdbcUrl, postgres.username, postgres.password)
             }
-
-            override fun init() {
-                TODO()
-            }
         }
     }
 

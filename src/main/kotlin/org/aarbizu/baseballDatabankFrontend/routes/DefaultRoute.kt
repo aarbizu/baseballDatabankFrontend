@@ -25,13 +25,12 @@ class DefaultRoute(private val crumbs: MutableList<Crumb>) : RouteHandler {
                         div(fomantic.content).text("Baseball Databank").new {
                             div(subHeaderStyle).text("Historical baseball database derived from: ").new {
                                 a(href = "https://github.com/chadwickbureau/baseballdatabank")
-                                    .text("The Chadwick Baseball Databank").tag
+                                    .text("The Chadwick Baseball Databank")
                             }
                         }
                     }
-                    div(fomantic.content).new {
-                        a(href = "http://chadwick-bureau.com/")
-                            .text("Visit the Chadwick Baseball Bureau")
+                    div(fomantic.content) {
+                        a(href = "http://chadwick-bureau.com/").text("Visit the Chadwick Baseball Bureau")
                     }
                     div(fomantic.ui.divider)
                     button(massiveButtonStyle).text("Get Started").on.click {
