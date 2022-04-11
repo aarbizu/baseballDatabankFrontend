@@ -4,7 +4,6 @@ import com.google.common.base.Stopwatch
 import io.ktor.application.Application
 import io.ktor.application.call
 import io.ktor.application.install
-import io.ktor.features.CallLogging
 import io.ktor.features.Compression
 import io.ktor.features.DefaultHeaders
 import io.ktor.http.cio.websocket.pingPeriod

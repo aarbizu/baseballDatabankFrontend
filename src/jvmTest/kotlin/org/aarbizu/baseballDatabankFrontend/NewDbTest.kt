@@ -1,7 +1,6 @@
 package org.aarbizu.baseballDatabankFrontend
 
 import com.google.common.truth.Truth.assertThat
-import io.ktor.network.util.DefaultDatagramByteBufferPool
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import org.aarbizu.baseballDatabankFrontend.db.DB
@@ -14,9 +13,24 @@ import org.junit.jupiter.api.extension.ExtendWith
 import util.createTableSql
 import util.upsertPlayerSql
 import java.io.File
+import java.sql.ResultSet
 
 @ExtendWith(MockKExtension::class)
 class NewDbTest {
+    private val extractor: (rs: ResultSet) -> List<TableRecord> = { rs ->
+        val records = mutableListOf<TestPlayerRecord>()
+        while (rs.next()) {
+            records.add(
+                TestPlayerRecord(
+                    rs.getString("id"),
+                    rs.getInt("games"),
+                    rs.getInt("pos")
+                )
+            )
+        }
+        records
+    }
+
 
     @MockK
     lateinit var dbmock: DBProvider
@@ -46,7 +60,7 @@ class NewDbTest {
             val stmt = it.prepareStatement("SELECT * from players where id = ?").apply {
                 setString(1, "aaronha")
             }
-            records = BasicTest.TestPlayerRecord.extract.invoke(stmt.executeQuery())
+            records = extractor.invoke(stmt.executeQuery())
         }
 
         assertThat(records.lastIndex).isEqualTo(0)
