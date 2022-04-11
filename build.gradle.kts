@@ -1,16 +1,16 @@
 import org.gradle.api.tasks.testing.logging.TestLogEvent.FAILED
 import org.gradle.api.tasks.testing.logging.TestLogEvent.PASSED
 import org.gradle.api.tasks.testing.logging.TestLogEvent.SKIPPED
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
-val compileKotlin: KotlinCompile by tasks
+import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 
 plugins {
     // Apply the Kotlin JVM plugin to add support for Kotlin.
-    kotlin("jvm") version "1.6.10"
+    kotlin("multiplatform") version "1.6.20"
 
     // Apply the application plugin to add support for building a CLI application.
     application
+
+    kotlin("plugin.serialization") version "1.6.20"
 
     // Apply the idea plugin
     idea
@@ -23,7 +23,7 @@ plugins {
 }
 
 object DependencyVersions {
-    const val kotlin = "1.6.0"
+    const val kotlin = "1.6.20"
     const val postgres = "42.3.3"
     const val kotlinLogging = "2.1.21"
     const val kweb = "0.11.2"
@@ -39,52 +39,95 @@ object DependencyVersions {
     const val mockk = "1.12.3"
     const val testContainers = "1.16.3"
     const val h2db = "2.1.210"
+    const val serialization = "1.3.2"
+    const val react = "17.0.2-pre.299-kotlin-1.6.10"
 }
 
-dependencies {
-    // Align versions of all Kotlin components
-    implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
+kotlin {
+    jvm {
+        withJava()
+    }
+    js {
+        browser {
+            binaries.executable()
+        }
+    }
+    sourceSets {
+        val commonMain by getting {
+            dependencies {
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:${DependencyVersions.serialization}")
+                implementation("io.ktor:ktor-client-core:${DependencyVersions.ktor}")
+            }
+        }
+        val commonTest by getting {
+            dependencies {
+                implementation(kotlin("test-common"))
+                implementation(kotlin("test-annotations-common"))
 
-    // Use the Kotlin 1.5.0 standard library.
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:${DependencyVersions.kotlin}")
 
-    // use ktor
-    implementation("io.ktor:ktor-server-core:${DependencyVersions.ktor}")
+            }
+        }
+        val jvmTest by getting {
+            dependencies {
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-debug:${DependencyVersions.kotlinxCoroutines}")
+                implementation("org.jetbrains.kotlin:kotlin-test-junit:${DependencyVersions.kotlin}")
+                implementation("com.github.stefanbirkner:system-rules:${DependencyVersions.systemRules}")
+                implementation("com.google.truth:truth:${DependencyVersions.truth}")
+                implementation("org.junit.jupiter:junit-jupiter-api:${DependencyVersions.junit}")
+                implementation("org.junit.jupiter:junit-jupiter-params:${DependencyVersions.junit}")
+                implementation("io.mockk:mockk:${DependencyVersions.mockk}")
+                implementation("org.testcontainers:testcontainers:${DependencyVersions.testContainers}")
+                implementation("org.testcontainers:junit-jupiter:${DependencyVersions.testContainers}")
+                implementation("org.testcontainers:postgresql:${DependencyVersions.testContainers}")
 
-    // use ktor-netty engine for ktor
-    implementation("io.ktor:ktor-server-netty:${DependencyVersions.ktor}")
+                runtimeOnly("org.junit.platform:junit-platform-console:${DependencyVersions.junitPlatformConsole}")
+                runtimeOnly("org.junit.jupiter:junit-jupiter-engine:${DependencyVersions.junit}")
+            }
+        }
+        val jvmMain by getting {
+            dependencies {
+                // Align versions of all Kotlin components
+                implementation("org.jetbrains.kotlin:kotlin-bom")
 
-    // use Kweb
-    implementation("com.github.kwebio:kweb-core:${DependencyVersions.kweb}")
+                // Use the Kotlin 1.5.0 standard library.
+                implementation("org.jetbrains.kotlin:kotlin-stdlib:${DependencyVersions.kotlin}")
 
-    // use KotlinLogging
-    implementation("io.github.microutils:kotlin-logging:${DependencyVersions.kotlinLogging}")
+                // use ktor
+                implementation("io.ktor:ktor-server-core:${DependencyVersions.ktor}")
 
-    //Coroutines (chapter 8)
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${DependencyVersions.kotlinxCoroutines}")
+                // use ktor-netty engine for ktor
+                implementation("io.ktor:ktor-server-netty:${DependencyVersions.ktor}")
 
-    // postgres
-    implementation("org.postgresql:postgresql:${DependencyVersions.postgres}")
+                // use Kweb
+                implementation("com.github.kwebio:kweb-core:${DependencyVersions.kweb}")
 
-    implementation("org.slf4j:slf4j-api:${DependencyVersions.slf4j}")
-    implementation("org.slf4j:slf4j-simple:${DependencyVersions.slf4j}")
-    implementation("com.google.code.gson:gson:${DependencyVersions.gson}")
-    implementation("com.google.guava:guava:${DependencyVersions.guava}")
-    implementation("com.h2database:h2:${DependencyVersions.h2db}")
+                // use KotlinLogging
+                implementation("io.github.microutils:kotlin-logging:${DependencyVersions.kotlinLogging}")
 
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-debug:${DependencyVersions.kotlinxCoroutines}")
-    testImplementation("org.jetbrains.kotlin:kotlin-test-junit:${DependencyVersions.kotlin}")
-    testImplementation("com.github.stefanbirkner:system-rules:${DependencyVersions.systemRules}")
-    testImplementation("com.google.truth:truth:${DependencyVersions.truth}")
-    testImplementation("org.junit.jupiter:junit-jupiter-api:${DependencyVersions.junit}")
-    testImplementation("org.junit.jupiter:junit-jupiter-params:${DependencyVersions.junit}")
-    testImplementation("io.mockk:mockk:${DependencyVersions.mockk}")
-    testImplementation("org.testcontainers:testcontainers:${DependencyVersions.testContainers}")
-    testImplementation("org.testcontainers:junit-jupiter:${DependencyVersions.testContainers}")
-    testImplementation("org.testcontainers:postgresql:${DependencyVersions.testContainers}")
+                //Coroutines (chapter 8)
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${DependencyVersions.kotlinxCoroutines}")
 
-    testRuntimeOnly("org.junit.platform:junit-platform-console:${DependencyVersions.junitPlatformConsole}")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${DependencyVersions.junit}")
+                // postgres
+                implementation("org.postgresql:postgresql:${DependencyVersions.postgres}")
+
+                implementation("org.slf4j:slf4j-api:${DependencyVersions.slf4j}")
+                implementation("org.slf4j:slf4j-simple:${DependencyVersions.slf4j}")
+                implementation("com.google.code.gson:gson:${DependencyVersions.gson}")
+                implementation("com.google.guava:guava:${DependencyVersions.guava}")
+                implementation("com.h2database:h2:${DependencyVersions.h2db}")
+            }
+        }
+        val jsMain by getting {
+            dependencies {
+                implementation("io.ktor:ktor-client-js:${DependencyVersions.ktor}")
+                implementation("io.ktor:ktor-client-json:${DependencyVersions.ktor}")
+                implementation("io.ktor:ktor-client-serialization:${DependencyVersions.ktor}")
+
+                implementation("org.jetbrains.kotlin-wrappers:kotlin-react:${DependencyVersions.react}")
+                implementation("org.jetbrains.kotlin-wrappers:kotlin-react-dom:${DependencyVersions.react}")
+            }
+        }
+    }
 }
 
 repositories {
@@ -94,15 +137,15 @@ repositories {
 }
 
 group = "org.aarbizu"
-version = "0.0.1"
+version = "0.1.0"
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_15
-    targetCompatibility = JavaVersion.VERSION_15
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
 }
 
 application {
-    mainClass.set("org.aarbizu.baseballDatabankFrontend.MainKt")
+    mainClass.set("MainKt")
 }
 
 spotless {
@@ -112,6 +155,25 @@ spotless {
 }
 
 tasks {
+    withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+        kotlinOptions {
+            jvmTarget = "11"
+        }
+    }
+
+    getByName<Jar>("jvmJar") {
+        val taskName = if (project.hasProperty("isProduction")
+            || project.gradle.startParameter.taskNames.contains("installDist")
+        ) {
+            "jsBrowserProductionWebpack"
+        } else {
+            "jsBrowserDevelopmentWebpack"
+        }
+        val webpackTask = getByName<KotlinWebpack>(taskName)
+        dependsOn(webpackTask) // make sure JS gets compiled first
+        from(File(webpackTask.destinationDirectory, webpackTask.outputFileName)) // bring output file along into the JAR
+    }
+
     test {
         useJUnitPlatform()
         testLogging {
@@ -121,5 +183,20 @@ tasks {
 
     task("stage") {
         dependsOn("installDist")
+    }
+
+    getByName<JavaExec>("run") {
+        classpath(getByName<Jar>("jvmJar")) // so that the JS artifacts generated by `jvmJar` can be found and served
+    }
+
+    distributions {
+        main {
+            contents {
+                from("$buildDir/libs") {
+                    rename("${rootProject.name}-jvm", rootProject.name)
+                    into("lib")
+                }
+            }
+        }
     }
 }
