@@ -23,5 +23,4 @@ class SchoolsLoader : CsvLoader {
             }
         }
     }
-
 }

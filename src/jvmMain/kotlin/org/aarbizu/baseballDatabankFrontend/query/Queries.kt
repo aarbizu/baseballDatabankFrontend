@@ -1,8 +1,8 @@
 package org.aarbizu.baseballDatabankFrontend.query
 
 // COALESCE returns first non-null argument
-
-val playerNamesByLengthSql = """
+val playerNamesByLengthSql =
+    """
     SELECT
         COALESCE(namegiven, 'unknown') || ' ' || COALESCE(namelast, 'unknown') as name,
         COALESCE(birthyear, 0) || '-' || COALESCE(birthmonth, 0) || '-' || COALESCE(birthday, 0) as born,
@@ -13,9 +13,10 @@ val playerNamesByLengthSql = """
     FROM people
     WHERE LENGTH(namelast) = ?
     ORDER BY playerid
-""".trimIndent()
+    """.trimIndent()
 
-val playerLastNameSubstringSql = """
+val playerLastNameSubstringSql =
+    """
     SELECT
         COALESCE(namegiven, 'unknown') || ' ' || COALESCE(namelast, 'unknown') as name,
         COALESCE(birthyear, 0) || '-' || COALESCE(birthmonth, 0) || '-' || COALESCE(birthday, 0) as born,
@@ -26,16 +27,21 @@ val playerLastNameSubstringSql = """
     FROM people
     WHERE LOWER(namelast) LIKE ?
     ORDER BY LENGTH(namelast) ASC
-""".trimIndent()
+    """.trimIndent()
 
-fun playerNameRegexSql(first: Boolean = true, last: Boolean = true, caseSensitive: Boolean = false): String {
-    val nameClauseColumn = if (first && last) {
-        "namefirst || ' ' || namelast"
-    } else if (first) {
-        "namefirst"
-    } else {
-        "namelast"
-    }
+fun playerNameRegexSql(
+    first: Boolean = true,
+    last: Boolean = true,
+    caseSensitive: Boolean = false
+): String {
+    val nameClauseColumn =
+        if (first && last) {
+            "namefirst || ' ' || namelast"
+        } else if (first) {
+            "namefirst"
+        } else {
+            "namelast"
+        }
 
     return """
         SELECT 
@@ -57,7 +63,12 @@ fun playerNameRegexSql(first: Boolean = true, last: Boolean = true, caseSensitiv
 }
 
 fun singleSeasonHrTotalsSql(firstOnly: Boolean = true): String {
-    val firstNameField = if (firstOnly) { "namefirst" } else { "namegiven" }
+    val firstNameField =
+        if (firstOnly) {
+            "namefirst"
+        } else {
+            "namegiven"
+        }
     return """
         SELECT b.yearid AS year, 
                COALESCE(p.$firstNameField, 'unknown') || ' ' || COALESCE(p.namelast, 'unknown') AS playername,

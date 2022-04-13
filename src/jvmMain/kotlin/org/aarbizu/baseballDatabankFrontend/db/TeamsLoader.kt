@@ -4,7 +4,8 @@ import java.io.File
 
 class TeamsLoader : CsvLoader {
     override fun load(db: DBProvider, csvFile: File) {
-        // upstream/Teams.csv vs core/Teams.csv -- not sure what the differences are, but, handle them here
+        // upstream/Teams.csv vs core/Teams.csv -- not sure what the differences are, but, handle
+        // them here
         if (csvFile.absolutePath.contains("/core/")) {
             loadCore(db, csvFile)
         } else {
@@ -82,8 +83,8 @@ class TeamsLoader : CsvLoader {
             it.createStatement().use { stmt ->
                 stmt.execute(
                     """
-                        DROP TABLE IF EXISTS upstream_${tableName};
-                        CREATE TABLE upstream_${tableName} (
+                        DROP TABLE IF EXISTS upstream_$tableName;
+                        CREATE TABLE upstream_$tableName (
                             yearID varchar,
                             lgID varchar,
                             teamID varchar,

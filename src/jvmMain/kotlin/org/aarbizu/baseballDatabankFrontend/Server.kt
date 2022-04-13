@@ -11,42 +11,30 @@ import io.ktor.http.ContentType
 import io.ktor.http.HttpMethod
 import io.ktor.http.content.resources
 import io.ktor.http.content.static
+import io.ktor.request.receive
+import io.ktor.response.respond
 import io.ktor.response.respondText
 import io.ktor.routing.get
+import io.ktor.routing.post
+import io.ktor.routing.route
 import io.ktor.routing.routing
 import io.ktor.serialization.json
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import org.aarbizu.baseballDatabankFrontend.config.AppConfig
 import org.aarbizu.baseballDatabankFrontend.db.DataLoader
+import org.aarbizu.baseballDatabankFrontend.query.QueryEngine
 import org.slf4j.LoggerFactory
 
-//fun Application.module() {
-//    install(DefaultHeaders)
-//    install(Compression)
-//    install(WebSockets) {
-//        pingPeriod = Duration.ofSeconds(15)
-//        timeout = Duration.ofSeconds(30)
-//    }
-//    install(Kweb) {
-//        plugins = listOf(fomanticUIPlugin)
-//        kwebConfig = DatabankKwebConfig()
-//        routing {
-//            trace { LoggerFactory.getLogger(this.javaClass).info(it.buildText()) }
-//            get("/{visitedUrl...}") {
-//                call.respondKwebRender {
-//                    route {
-//                        handleRoutes()
-//                    }
-//                }
-//            }
-//        }
-//    }
-//}
-
 class Server(private val config: AppConfig) {
+    private lateinit var queries: QueryEngine
+
     fun start() {
         initializeDb(config)
+        queries = QueryEngine(config.db)
+
+        // this has to come last, since it starts the server and doesn't exit until the app stops
+        // and exists
         startBackend(config)
     }
 
@@ -64,35 +52,55 @@ class Server(private val config: AppConfig) {
     }
 
     private fun startBackend(config: AppConfig) {
-        embeddedServer(
-            Netty,
-            config.port
-        ) {
-            install(ContentNegotiation) {
-                json()
-            }
+        embeddedServer(Netty, config.port) {
+            install(ContentNegotiation) { json() }
             install(CORS) {
                 method(HttpMethod.Get)
                 method(HttpMethod.Post)
-                method(HttpMethod.Delete)
                 anyHost()
             }
-            install(Compression) {
-                gzip()
-            }
+            install(Compression) { gzip() }
 
             routing {
-                trace { LoggerFactory.getLogger(this.javaClass).info(it.buildText()) }
+                //                trace {
+                // LoggerFactory.getLogger(this.javaClass).info(it.buildText()) }
+                route("player-name-length") {
+                    post {
+                        val param = call.receive<PlayerNameLengthParam>()
+                        call.respond(queries.playerNamesByLength(param.nameLength))
+                    }
+                }
+
+                route("player-lastname-search") {
+                    post {
+                        val param = call.receive<PlayerNameSearchParam>()
+                        call.respond(queries.playerNameSearch(param.nameSearchString))
+                    }
+                }
+
+                route("player-lastname-regex-search") {
+                    post {
+                        val param = call.receive<PlayerNameSearchParam>()
+                        call.respond(
+                            queries.playerNameRegexSearch(
+                                param.nameSearchString,
+                                param.matchFirstName,
+                                param.matchLastName,
+                                param.caseSensitive
+                            )
+                        )
+                    }
+                }
+
                 get("/") {
                     call.respondText(
                         this::class.java.classLoader.getResource("index.html")!!.readText(),
                         ContentType.Text.Html
                     )
                 }
-                static("/") {
-                    resources("")
-                }
+                static("/") { resources("") }
             }
-        }.start(wait = true)
+        }
+            .start(wait = true)
     }
 }

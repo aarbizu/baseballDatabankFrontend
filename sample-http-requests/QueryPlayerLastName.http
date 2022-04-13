@@ -1,0 +1,6 @@
+POST http://localhost:8080/player-lastname-search
+Content-Type: application/json
+
+{
+  "nameSearchString": "Bond"
+}

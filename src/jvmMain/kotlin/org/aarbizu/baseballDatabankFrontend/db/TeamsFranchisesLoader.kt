@@ -22,5 +22,4 @@ class TeamsFranchisesLoader : CsvLoader {
             }
         }
     }
-
 }

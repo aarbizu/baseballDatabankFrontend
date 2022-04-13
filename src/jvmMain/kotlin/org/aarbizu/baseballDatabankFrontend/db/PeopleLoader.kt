@@ -42,5 +42,4 @@ class PeopleLoader : CsvLoader {
             }
         }
     }
-
 }

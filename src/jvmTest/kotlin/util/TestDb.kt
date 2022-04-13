@@ -7,11 +7,12 @@ fun upsertPlayerSql(id: String, gamesPlayed: Int, position: Int): String {
     """.trimIndent()
 }
 
-val createTableSql = """
+val createTableSql =
+    """
     DROP TABLE IF EXISTS players;
     CREATE TABLE players (
         id text,
         games int DEFAULT null,
         pos int DEFAULT null
     );
-""".trimIndent()
+    """.trimIndent()

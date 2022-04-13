@@ -6,7 +6,6 @@ import io.mockk.junit5.MockKExtension
 import org.aarbizu.baseballDatabankFrontend.config.ServerConfig
 import org.aarbizu.baseballDatabankFrontend.db.DBProvider
 import org.aarbizu.baseballDatabankFrontend.db.DataLoader
-import org.aarbizu.baseballDatabankFrontend.records.TableRecord
 import org.h2.jdbcx.JdbcConnectionPool
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -17,19 +16,12 @@ import java.sql.ResultSet
 
 @ExtendWith(MockKExtension::class)
 class NewDbTest {
-    @MockK
-    lateinit var dbmock: DBProvider
+    @MockK lateinit var dbmock: DBProvider
 
-    private val extractor: (rs: ResultSet) -> List<TableRecord> = { rs ->
+    private val extractor: (ResultSet) -> List<TestPlayerRecord> = { rs ->
         val records = mutableListOf<TestPlayerRecord>()
         while (rs.next()) {
-            records.add(
-                TestPlayerRecord(
-                    rs.getString("id"),
-                    rs.getInt("games"),
-                    rs.getInt("pos")
-                )
-            )
+            records.add(TestPlayerRecord(rs.getString("id"), rs.getInt("games"), rs.getInt("pos")))
         }
         records
     }
@@ -39,32 +31,29 @@ class NewDbTest {
         val currentDrivers = System.getProperty("jdbc.drivers") + ":org.h2.Driver"
         System.setProperty("jdbc.drivers", currentDrivers)
         val jdbcUrl = "jdbc:h2:mem:stats;DB_CLOSE_DELAY=-1"
-        var records: List<TableRecord>
+        var records: List<TestPlayerRecord>
         val connPool = JdbcConnectionPool.create(jdbcUrl, "stats", "stats")
 
         connPool.connection.use {
-            it.createStatement().use { stmt ->
-                stmt.execute(createTableSql)
-            }
+            it.createStatement().use { stmt -> stmt.execute(createTableSql) }
         }
 
         connPool.connection.use {
-            it.createStatement().use { stmt ->
-                stmt.execute(upsertPlayerSql("aaronha", 15000, 7))
-            }
+            it.createStatement().use { stmt -> stmt.execute(upsertPlayerSql("aaronha", 15000, 7)) }
             it.commit()
         }
 
         connPool.connection.use {
-            val stmt = it.prepareStatement("SELECT * from players where id = ?").apply {
-                setString(1, "aaronha")
-            }
+            val stmt =
+                it.prepareStatement("SELECT * from players where id = ?").apply {
+                    setString(1, "aaronha")
+                }
             records = extractor.invoke(stmt.executeQuery())
         }
 
         assertThat(records.lastIndex).isEqualTo(0)
 
-        connPool.dispose();
+        connPool.dispose()
     }
 
     @Test
@@ -100,9 +89,12 @@ class NewDbTest {
 
             connPool.connection.use {
                 it.createStatement().use { stmt ->
-                    val rs = stmt.executeQuery("""
+                    val rs =
+                        stmt.executeQuery(
+                            """
                         SELECT COUNT(*) from ${fileOne.nameWithoutExtension}
-                    """.trimIndent())
+                            """.trimIndent()
+                        )
 
                     rs.next()
                     val rows = rs.getInt(1)
@@ -131,11 +123,12 @@ class NewDbTest {
         dataLoader.buildIndexes()
         ServerConfig.db.getConnection().use {
             it.createStatement().use { stmt ->
-                val rs = stmt.executeQuery(
-                    """
+                val rs =
+                    stmt.executeQuery(
+                        """
                     SELECT COUNT(*) from people
-                """.trimIndent()
-                )
+                        """.trimIndent()
+                    )
                 rs.next()
                 val playerCount = rs.getInt(1)
                 assertThat(playerCount).isEqualTo(20370)

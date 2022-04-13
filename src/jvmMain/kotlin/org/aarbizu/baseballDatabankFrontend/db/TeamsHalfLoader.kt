@@ -26,6 +26,6 @@ class TeamsHalfLoader : CsvLoader {
                     """.trimIndent()
                 )
             }
-        }    }
-
+        }
+    }
 }

@@ -1,0 +1,9 @@
+POST http://localhost:8080/player-lastname-regex-search
+Content-Type: application/json
+
+{
+  "nameSearchString": ".(?:na){2}.*",
+  "matchFirstName": "true",
+  "matchLastName": "true",
+  "caseSensitive": "true"
+}
