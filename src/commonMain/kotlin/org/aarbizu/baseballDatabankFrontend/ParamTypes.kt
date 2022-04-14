@@ -17,6 +17,6 @@ class PlayerNameSearchParam(
 private const val bbrefUri = "https://www.baseball-reference.com/players"
 private const val bbrefSuffix = ".shtml"
 
-private fun decorateBbrefId(bbrefid: String): String {
+fun decorateBbrefId(bbrefid: String): String {
     return "$bbrefUri/${bbrefid[0]}/$bbrefid$bbrefSuffix"
 }

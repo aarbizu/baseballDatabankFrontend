@@ -18,7 +18,8 @@ val mockk = "1.12.3"
 val testContainers = "1.16.3"
 val h2db = "2.1.210"
 val serialization = "1.3.2"
-val react = "17.0.2-pre.299-kotlin-1.6.10"
+val react = "18.0.0-pre.329-kotlin-1.6.20"
+val reactRouterDom = "6.3.0-pre.329-kotlin-1.6.20"
 
 plugins {
     // Apply the Kotlin JVM plugin to add support for Kotlin.
@@ -78,9 +79,6 @@ kotlin {
                 implementation("org.junit.jupiter:junit-jupiter-api:$junit")
                 implementation("org.junit.jupiter:junit-jupiter-params:$junit")
                 implementation("io.mockk:mockk:$mockk")
-                implementation("org.testcontainers:testcontainers:$testContainers")
-                implementation("org.testcontainers:junit-jupiter:$testContainers")
-                implementation("org.testcontainers:postgresql:$testContainers")
 
                 runtimeOnly("org.junit.platform:junit-platform-console:$junitPlatformConsole")
                 runtimeOnly("org.junit.jupiter:junit-jupiter-engine:$junit")
@@ -108,6 +106,7 @@ kotlin {
 
                 implementation("org.jetbrains.kotlin-wrappers:kotlin-react:$react")
                 implementation("org.jetbrains.kotlin-wrappers:kotlin-react-dom:$react")
+                implementation("org.jetbrains.kotlin-wrappers:kotlin-react-router-dom:$reactRouterDom")
             }
         }
         val jsTest by getting {
