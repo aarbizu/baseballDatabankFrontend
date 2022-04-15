@@ -4,14 +4,19 @@ import kotlinx.coroutines.launch
 import react.FC
 import react.Props
 import react.dom.html.AnchorTarget
-import react.dom.html.ReactHTML
+import react.dom.html.ReactHTML.a
+import react.dom.html.ReactHTML.h1
+import react.dom.html.ReactHTML.table
+import react.dom.html.ReactHTML.tbody
+import react.dom.html.ReactHTML.td
+import react.dom.html.ReactHTML.tr
 import react.useState
 
-val LastNameSearch =
+val LastNameLengthSearch =
     FC<Props> {
         var players by useState(emptyList<SimplePlayerRecord>())
 
-        ReactHTML.h1 { +"Baseball Databank" }
+        h1 { +"Player Search By Last Name Length" }
 
         InputComponent {
             inputLabel = "Player Last Name Length"
@@ -21,17 +26,17 @@ val LastNameSearch =
             title = "Last name length, up to two digits"
             allowedPattern = "[0-9]{1,2}"
         }
-
-        ReactHTML.table {
-            ReactHTML.tbody {
+        // TODO - make this a component
+        table {
+            tbody {
                 players.forEach {
-                    ReactHTML.tr {
-                        ReactHTML.td { +it.name }
-                        ReactHTML.td { +it.born }
-                        ReactHTML.td { +it.debut }
-                        ReactHTML.td { +it.finalGame }
-                        ReactHTML.td {
-                            ReactHTML.a {
+                    tr {
+                        td { +it.name }
+                        td { +it.born }
+                        td { +it.debut }
+                        td { +it.finalGame }
+                        td {
+                            a {
                                 target = AnchorTarget._blank
                                 href = decorateBbrefId(it.bbrefId)
                                 +it.bbrefId

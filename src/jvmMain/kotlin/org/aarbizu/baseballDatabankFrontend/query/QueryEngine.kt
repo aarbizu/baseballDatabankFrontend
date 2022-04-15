@@ -61,6 +61,7 @@ class QueryEngine(private val dbProvider: DBProvider) {
             simplePlayerRecordExtractor
         )
 
+    //TODO - make this also search by full-name length with an option
     fun playerNamesByLength(length: String) =
         query(
             dbProvider,

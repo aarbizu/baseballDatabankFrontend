@@ -6,7 +6,7 @@ import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 val kotlin = "1.6.20"
 val kotlinLogging = "2.1.21"
 val kotlinxCoroutines = "1.6.0"
-val ktor = "1.6.8"
+val ktor = "2.0.0"
 val gson = "2.9.0"
 val guava = "31.1-jre"
 val systemRules = "1.19.0"
@@ -86,11 +86,14 @@ kotlin {
         }
         val jvmMain by getting {
             dependencies {
-                implementation("io.ktor:ktor-serialization:$ktor")
                 implementation("io.ktor:ktor-server-core:$ktor")
+                implementation("io.ktor:ktor-server-compression:$ktor")
+                implementation("io.ktor:ktor-server-content-negotiation:$ktor")
+                implementation("io.ktor:ktor-server-cors:$ktor")
                 implementation("io.ktor:ktor-server-netty:$ktor")
-                implementation("io.github.microutils:kotlin-logging:$kotlinLogging")
+                implementation("io.ktor:ktor-serialization-kotlinx-json:$ktor")
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinxCoroutines")
+                implementation("io.github.microutils:kotlin-logging:$kotlinLogging")
                 implementation("org.slf4j:slf4j-api:$slf4j")
                 implementation("org.slf4j:slf4j-simple:$slf4j")
                 implementation("com.google.code.gson:gson:$gson")
@@ -102,7 +105,8 @@ kotlin {
             dependencies {
                 implementation("io.ktor:ktor-client-js:$ktor")
                 implementation("io.ktor:ktor-client-json:$ktor")
-                implementation("io.ktor:ktor-client-serialization:$ktor")
+                implementation("io.ktor:ktor-client-content-negotiation:$ktor")
+                implementation("io.ktor:ktor-serialization-kotlinx-json:$ktor")
 
                 implementation("org.jetbrains.kotlin-wrappers:kotlin-react:$react")
                 implementation("org.jetbrains.kotlin-wrappers:kotlin-react-dom:$react")
