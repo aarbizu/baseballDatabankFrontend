@@ -19,22 +19,27 @@ import io.ktor.server.response.respond
 import io.ktor.server.response.respondText
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
-import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
 import org.aarbizu.baseballDatabankFrontend.config.AppConfig
 import org.aarbizu.baseballDatabankFrontend.db.DataLoader
 import org.aarbizu.baseballDatabankFrontend.query.QueryEngine
+import org.h2.tools.Server
 import org.slf4j.LoggerFactory
+import java.nio.file.Files.readString
+import java.nio.file.Paths
+
+private const val DEFAULT_HTML_DOC = "src/commonMain/resources/index.html"
 
 class Server(private val config: AppConfig) {
     private lateinit var queries: QueryEngine
+    private lateinit var defaultHtmlText: String
 
     fun start() {
         initializeDb(config)
         queries = QueryEngine(config.db)
+        defaultHtmlText = readString(Paths.get(DEFAULT_HTML_DOC))
 
-        // this has to come last, since it starts the server and doesn't exit until the app stops
-        // and exists
+        /* this needs to be last since it starts the server loop */
         startBackend(config)
     }
 
@@ -49,6 +54,12 @@ class Server(private val config: AppConfig) {
         dataLoader.buildIndexes()
         config.db.stats()
         log.info("database init complete in {}", timer.toString())
+
+        val useDebugServer = System.getenv("DB_DEBUG")?.toBoolean() ?: false
+
+        if(useDebugServer) {
+            Server.createTcpServer("-tcp", "-tcpPort" ,"9999").start()
+        }
     }
 
     private fun startBackend(config: AppConfig) {
@@ -62,42 +73,30 @@ class Server(private val config: AppConfig) {
             install(Compression) { gzip() }
 
             routing {
-                //                trace {
-                // LoggerFactory.getLogger(this.javaClass).info(it.buildText()) }
-                route("player-name-length") {
-                    post {
-                        val param = call.receive<PlayerNameLengthParam>()
-                        call.respond(queries.playerNamesByLength(param.nameLength))
-                    }
+                // trace { LoggerFactory.getLogger(this.javaClass).info(it.buildText()) }
+                post("player-name-length") {
+                    val param = call.receive<PlayerNameLengthParam>()
+                    call.respond(queries.playerNamesByLength(param.nameLength))
                 }
 
-                route("player-lastname-search") {
-                    post {
-                        val param = call.receive<PlayerNameSearchParam>()
-                        call.respond(queries.playerNameSearch(param.nameSearchString))
-                    }
+                post("player-lastname-search") {
+                    val param = call.receive<PlayerNameSearchParam>()
+                    call.respond(queries.playerNameSearch(param.nameSearchString))
                 }
 
-                route("player-lastname-regex-search") {
-                    post {
-                        val param = call.receive<PlayerNameSearchParam>()
-                        call.respond(
-                            queries.playerNameRegexSearch(
-                                param.nameSearchString,
-                                param.matchFirstName,
-                                param.matchLastName,
-                                param.caseSensitive
-                            )
+                post("player-lastname-regex-search") {
+                    val param = call.receive<PlayerNameSearchParam>()
+                    call.respond(
+                        queries.playerNameRegexSearch(
+                            param.nameSearchString,
+                            param.matchFirstName,
+                            param.matchLastName,
+                            param.caseSensitive
                         )
-                    }
-                }
-
-                get("/") {
-                    call.respondText(
-                        this::class.java.classLoader.getResource("index.html")!!.readText(),
-                        ContentType.Text.Html
                     )
                 }
+
+                get("/") { call.respondText(defaultHtmlText, ContentType.Text.Html) }
                 static("/") { resources("") }
             }
         }
