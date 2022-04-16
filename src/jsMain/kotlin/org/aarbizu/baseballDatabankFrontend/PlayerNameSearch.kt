@@ -1,39 +1,23 @@
 package org.aarbizu.baseballDatabankFrontend
 
-import react.FC
-import react.Props
-import react.dom.html.AnchorTarget
-import react.dom.html.ReactHTML.a
+import kotlinx.coroutines.launch
+import react.VFC
 import react.dom.html.ReactHTML.h1
-import react.dom.html.ReactHTML.table
-import react.dom.html.ReactHTML.tbody
-import react.dom.html.ReactHTML.td
-import react.dom.html.ReactHTML.tr
 import react.useState
 
-val PlayerNameSearch =
-    FC<Props> {
-        var players by useState(emptyList<SimplePlayerRecord>())
+val PlayerNameSearch = VFC {
+    var players by useState(emptyList<SimplePlayerRecord>())
 
-        h1 { +"Player Search" }
+    h1 { +"Player Search" }
 
-        table {
-            tbody {
-                players.forEach {
-                    tr {
-                        td { +it.name }
-                        td { +it.born }
-                        td { +it.debut }
-                        td { +it.finalGame }
-                        td {
-                            a {
-                                target = AnchorTarget._blank
-                                href = decorateBbrefId(it.bbrefId)
-                                +it.bbrefId
-                            }
-                        }
-                    }
-                }
-            }
+    InputComponent {
+        inputLabel = "Player Last Name"
+        onSubmit = { input ->
+            scope.launch { players = queryPlayerName(PlayerNameSearchParam(input)) }
         }
+        title = "Player name, at last two characters long"
+        allowedPattern = """[a-zA-Z'\- ]{2,}"""
     }
+
+    PlayerTable { playerList = players }
+}

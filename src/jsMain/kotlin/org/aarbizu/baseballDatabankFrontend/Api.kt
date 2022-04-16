@@ -32,3 +32,12 @@ suspend fun queryPlayerNameLength(lengthParam: PlayerNameLengthParam): List<Simp
         }
         .body()
 }
+
+suspend fun queryPlayerName(nameParam: PlayerNameSearchParam): List<SimplePlayerRecord> {
+    return jsonClient
+        .post("$endpoint/player-lastname-search") {
+            contentType(ContentType.Application.Json)
+            setBody(nameParam)
+        }
+        .body()
+}

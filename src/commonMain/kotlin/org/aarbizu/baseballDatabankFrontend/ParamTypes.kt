@@ -13,7 +13,6 @@ class PlayerNameSearchParam(
     val caseSensitive: Boolean = false,
 )
 
-// TODO stashing these here for later front-end use
 private const val bbrefUri = "https://www.baseball-reference.com/players"
 private const val bbrefSuffix = ".shtml"
 

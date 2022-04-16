@@ -57,8 +57,9 @@ class Server(private val config: AppConfig) {
 
         val useDebugServer = System.getenv("DB_DEBUG")?.toBoolean() ?: false
 
-        if(useDebugServer) {
-            Server.createTcpServer("-tcp", "-tcpPort" ,"9999").start()
+        if (useDebugServer) {
+            Server.createTcpServer("-tcp", "-tcpPort", "9999").start()
+            log.info("h2 tcp server started on port 9999")
         }
     }
 
@@ -74,12 +75,13 @@ class Server(private val config: AppConfig) {
 
             routing {
                 // trace { LoggerFactory.getLogger(this.javaClass).info(it.buildText()) }
-                post("player-name-length") {
+                post(PLAYER_NAME_LENGTH) {
                     val param = call.receive<PlayerNameLengthParam>()
                     call.respond(queries.playerNamesByLength(param.nameLength))
                 }
 
-                post("player-lastname-search") {
+                // TODO probably combine the following two with some query engine changes
+                post(PLAYER_NAME) {
                     val param = call.receive<PlayerNameSearchParam>()
                     call.respond(queries.playerNameSearch(param.nameSearchString))
                 }

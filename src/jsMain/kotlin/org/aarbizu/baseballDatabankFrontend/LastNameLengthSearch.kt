@@ -1,49 +1,28 @@
 package org.aarbizu.baseballDatabankFrontend
 
+import kotlinext.js.asJsObject
 import kotlinx.coroutines.launch
-import react.FC
-import react.Props
-import react.dom.html.AnchorTarget
-import react.dom.html.ReactHTML.a
+import react.VFC
 import react.dom.html.ReactHTML.h1
-import react.dom.html.ReactHTML.table
-import react.dom.html.ReactHTML.tbody
-import react.dom.html.ReactHTML.td
-import react.dom.html.ReactHTML.tr
+import react.router.useLocation
 import react.useState
+import kotlin.js.Date
 
-val LastNameLengthSearch =
-    FC<Props> {
-        var players by useState(emptyList<SimplePlayerRecord>())
+val LastNameLengthSearch = VFC {
+    var players by useState(emptyList<SimplePlayerRecord>())
+    val stateObj = useLocation().state
+    val inboundInfo = Date.now()
 
-        h1 { +"Player Search By Last Name Length" }
+    h1 { +"Player Search By Last Name Length [$inboundInfo][${stateObj.asJsObject()}]" }
 
-        InputComponent {
-            inputLabel = "Player Last Name Length"
-            onSubmit = { input ->
-                scope.launch { players = queryPlayerNameLength(PlayerNameLengthParam(input)) }
-            }
-            title = "Last name length, up to two digits"
-            allowedPattern = "[0-9]{1,2}"
+    InputComponent {
+        inputLabel = "Player Last Name Length"
+        onSubmit = { input ->
+            scope.launch { players = queryPlayerNameLength(PlayerNameLengthParam(input)) }
         }
-        // TODO - make this a component
-        table {
-            tbody {
-                players.forEach {
-                    tr {
-                        td { +it.name }
-                        td { +it.born }
-                        td { +it.debut }
-                        td { +it.finalGame }
-                        td {
-                            a {
-                                target = AnchorTarget._blank
-                                href = decorateBbrefId(it.bbrefId)
-                                +it.bbrefId
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        title = "Last name length, up to two digits"
+        allowedPattern = """[0-9]{1,2}"""
     }
+
+    PlayerTable { playerList = players }
+}

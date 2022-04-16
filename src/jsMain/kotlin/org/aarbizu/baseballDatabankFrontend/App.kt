@@ -1,8 +1,7 @@
 package org.aarbizu.baseballDatabankFrontend
 
 import kotlinx.coroutines.MainScope
-import react.FC
-import react.Props
+import react.VFC
 import react.create
 import react.dom.html.ReactHTML.div
 import react.dom.html.ReactHTML.h1
@@ -16,44 +15,48 @@ import react.router.dom.Link
 
 val scope = MainScope()
 
-val MainView =
-    FC<Props> {
-        div {
-            h1 { +"Baseball Databank" }
-            nav {
-                style { type = "{{ borderBottom: solid 1px, paddingBottom: 1rem }}" }
-                Link {
-                    to = "/lastnamelength"
-                    +"Last Name Search"
-                }
-                +" | "
-                Link {
-                    to = "/name"
-                    +"Player Name Search"
-                }
+val MainView = VFC {
+    div {
+        h1 { +"Baseball Databank" }
+        nav {
+            style { type = "{{ borderBottom: solid 1px, paddingBottom: 1rem }}" }
+            Link {
+                state = """
+                    "from": "/"
+                """.trimIndent()
+                to = "/lastnamelength"
+                +"Last Name Search"
             }
-            Outlet {}
+            +" | "
+            Link {
+                state = """
+                    "from": "/"
+                """.trimIndent()
+                to = "/name"
+                +"Player Name Search"
+            }
         }
+        Outlet {}
     }
+}
 
-val App =
-    FC<Props> {
-        BrowserRouter {
-            Routes {
+val App = VFC {
+    BrowserRouter {
+        Routes {
+            Route {
+                path = "/"
+                element = MainView.create()
+
                 Route {
-                    path = "/"
-                    element = MainView.create()
+                    path = "/lastnamelength"
+                    element = LastNameLengthSearch.create()
+                }
 
-                    Route {
-                        path = "/lastnamelength"
-                        element = LastNameLengthSearch.create()
-                    }
-
-                    Route {
-                        path = "/name"
-                        element = PlayerNameSearch.create()
-                    }
+                Route {
+                    path = "/name"
+                    element = PlayerNameSearch.create()
                 }
             }
         }
     }
+}
