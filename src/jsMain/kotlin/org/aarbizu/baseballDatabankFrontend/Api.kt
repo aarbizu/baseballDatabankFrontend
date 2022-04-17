@@ -26,7 +26,7 @@ val jsonClient = HttpClient {
 
 suspend fun queryPlayerNameLength(lengthParam: PlayerNameLengthParam): List<SimplePlayerRecord> {
     return jsonClient
-        .post("$endpoint/player-name-length") {
+        .post("$endpoint/$PLAYER_NAME_LENGTH") {
             contentType(ContentType.Application.Json)
             setBody(lengthParam)
         }
@@ -35,7 +35,7 @@ suspend fun queryPlayerNameLength(lengthParam: PlayerNameLengthParam): List<Simp
 
 suspend fun queryPlayerName(nameParam: PlayerNameSearchParam): List<SimplePlayerRecord> {
     return jsonClient
-        .post("$endpoint/player-lastname-search") {
+        .post("$endpoint/$PLAYER_NAME") {
             contentType(ContentType.Application.Json)
             setBody(nameParam)
         }

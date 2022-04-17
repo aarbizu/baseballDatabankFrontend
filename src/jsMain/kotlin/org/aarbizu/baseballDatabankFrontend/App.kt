@@ -19,21 +19,18 @@ val MainView = VFC {
     div {
         h1 { +"Baseball Databank" }
         nav {
-            style { type = "{{ borderBottom: solid 1px, paddingBottom: 1rem }}" }
+            style { type = "{ borderBottom: solid 1px, paddingBottom: 1rem }" }
             Link {
-                state = """
-                    "from": "/"
-                """.trimIndent()
                 to = "/lastnamelength"
-                +"Last Name Search"
+                +"Name length"
             }
             +" | "
             Link {
-                state = """
-                    "from": "/"
-                """.trimIndent()
+                //                state = """
+                //                    "from": "/"
+                //                """.trimIndent()
                 to = "/name"
-                +"Player Name Search"
+                +"Name or Regex"
             }
         }
         Outlet {}

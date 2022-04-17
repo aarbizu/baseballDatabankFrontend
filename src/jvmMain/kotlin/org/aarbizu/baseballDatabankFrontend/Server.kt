@@ -80,22 +80,9 @@ class Server(private val config: AppConfig) {
                     call.respond(queries.playerNamesByLength(param.nameLength))
                 }
 
-                // TODO probably combine the following two with some query engine changes
                 post(PLAYER_NAME) {
                     val param = call.receive<PlayerNameSearchParam>()
-                    call.respond(queries.playerNameSearch(param.nameSearchString))
-                }
-
-                post("player-lastname-regex-search") {
-                    val param = call.receive<PlayerNameSearchParam>()
-                    call.respond(
-                        queries.playerNameRegexSearch(
-                            param.nameSearchString,
-                            param.matchFirstName,
-                            param.matchLastName,
-                            param.caseSensitive
-                        )
-                    )
+                    call.respond(queries.playerNameSearch(param))
                 }
 
                 get("/") { call.respondText(defaultHtmlText, ContentType.Text.Html) }

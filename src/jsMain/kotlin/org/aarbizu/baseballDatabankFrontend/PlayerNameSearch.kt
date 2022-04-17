@@ -9,14 +9,12 @@ val PlayerNameSearch = VFC {
     var players by useState(emptyList<SimplePlayerRecord>())
 
     h1 { +"Player Search" }
-
-    InputComponent {
-        inputLabel = "Player Last Name"
-        onSubmit = { input ->
-            scope.launch { players = queryPlayerName(PlayerNameSearchParam(input)) }
-        }
+    +"Search by name fragments or regex, e.g. '.(?:na){2}' -> [Frank Tanana]"
+    NameSearchInput {
+        textLabel = "Search"
+        onSubmit = { input -> scope.launch { players = queryPlayerName(input) } }
         title = "Player name, at last two characters long"
-        allowedPattern = """[a-zA-Z'\- ]{2,}"""
+        // allowedPattern = """[a-zA-Z'\- ]{2,}"""
     }
 
     PlayerTable { playerList = players }

@@ -2,6 +2,7 @@ package org.aarbizu.baseballDatabankFrontend.query
 
 import com.google.common.base.Stopwatch
 import org.aarbizu.baseballDatabankFrontend.BaseballRecord
+import org.aarbizu.baseballDatabankFrontend.PlayerNameSearchParam
 import org.aarbizu.baseballDatabankFrontend.PlayerSeasonStatRecord
 import org.aarbizu.baseballDatabankFrontend.SimplePlayerRecord
 import org.aarbizu.baseballDatabankFrontend.db.DBProvider
@@ -53,11 +54,11 @@ class QueryEngine(private val dbProvider: DBProvider) {
         }
     }
 
-    fun playerNameSearch(nameSubstring: String) =
+    fun playerNameSearch(params: PlayerNameSearchParam) =
         query(
             dbProvider,
-            playerLastNameSubstringSql,
-            listOf(StrBind("lnameSubstr", "%${nameSubstring.lowercase()}%")),
+            playerNameRegexSql(params.matchFirstName, params.matchLastName, params.caseSensitive),
+            listOf(StrBind("nameRegex", params.nameSearchString)),
             simplePlayerRecordExtractor
         )
 

@@ -1,8 +1,8 @@
 package org.aarbizu.baseballDatabankFrontend.query
 
-// COALESCE returns first non-null argument
 val playerNamesByLengthSql =
-    """
+// COALESCE returns first non-null argument
+"""
     SELECT
         COALESCE(namegiven, 'unknown') || ' ' || COALESCE(namelast, 'unknown') as name,
         COALESCE(birthyear, 0) || '-' || COALESCE(birthmonth, 0) || '-' || COALESCE(birthday, 0) as born,
@@ -13,20 +13,6 @@ val playerNamesByLengthSql =
     FROM people
     WHERE LENGTH(namelast) = ?
     ORDER BY playerid
-    """.trimIndent()
-
-val playerLastNameSubstringSql =
-    """
-    SELECT
-        COALESCE(namegiven, 'unknown') || ' ' || COALESCE(namelast, 'unknown') as name,
-        COALESCE(birthyear, 0) || '-' || COALESCE(birthmonth, 0) || '-' || COALESCE(birthday, 0) as born,
-        COALESCE(debut, 'unknown') as debut,
-        COALESCE(finalgame, 'unknown') as finalgame,
-        COALESCE(playerid, 'unknown') as playerid,
-        COALESCE(bbrefid, 'unknown') as bbrefid
-    FROM people
-    WHERE LOWER(namelast) LIKE ?
-    ORDER BY LENGTH(namelast) ASC
     """.trimIndent()
 
 fun playerNameRegexSql(
@@ -45,14 +31,14 @@ fun playerNameRegexSql(
 
     return """
         SELECT 
-            namefirst || ' ' || namelast as name,
+            COALESCE(namefirst || ' ' || namelast, 'unknown') as name,
             COALESCE(birthyear, 0) || '-' || COALESCE(birthmonth, 0) || '-' || COALESCE(birthday, 0) as born,
             COALESCE(debut, 'unknown') as debut,
             COALESCE(finalgame, 'unknown') as finalgame,
             COALESCE(playerid, 'unknown') as playerid,
             COALESCE(bbrefid, 'unknown') as bbrefid
         FROM people
-        WHERE $nameClauseColumn ${if (caseSensitive) "~" else { "~*" }} ?
+        WHERE REGEXP_LIKE($nameClauseColumn, ?, '${if (caseSensitive) "c" else { "i" }}')
     """.trimIndent()
 }
 
