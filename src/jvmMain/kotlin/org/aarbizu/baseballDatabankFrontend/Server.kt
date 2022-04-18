@@ -19,6 +19,7 @@ import io.ktor.server.response.respond
 import io.ktor.server.response.respondText
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
+import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
 import org.aarbizu.baseballDatabankFrontend.config.AppConfig
 import org.aarbizu.baseballDatabankFrontend.db.DataLoader
@@ -74,7 +75,7 @@ class Server(private val config: AppConfig) {
             install(Compression) { gzip() }
 
             routing {
-                // trace { LoggerFactory.getLogger(this.javaClass).info(it.buildText()) }
+                trace { LoggerFactory.getLogger(this.javaClass).info(it.buildText()) }
                 post(PLAYER_NAME_LENGTH) {
                     val param = call.receive<PlayerNameLengthParam>()
                     call.respond(queries.playerNamesByLength(param.nameLength))
@@ -85,8 +86,14 @@ class Server(private val config: AppConfig) {
                     call.respond(queries.playerNameSearch(param))
                 }
 
-                get("/") { call.respondText(defaultHtmlText, ContentType.Text.Html) }
-                static("/") { resources("") }
+                route("/") {
+                    route("{...}") {
+                        get { call.respondText(defaultHtmlText, ContentType.Text.Html) }
+                    }
+                }
+
+                static("/static") { resources("") }
+
             }
         }
             .start(wait = true)

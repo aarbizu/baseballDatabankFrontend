@@ -5,7 +5,9 @@ import react.VFC
 import react.create
 import react.dom.html.ReactHTML.div
 import react.dom.html.ReactHTML.h1
+import react.dom.html.ReactHTML.h3
 import react.dom.html.ReactHTML.nav
+import react.dom.html.ReactHTML.p
 import react.dom.html.ReactHTML.style
 import react.router.Outlet
 import react.router.Route
@@ -37,6 +39,18 @@ val MainView = VFC {
     }
 }
 
+val NoMatch = VFC {
+    div {
+        h3 { + "Nothing to see here. "}
+        p {
+            Link {
+                to = "/"
+                +"Home"
+            }
+        }
+    }
+}
+
 val App = VFC {
     BrowserRouter {
         Routes {
@@ -52,6 +66,11 @@ val App = VFC {
                 Route {
                     path = "/name"
                     element = PlayerNameSearch.create()
+                }
+
+                Route {
+                    path = "*"
+                    element = NoMatch.create()
                 }
             }
         }
