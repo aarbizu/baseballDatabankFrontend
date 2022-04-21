@@ -71,19 +71,6 @@ class QueryEngine(private val dbProvider: DBProvider) {
             simplePlayerRecordExtractor
         )
 
-    fun playerNameRegexSearch(
-        regex: String,
-        matchFirst: Boolean,
-        matchLast: Boolean,
-        caseSensitive: Boolean
-    ) =
-        query(
-            dbProvider,
-            playerNameRegexSql(matchFirst, matchLast, caseSensitive),
-            listOf(StrBind("nameRegex", regex)),
-            simplePlayerRecordExtractor
-        )
-
     fun singleSeasonHrTotals(firstOnly: Boolean = true) =
         query(
             dbProvider,

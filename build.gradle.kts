@@ -20,7 +20,7 @@ val h2db = "2.1.210"
 val serialization = "1.3.2"
 val react = "18.0.0-pre.329-kotlin-1.6.20"
 val reactRouterDom = "6.3.0-pre.329-kotlin-1.6.20"
-val styled = "1.1.0-pre.330-kotlin-1.6.20"
+val emotion = "11.9.0-pre.330-kotlin-1.6.20"
 
 plugins {
     // Apply the Kotlin JVM plugin to add support for Kotlin.
@@ -108,7 +108,7 @@ kotlin {
                 implementation("io.ktor:ktor-client-json:$ktor")
                 implementation("io.ktor:ktor-client-content-negotiation:$ktor")
                 implementation("io.ktor:ktor-serialization-kotlinx-json:$ktor")
-                implementation("org.jetbrains.kotlin-wrappers:kotlin-styled-next:$styled")
+                implementation("org.jetbrains.kotlin-wrappers:kotlin-emotion:$emotion")
                 implementation("org.jetbrains.kotlin-wrappers:kotlin-react:$react")
                 implementation("org.jetbrains.kotlin-wrappers:kotlin-react-dom:$react")
                 implementation("org.jetbrains.kotlin-wrappers:kotlin-react-router-dom:$reactRouterDom")

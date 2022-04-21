@@ -75,7 +75,8 @@ class Server(private val config: AppConfig) {
             install(Compression) { gzip() }
 
             routing {
-                trace { LoggerFactory.getLogger(this.javaClass).info(it.buildText()) }
+                //                trace {
+                // LoggerFactory.getLogger(this.javaClass).info(it.buildText()) }
                 post(PLAYER_NAME_LENGTH) {
                     val param = call.receive<PlayerNameLengthParam>()
                     call.respond(queries.playerNamesByLength(param.nameLength))
@@ -93,7 +94,6 @@ class Server(private val config: AppConfig) {
                 }
 
                 static("/static") { resources("") }
-
             }
         }
             .start(wait = true)
