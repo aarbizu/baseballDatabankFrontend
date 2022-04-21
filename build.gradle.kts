@@ -21,6 +21,7 @@ val serialization = "1.3.2"
 val react = "18.0.0-pre.329-kotlin-1.6.20"
 val reactRouterDom = "6.3.0-pre.329-kotlin-1.6.20"
 val emotion = "11.9.0-pre.330-kotlin-1.6.20"
+val kotlinMUI = "5.6.1-pre.331-kotlin-1.6.20"
 
 plugins {
     // Apply the Kotlin JVM plugin to add support for Kotlin.
@@ -112,6 +113,8 @@ kotlin {
                 implementation("org.jetbrains.kotlin-wrappers:kotlin-react:$react")
                 implementation("org.jetbrains.kotlin-wrappers:kotlin-react-dom:$react")
                 implementation("org.jetbrains.kotlin-wrappers:kotlin-react-router-dom:$reactRouterDom")
+                implementation("org.jetbrains.kotlin-wrappers:kotlin-mui:$kotlinMUI")
+                implementation("org.jetbrains.kotlin-wrappers:kotlin-mui-icons:$kotlinMUI")
             }
         }
         val jsTest by getting {

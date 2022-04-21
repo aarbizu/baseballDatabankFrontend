@@ -1,56 +1,34 @@
 package org.aarbizu.baseballDatabankFrontend.routes
 
 import csstype.ClassName
+import mui.icons.material.Home
+import mui.material.Icon
+import mui.material.IconColor
+import mui.material.IconSize
+import org.aarbizu.baseballDatabankFrontend.PlayerDropdown
 import react.VFC
 import react.create
 import react.dom.html.ReactHTML.div
-import react.dom.html.ReactHTML.i
-import react.dom.html.ReactHTML.nav
 import react.router.Outlet
 import react.router.dom.NavLink
 
 val NavBar = VFC {
     div {
-        nav {
-            className = ClassName("ui attached inverted segment")
 
+        NavLink {
+            to = "/"
             div {
-                className = ClassName("ui inverted breadcrumb")
-
-                NavLink {
-                    className = ClassName("section")
-                    to = "/"
-                    div {
-                        className = ClassName("ui item")
-                        i { className = ClassName("home icon") }
-                    }
-                }
-
-                div {
-                    className = ClassName("divider")
-                    +"|"
-                }
-
-                NavLink {
-                    className = ClassName("section")
-                    to = "/lastnamelength"
-                    +"Name length"
-                }
-
-                div {
-                    className = ClassName("divider")
-                    +"|"
-                }
-
-                NavLink {
-                    className = ClassName("section")
-                    //                state = """
-                    //                    "from": "/"
-                    //                """.trimIndent()
-                    to = "/name"
-                    +"Name or Regex"
+                Icon {
+                    color = IconColor.primary
+                    fontSize = IconSize.large
+                    Home
                 }
             }
+        }
+
+        div {
+            +"Players"
+            PlayerDropdown.create()
         }
 
         Outlet {}
