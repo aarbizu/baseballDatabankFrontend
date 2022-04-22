@@ -19,7 +19,10 @@ val Home = VFC {
             margin = Auto.auto
         }
         Icon {
-            sx { fontSize = 10.rem }
+            sx {
+                fontSize = 10.rem
+                marginRight = 0.7.rem
+            }
             SportsBaseballOutlined {
                 sx {
                     fontSize = 10.rem
