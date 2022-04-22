@@ -1,22 +1,38 @@
 package org.aarbizu.baseballDatabankFrontend.routes
 
+import csstype.AlignItems
+import csstype.Auto
+import csstype.FontWeight
+import csstype.rem
 import mui.icons.material.SportsBaseballOutlined
 import mui.material.Icon
-import mui.material.IconColor
-import mui.material.IconSize
+import mui.material.Stack
+import mui.material.Typography
+import mui.system.sx
+import org.aarbizu.baseballDatabankFrontend.myAppTheme
 import react.VFC
-import react.dom.html.ReactHTML.h1
-import react.dom.html.ReactHTML.h3
 
 val Home = VFC {
-    h1 {
-        Icon {
-            color = IconColor.primary
-            fontSize = IconSize.large
-            SportsBaseballOutlined
+    Stack {
+        sx {
+            alignItems = AlignItems.center
+            margin = Auto.auto
         }
-    }
-    h3 {
-        +"Baseball Databank"
+        Icon {
+            sx { fontSize = 10.rem }
+            SportsBaseballOutlined {
+                sx {
+                    fontSize = 10.rem
+                    color = myAppTheme.palette.secondary.main
+                }
+            }
+        }
+        Typography {
+            sx {
+                fontSize = 2.rem
+                fontWeight = FontWeight.bold
+            }
+            +"Baseball Databank"
+        }
     }
 }

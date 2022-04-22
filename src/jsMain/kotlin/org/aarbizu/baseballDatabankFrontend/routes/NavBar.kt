@@ -1,36 +1,39 @@
 package org.aarbizu.baseballDatabankFrontend.routes
 
-import csstype.ClassName
 import mui.icons.material.Home
-import mui.material.Icon
-import mui.material.IconColor
-import mui.material.IconSize
-import org.aarbizu.baseballDatabankFrontend.PlayerDropdown
+import mui.material.AppBar
+import mui.material.AppBarPosition
+import mui.material.Box
+import mui.material.Button
+import mui.material.IconButton
+import mui.material.Size
+import mui.material.Toolbar
+import mui.material.Typography
+import mui.system.sx
+import org.aarbizu.baseballDatabankFrontend.myAppTheme
 import react.VFC
-import react.create
-import react.dom.html.ReactHTML.div
 import react.router.Outlet
-import react.router.dom.NavLink
+import react.router.useHref
 
 val NavBar = VFC {
-    div {
-
-        NavLink {
-            to = "/"
-            div {
-                Icon {
-                    color = IconColor.primary
-                    fontSize = IconSize.large
-                    Home
+    Box {
+        AppBar {
+            position = AppBarPosition.static
+            Toolbar {
+                IconButton {
+                    size = Size.large
+                    sx { color = myAppTheme.palette.secondary.main }
+                    useHref(to = "/")
+                    Home {} /* not the component, the mui icon */
+                }
+                Button {
+                    Typography {
+                        sx { color = myAppTheme.palette.secondary.main }
+                        +"Players"
+                    }
                 }
             }
         }
-
-        div {
-            +"Players"
-            PlayerDropdown.create()
-        }
-
-        Outlet {}
     }
+    Outlet {}
 }
