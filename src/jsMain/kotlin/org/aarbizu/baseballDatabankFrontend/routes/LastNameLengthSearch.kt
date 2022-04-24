@@ -48,7 +48,7 @@ val LastNameLengthSearch = VFC {
                     scope.launch { players = queryPlayerNameLength(PlayerNameLengthParam(input)) }
                 }
                 title = "Last name length, up to two digits"
-                allowedPattern = """[0-9]{1,2}"""
+                allowedPattern = { s -> s.isNotBlank() && s.toIntOrNull() != null }
                 placeHolderString = "10"
             }
         }
@@ -68,7 +68,6 @@ val LastNameLengthSearch = VFC {
                     variant = TypographyVariant.body1
                     +"No players found"
                 }
-
             }
         }
     }

@@ -3,6 +3,9 @@ package org.aarbizu.baseballDatabankFrontend
 import csstype.Auto
 import csstype.pct
 import kotlinx.js.jso
+import mui.material.Alert
+import mui.material.AlertColor
+import mui.material.AlertTitle
 import mui.material.Box
 import mui.material.FormControl
 import mui.material.FormLabel
@@ -12,6 +15,7 @@ import org.w3c.dom.HTMLInputElement
 import react.FC
 import react.Props
 import react.dom.events.FormEventHandler
+import react.dom.html.HTMLAttributes
 import react.dom.html.ReactHTML.div
 import react.dom.html.ReactHTML.form
 import react.dom.html.ReactHTML.legend
@@ -21,7 +25,7 @@ import react.useState
 external interface TextInputProps : Props {
     var onSubmit: (String) -> Unit
     var inputLabel: String
-    var allowedPattern: String
+    var allowedPattern: (String) -> Boolean
     var title: String
     var placeHolderString: String
 }
@@ -35,11 +39,12 @@ external interface NameSearchProps : Props {
 val TextInputComponent =
     FC<TextInputProps> { props ->
         val (textInputValue, setTextInput) = useState("")
+        val (validInput, setValidInput) = useState(true)
 
         val submitHandler: FormEventHandler<*> = {
             it.preventDefault()
             setTextInput("")
-            if (textInputValue.isNotBlank()) {
+            if (textInputValue.isNotBlank() && validInput) {
                 props.onSubmit(textInputValue)
             }
         }
@@ -61,18 +66,23 @@ val TextInputComponent =
                 }
 
                 TextField {
-                    inputProps = jso {
-                        sx {
-                            """
-                                pattern="${props.allowedPattern}"
-                            """.trimIndent()
-                        }
-                    }
                     placeholder = props.placeHolderString
                     value = textInputValue
                     onChange = { event ->
+                        setValidInput(true)
                         val target = event.target as HTMLInputElement
                         setTextInput(target.value)
+                        if (!props.allowedPattern(target.value)) setValidInput(false)
+                    }
+                }
+
+                if (!validInput) {
+                    Alert {
+                        severity = AlertColor.error
+                        AlertTitle {
+                            +"Error: Invalid input"
+                        }
+                        +"Try another value, please."
                     }
                 }
             }
