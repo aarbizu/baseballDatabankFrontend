@@ -21,8 +21,8 @@ val serialization = "1.3.2"
 val react = "18.0.0-pre.329-kotlin-1.6.20"
 val reactRouterDom = "6.3.0-pre.329-kotlin-1.6.20"
 val emotion = "11.9.0-pre.330-kotlin-1.6.20"
-val kotlinMUI = "5.6.1-pre.331-kotlin-1.6.20"
-
+val kotlinMUI = "5.6.2-pre.332-kotlin-1.6.21"
+// TODO -- update these
 plugins {
     // Apply the Kotlin JVM plugin to add support for Kotlin.
     kotlin("multiplatform") version "1.6.20"
