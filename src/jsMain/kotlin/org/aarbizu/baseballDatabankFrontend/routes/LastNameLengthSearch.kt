@@ -48,7 +48,7 @@ val LastNameLengthSearch = VFC {
                     scope.launch { players = queryPlayerNameLength(PlayerNameLengthParam(input)) }
                 }
                 title = "Last name length, up to two digits"
-                allowedPattern = { s -> s.isNotBlank() && s.toIntOrNull() != null }
+                allowedPattern = { s -> s.isNotEmpty() && s.toIntOrNull() != null }
                 placeHolderString = "10"
             }
         }
