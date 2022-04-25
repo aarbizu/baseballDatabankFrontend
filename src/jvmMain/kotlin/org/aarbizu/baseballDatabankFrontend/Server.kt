@@ -2,6 +2,7 @@ package org.aarbizu.baseballDatabankFrontend
 
 import com.google.common.base.Stopwatch
 import io.ktor.http.ContentType
+import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.call
@@ -70,13 +71,15 @@ class Server(private val config: AppConfig) {
             install(CORS) {
                 allowMethod(HttpMethod.Get)
                 allowMethod(HttpMethod.Post)
+                allowHeader(HttpHeaders.AccessControlAllowOrigin)
                 anyHost()
             }
             install(Compression) { gzip() }
 
             routing {
-                //                trace {
-                // LoggerFactory.getLogger(this.javaClass).info(it.buildText()) }
+                trace {
+                    LoggerFactory.getLogger(this.javaClass).info(it.buildText())
+                }
                 post(PLAYER_NAME_LENGTH) {
                     val param = call.receive<PlayerNameLengthParam>()
                     call.respond(queries.playerNamesByLength(param.nameLength))
