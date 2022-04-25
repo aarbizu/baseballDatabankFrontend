@@ -8,7 +8,7 @@ import react.VFC
 val NoMatch = VFC {
     Box {
         Typography {
-            variant = TypographyVariant.h3
+            variant = TypographyVariant.h6
             +"Nothing to see here"
         }
     }

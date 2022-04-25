@@ -57,11 +57,11 @@ val App = VFC {
                         path = "name"
                         element = PlayerNameSearch.create()
                     }
-                }
 
-                Route {
-                    path = "*"
-                    element = NoMatch.create()
+                    Route {
+                        path = "*"
+                        element = NoMatch.create()
+                    }
                 }
             }
         }

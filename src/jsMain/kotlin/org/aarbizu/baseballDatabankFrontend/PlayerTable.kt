@@ -5,7 +5,6 @@ import csstype.Auto
 import csstype.em
 import csstype.pct
 import csstype.px
-import kotlinext.js.asJsObject
 import kotlinx.js.jso
 import mui.material.Link
 import mui.material.LinkUnderline
@@ -105,9 +104,7 @@ val PlayerTable =
                                 count = props.playerList.size
                                 rowsPerPage = rowsPerPg
                                 page = currentPg
-                                SelectProps = jso {
-                                    asDynamic()["native"] = true
-                                }
+                                SelectProps = jso { asDynamic()["native"] = true }
                                 onRowsPerPageChange = handleRppChange
                                 onPageChange = handlePgChange
                             }

@@ -4,7 +4,6 @@ import csstype.Auto
 import csstype.FlexDirection
 import csstype.em
 import csstype.pct
-import kotlinx.js.jso
 import mui.material.Alert
 import mui.material.AlertColor
 import mui.material.AlertTitle
@@ -23,14 +22,10 @@ import mui.system.sx
 import org.w3c.dom.HTMLInputElement
 import react.FC
 import react.Props
-import react.ReactElement
 import react.ReactNode
 import react.create
-import react.dom.events.ChangeEventHandler
 import react.dom.events.FormEventHandler
-import react.dom.html.HTMLAttributes
 import react.dom.html.ReactHTML.div
-import react.dom.html.ReactHTML.fieldset
 import react.dom.html.ReactHTML.form
 import react.dom.html.ReactHTML.legend
 import react.dom.html.ReactHTML.span
@@ -94,9 +89,7 @@ val TextInputComponent =
                 if (!validInput) {
                     Alert {
                         severity = AlertColor.error
-                        AlertTitle {
-                            +"Error: Invalid input"
-                        }
+                        AlertTitle { +"Error: Invalid input" }
                         +"Try another value, please."
                     }
                 }
@@ -111,10 +104,8 @@ val NameSearchInput =
         val (lastNameMatchToggle, setLastNameMatch) = useState(false)
         val (caseSensitiveMatchToggle, setCaseSensitiveMatch) = useState(false)
         val (lastSearch, setLastSearch) = useState("")
-        val (validInput, setValidInput) = useState(true)
 
         val submitHandler: FormEventHandler<*> = {
-            console.log("submitting $nameSearchString, $firstNameMatchToggle, $lastNameMatchToggle, $caseSensitiveMatchToggle")
             it.preventDefault()
             setLastSearch(nameSearchString)
             setNameSearchString("")
@@ -148,63 +139,61 @@ val NameSearchInput =
                         placeholder = "name or regex"
                         value = nameSearchString
                         onChange = { event ->
-                            setValidInput(true)
                             val target = event.target as HTMLInputElement
                             setNameSearchString(target.value)
-//                        if (!props.allowedPattern(target.value)) setValidInput(false)
                         }
                     }
                 }
 
                 FormGroup {
-                    sx {
-                        flexDirection = FlexDirection.row
-                    }
+                    sx { flexDirection = FlexDirection.row }
                     Typography {
-                        sx {
-                            padding = 1.em
-                        }
+                        sx { padding = 1.em }
                         variant = TypographyVariant.subtitle1
                         component = span
                         +"Match Options:"
                     }
                     FormControlLabel {
-                        control = FC<Props> {
-                            Checkbox {
-                                onChange = { _, nextState ->
-                                    setFirstNameMatch(nextState)
+                        control =
+                            FC<Props> {
+                                Checkbox {
+                                    onChange = { _, nextState -> setFirstNameMatch(nextState) }
+                                    value = firstNameMatchToggle
+                                    checked = firstNameMatchToggle
                                 }
-                                value = firstNameMatchToggle
-                                checked = firstNameMatchToggle
                             }
-                        }.create()
+                                .create()
                         label = ReactNode("First name")
                     }
                     FormControlLabel {
-                        control = FC<Props> {
-                            Checkbox {
-                                onChange = { _, nextState -> setLastNameMatch(nextState) }
-                                value = lastNameMatchToggle
-                                checked = lastNameMatchToggle
+                        control =
+                            FC<Props> {
+                                Checkbox {
+                                    onChange = { _, nextState -> setLastNameMatch(nextState) }
+                                    value = lastNameMatchToggle
+                                    checked = lastNameMatchToggle
+                                }
                             }
-                        }.create()
+                                .create()
                         label = ReactNode("Last Name")
                     }
                     FormControlLabel {
-                        control = FC<Props> {
-                            Checkbox {
-                                onChange = { _, nextState -> setCaseSensitiveMatch(nextState) }
-                                value = caseSensitiveMatchToggle
-                                checked = caseSensitiveMatchToggle
+                        control =
+                            FC<Props> {
+                                Checkbox {
+                                    onChange = { _, nextState ->
+                                        setCaseSensitiveMatch(nextState)
+                                    }
+                                    value = caseSensitiveMatchToggle
+                                    checked = caseSensitiveMatchToggle
+                                }
                             }
-                        }.create()
+                                .create()
                         label = ReactNode("Case Sensitive")
                     }
                 }
                 Paper {
-                    sx {
-                        padding = 0.1.em
-                    }
+                    sx { padding = 0.1.em }
                     Typography {
                         variant = TypographyVariant.subtitle1
                         component = span

@@ -1,17 +1,19 @@
 package org.aarbizu.baseballDatabankFrontend.routes
 
 import csstype.Auto
-import csstype.FontStyle
 import csstype.NamedColor
+import csstype.Padding
 import csstype.em
 import csstype.pct
 import kotlinx.coroutines.launch
 import mui.material.Box
+import mui.material.MuiList.Companion.padding
 import mui.material.Stack
 import mui.material.Typography
 import mui.material.styles.TypographyVariant
 import mui.system.sx
 import org.aarbizu.baseballDatabankFrontend.NameSearchInput
+import org.aarbizu.baseballDatabankFrontend.NoPlayersFound
 import org.aarbizu.baseballDatabankFrontend.PlayerTable
 import org.aarbizu.baseballDatabankFrontend.SimplePlayerRecord
 import org.aarbizu.baseballDatabankFrontend.queryPlayerName
@@ -54,33 +56,35 @@ val PlayerNameSearch = VFC {
                 }
                 variant = TypographyVariant.body1
                 +"""
-                    Search by partial name match or regex"
+                    Search by partial name match or regex
                 """.trimIndent()
             }
             Typography {
                 sx {
-                    padding = 0.1.em
+                    padding = Padding(0.1.em, 0.1.em, 0.1.em, 0.5.em)
                     marginLeft = Auto.auto
                     marginRight = Auto.auto
                     width = 70.pct
-                    backgroundColor = NamedColor.lightgray
-                    fontStyle = FontStyle.italic
+                    color = NamedColor.darkgrey
                 }
                 variant = TypographyVariant.caption
                 +"""
-                   e.g., partial: "Bond", regex: ".(?:na){2}" (matches,[Frank Tanana] et al.) 
+                   e.g., partial: "Bond" | regex: ".(?:na){2}" (matches [Frank Tanana], et al.) 
                 """.trimIndent()
             }
+
+            Box { sx { padding = 1.em } }
 
             NameSearchInput {
                 textLabel = "Search"
                 onSubmit = { input -> scope.launch { players = queryPlayerName(input) } }
                 title = "Player name search string"
-                // allowedPattern = """[a-zA-Z'\- ]{2,}"""
             }
 
             if (players.isNotEmpty()) {
                 PlayerTable { playerList = players }
+            } else {
+                NoPlayersFound {}
             }
         }
     }
