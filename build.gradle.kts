@@ -101,6 +101,7 @@ kotlin {
                 implementation("com.google.code.gson:gson:$gson")
                 implementation("com.google.guava:guava:$guava")
                 implementation("com.h2database:h2:$h2db")
+                implementation("io.ktor:ktor-server-call-logging:$ktor")
             }
         }
         val jsMain by getting {

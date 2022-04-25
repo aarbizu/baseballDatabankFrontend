@@ -11,6 +11,7 @@ import io.ktor.server.engine.embeddedServer
 import io.ktor.server.http.content.resources
 import io.ktor.server.http.content.static
 import io.ktor.server.netty.Netty
+import io.ktor.server.plugins.callloging.CallLogging
 import io.ktor.server.plugins.compression.Compression
 import io.ktor.server.plugins.compression.gzip
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
@@ -27,6 +28,7 @@ import org.aarbizu.baseballDatabankFrontend.db.DataLoader
 import org.aarbizu.baseballDatabankFrontend.query.QueryEngine
 import org.h2.tools.Server
 import org.slf4j.LoggerFactory
+import org.slf4j.event.Level
 import java.nio.file.Files.readString
 import java.nio.file.Paths
 
@@ -67,11 +69,18 @@ class Server(private val config: AppConfig) {
 
     private fun startBackend(config: AppConfig) {
         embeddedServer(Netty, config.port) {
+            install(CallLogging) { level = Level.DEBUG }
             install(ContentNegotiation) { json() }
             install(CORS) {
+                allowMethod(HttpMethod.Options)
                 allowMethod(HttpMethod.Get)
                 allowMethod(HttpMethod.Post)
                 allowHeader(HttpHeaders.AccessControlAllowOrigin)
+                allowHeader(HttpHeaders.Authorization)
+                allowHeader(HttpHeaders.ContentType)
+                allowNonSimpleContentTypes = true
+                allowSameOrigin = true
+                allowCredentials = true
                 anyHost()
             }
             install(Compression) { gzip() }
