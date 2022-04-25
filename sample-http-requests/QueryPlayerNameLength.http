@@ -1,0 +1,6 @@
+POST http://localhost:8080/player-name-length
+Content-Type: application/json
+
+{
+  "nameLength": "14"
+}
