@@ -14,7 +14,7 @@ import react.useState
 external interface BasicMenuProps : Props {
     var buttonLabel: String
 }
-
+// TODO pull more into props to make it reusable
 val BasicMenu =
     FC<BasicMenuProps> { props ->
         var menuAnchorElem by useState<Element>()
@@ -34,12 +34,14 @@ val BasicMenu =
             }
             open = menuAnchorElem != null
 
+            onClose = { menuAnchorElem = null }
+
             MenuItem {
                 onClick = {
                     menuAnchorElem = null
                     navigate("/lastnamelength")
                 }
-                +"Last Name Length"
+                +"By Name Length"
             }
 
             MenuItem {
@@ -47,7 +49,7 @@ val BasicMenu =
                     menuAnchorElem = null
                     navigate("/name")
                 }
-                +"Name or Regex"
+                +"By Name / Regex"
             }
         }
     }

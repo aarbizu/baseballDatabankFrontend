@@ -1,41 +1,55 @@
 package org.aarbizu.baseballDatabankFrontend.routes
 
-import csstype.AlignItems
-import csstype.Auto
 import csstype.FontWeight
+import csstype.JustifyContent
+import csstype.TextAlign
 import csstype.rem
 import mui.icons.material.SportsBaseballOutlined
+import mui.material.Container
+import mui.material.Grid
+import mui.material.GridDirection
 import mui.material.Icon
-import mui.material.Stack
+import mui.material.IconColor
+import mui.material.SvgIconSize
 import mui.material.Typography
+import mui.system.responsive
 import mui.system.sx
-import org.aarbizu.baseballDatabankFrontend.myAppTheme
 import react.VFC
 
 val Home = VFC {
-    Stack {
-        sx {
-            alignItems = AlignItems.center
-            margin = Auto.auto
-        }
-        Icon {
-            sx {
-                fontSize = 10.rem
-                marginRight = 0.7.rem
-            }
-            SportsBaseballOutlined {
-                sx {
-                    fontSize = 10.rem
-                    color = myAppTheme.palette.secondary.main
+    Container {
+        maxWidth = "sm"
+        sx { paddingBottom = 0.5.rem }
+
+        Grid {
+            container = true
+            direction = responsive(GridDirection.column)
+            spacing = responsive(2)
+            sx { justifyContent = JustifyContent.center }
+
+            Grid {
+                item = true
+                sx { textAlign = TextAlign.center }
+                Icon {
+                    sx {
+                        fontSize = 10.rem
+                        paddingRight = 0.6.rem
+                    }
+                    color = IconColor.secondary
+                    SportsBaseballOutlined { fontSize = SvgIconSize.inherit }
                 }
             }
-        }
-        Typography {
-            sx {
-                fontSize = 2.rem
-                fontWeight = FontWeight.bold
+            Grid {
+                item = true
+                sx { textAlign = TextAlign.center }
+                Typography {
+                    sx {
+                        fontSize = 2.rem
+                        fontWeight = FontWeight.bold
+                    }
+                    +"Baseball Databank"
+                }
             }
-            +"Baseball Databank"
         }
     }
 }

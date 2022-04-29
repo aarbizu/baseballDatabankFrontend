@@ -1,11 +1,12 @@
 package org.aarbizu.baseballDatabankFrontend
 
+import csstype.rgba
 import kotlinx.coroutines.MainScope
 import kotlinx.js.jso
 import mui.material.styles.ThemeProvider
 import mui.material.styles.createTheme
 import org.aarbizu.baseballDatabankFrontend.routes.Home
-import org.aarbizu.baseballDatabankFrontend.routes.LastNameLengthSearch
+import org.aarbizu.baseballDatabankFrontend.routes.NameLengthSearch
 import org.aarbizu.baseballDatabankFrontend.routes.NavBar
 import org.aarbizu.baseballDatabankFrontend.routes.NoMatch
 import org.aarbizu.baseballDatabankFrontend.routes.PlayerNameSearch
@@ -30,6 +31,11 @@ val myAppTheme =
                     main = "rgb(249,82,0)"
                     darker = "rgb(166,76,31)"
                 }
+                text = jso {
+                    primary = rgba(0, 0, 0, 0.87)
+                    secondary = rgba(145, 145, 145, 0.8)
+                    disabled = rgba(0, 0, 0, 0.6)
+                }
             }
         }
     )
@@ -50,7 +56,7 @@ val App = VFC {
 
                     Route {
                         path = "lastnamelength"
-                        element = LastNameLengthSearch.create()
+                        element = NameLengthSearch.create()
                     }
 
                     Route {

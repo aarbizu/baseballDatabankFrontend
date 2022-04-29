@@ -1,15 +1,12 @@
 package org.aarbizu.baseballDatabankFrontend
 
-import csstype.AlignContent
-import csstype.Auto
-import csstype.em
 import csstype.pct
 import csstype.px
 import kotlinx.js.jso
+import mui.material.Container
 import mui.material.Link
 import mui.material.LinkUnderline
 import mui.material.Paper
-import mui.material.Size
 import mui.material.Table
 import mui.material.TableBody
 import mui.material.TableCell
@@ -46,67 +43,57 @@ val PlayerTable =
         val (currentPg, setCurrentPg) = useState(0)
 
         val handleRppChange: ChangeEventHandler<HTMLElement> = { event ->
-            //            val jsonObj = event.target.asJsObject()
-            //            console.log(event)
-            //            console.log(event.target)
             val select = event.target as HTMLSelectElement
-            //            val rpp = Object.entries(jsonObj)[0].component2()
             setRowsPerPg(select.value.toInt())
             setCurrentPg(0)
         }
         val handlePgChange: (MouseEvent<HTMLButtonElement, *>?, Number) -> Unit = { _, pageNumber ->
             setCurrentPg(pageNumber as Int)
         }
+        Container {
+            sx { width = 100.pct }
 
-        TableContainer {
-            component = Paper.create().type
-            sx {
-                alignContent = AlignContent.center
-                marginLeft = Auto.auto
-                marginRight = Auto.auto
-                padding = 1.em
-                width = 70.pct
-            }
-            Table {
-                sx { minWidth = 650.px }
-                size = Size.small
-                ariaLabel = "players"
-                TableHead {
-                    TableRow {
-                        TableCell { +"Name" }
-                        TableCell {
-                            align = TableCellAlign.right
-                            +"bbref"
-                        }
-                        TableCell {
-                            align = TableCellAlign.right
-                            +"Born"
-                        }
-                        TableCell {
-                            align = TableCellAlign.right
-                            +"Debut"
-                        }
-                        TableCell {
-                            align = TableCellAlign.right
-                            +"Final Game"
+            TableContainer {
+                component = Paper.create().type
+                Table {
+                    ariaLabel = "players"
+                    TableHead {
+                        TableRow {
+                            TableCell { +"Name" }
+                            TableCell {
+                                align = TableCellAlign.right
+                                +"bbref"
+                            }
+                            TableCell {
+                                align = TableCellAlign.right
+                                +"Born"
+                            }
+                            TableCell {
+                                align = TableCellAlign.right
+                                +"Debut"
+                            }
+                            TableCell {
+                                align = TableCellAlign.right
+                                +"Final Game"
+                            }
                         }
                     }
-                }
 
-                TableBody { showPlayers(props.playerList, rowsPerPg, currentPg) }
+                    TableBody { showPlayers(props.playerList, rowsPerPg, currentPg) }
 
-                if (props.playerList.size > 10) {
-                    TableFooter {
-                        TableRow {
-                            TablePagination {
-                                rowsPerPageOptions = arrayOf(5, 10, 25, -1)
-                                colSpan = 5
-                                count = props.playerList.size
-                                rowsPerPage = rowsPerPg
-                                page = currentPg
-                                SelectProps = jso { asDynamic()["native"] = true }
-                                onRowsPerPageChange = handleRppChange
-                                onPageChange = handlePgChange
+                    if (props.playerList.size > 10) {
+                        TableFooter {
+                            TableRow {
+                                TablePagination {
+                                    rowsPerPageOptions = arrayOf(5, 10, 25, -1)
+                                    colSpan = 5
+                                    count = props.playerList.size
+                                    rowsPerPage = rowsPerPg
+                                    page = currentPg
+                                    SelectProps = jso { asDynamic()["native"] = true }
+                                    onRowsPerPageChange = handleRppChange
+                                    onPageChange = handlePgChange
+                                }
                             }
                         }
                     }

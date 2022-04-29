@@ -3,11 +3,9 @@ package org.aarbizu.baseballDatabankFrontend
 import csstype.Auto
 import csstype.FlexDirection
 import csstype.em
-import csstype.pct
 import mui.material.Alert
 import mui.material.AlertColor
 import mui.material.AlertTitle
-import mui.material.Box
 import mui.material.Checkbox
 import mui.material.FormControl
 import mui.material.FormControlLabel
@@ -15,6 +13,7 @@ import mui.material.FormGroup
 import mui.material.FormLabel
 import mui.material.MuiList.Companion.padding
 import mui.material.Paper
+import mui.material.Stack
 import mui.material.TextField
 import mui.material.Typography
 import mui.material.styles.TypographyVariant
@@ -43,7 +42,6 @@ external interface TextInputProps : Props {
 external interface NameSearchProps : Props {
     var onSubmit: (PlayerNameSearchParam) -> Unit
     var textLabel: String
-    var title: String
 }
 
 val TextInputComponent =
@@ -59,23 +57,19 @@ val TextInputComponent =
             }
         }
 
-        Box {
-            component = div
-            sx {
-                marginLeft = Auto.auto
-                marginRight = Auto.auto
-                width = 70.pct
-            }
+        Stack {
             FormControl {
                 component = form
                 onSubmit = submitHandler
 
                 FormLabel {
+                    sx { marginLeft = Auto.auto }
                     component = legend
                     +props.title
                 }
 
                 TextField {
+                    sx { marginLeft = Auto.auto }
                     placeholder = props.placeHolderString
                     value = textInputValue
                     onChange = { event ->
@@ -118,35 +112,27 @@ val NameSearchInput =
                 )
             )
         }
-        Box {
-            component = div
-            sx {
-                marginLeft = Auto.auto
-                marginRight = Auto.auto
-                width = 70.pct
-            }
 
+        Stack {
             FormControl {
                 component = form
                 onSubmit = submitHandler
 
-                Box {
-                    FormLabel {
-                        component = legend
-                        +props.title
-                    }
-                    TextField {
-                        placeholder = "name or regex"
-                        value = nameSearchString
-                        onChange = { event ->
-                            val target = event.target as HTMLInputElement
-                            setNameSearchString(target.value)
-                        }
+                TextField {
+                    placeholder = "name or regex"
+                    value = nameSearchString
+                    sx { marginLeft = Auto.auto }
+                    onChange = { event ->
+                        val target = event.target as HTMLInputElement
+                        setNameSearchString(target.value)
                     }
                 }
 
                 FormGroup {
-                    sx { flexDirection = FlexDirection.row }
+                    sx {
+                        flexDirection = FlexDirection.row
+                        marginLeft = Auto.auto
+                    }
                     Typography {
                         sx { padding = 1.em }
                         variant = TypographyVariant.subtitle1
@@ -193,7 +179,8 @@ val NameSearchInput =
                     }
                 }
                 Paper {
-                    sx { padding = 0.1.em }
+                    elevation = 0
+                    sx { marginLeft = Auto.auto }
                     Typography {
                         variant = TypographyVariant.subtitle1
                         component = span
