@@ -1,28 +1,26 @@
 package org.aarbizu.baseballDatabankFrontend
 
-import csstype.Auto
-import csstype.em
+import csstype.TextAlign
 import csstype.pct
-import mui.material.Box
+import mui.material.Paper
 import mui.material.Typography
 import mui.material.styles.TypographyVariant
 import mui.system.sx
 import react.VFC
-import react.dom.html.ReactHTML
 
 val NoPlayersFound =
     VFC() {
-        Box {
-            component = ReactHTML.div
+        Paper {
+            elevation = 0
+            square = true
+            sx {
+                width = 100.pct
+                textAlign = TextAlign.center
+            }
             Typography {
-                sx {
-                    padding = 0.2.em
-                    marginLeft = Auto.auto
-                    marginRight = Auto.auto
-                    width = 70.pct
-                }
-                variant = TypographyVariant.body1
-                +"No players found"
+                variant = TypographyVariant.h2
+                sx { color = myAppTheme.palette.text.secondary }
+                +"No results"
             }
         }
     }

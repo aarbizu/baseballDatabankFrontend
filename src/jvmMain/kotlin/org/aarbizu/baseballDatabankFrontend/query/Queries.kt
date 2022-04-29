@@ -56,6 +56,44 @@ fun singleSeasonHrTotalsSql(firstOnly: Boolean = true): String {
         FROM batting b, people p
         WHERE b.playerid = p.playerid
         GROUP BY playername, yearid
-        ORDER BY season_hr desc;
+        ORDER BY season_hr desc
+    """.trimIndent()
+}
+
+fun playerNameLengthSql(
+    firstOnly: Boolean,
+    lastOnly: Boolean,
+    firstAndLast: Boolean,
+    fullName: Boolean
+): String {
+    val namelengthValue =
+        if (firstOnly) {
+            "namefirst"
+        } else if (lastOnly) {
+            "namelast"
+        } else if (firstAndLast) {
+            "namefirst||namelast"
+        } else {
+            "namegiven||namelast"
+        }
+
+    return """
+        SELECT
+            COALESCE(p.namegiven, 'unknown') || ' ' || COALESCE(p.namelast, 'unknown')                     as name,
+            COALESCE(p.birthyear, 0) || '-' || COALESCE(p.birthmonth, 0) || '-' || COALESCE(p.birthday, 0) as born,
+            COALESCE(p.debut, 'unknown')                                                                   as debut,
+            COALESCE(p.finalgame, 'unknown')                                                               as finalgame,
+            COALESCE(p.playerid, 'unknown')                                                                as playerid,
+            COALESCE(p.bbrefid, 'unknown')                                                                 as bbrefid,
+            COALESCE(TO_CHAR(m.playermanager), '0') as playerManager
+        FROM PEOPLE p
+        LEFT JOIN (
+                SELECT playerid, CASE WHEN PLYRMGR = 'Y' THEN 1 ELSE 0 END as playermanager
+                FROM MANAGERS
+                GROUP BY PLAYERID, playermanager
+                HAVING SUM(playermanager) >= 1
+        ) m
+        ON p.PLAYERID = m.PLAYERID
+        WHERE LENGTH($namelengthValue) = ?
     """.trimIndent()
 }
