@@ -12,6 +12,7 @@ class SimplePlayerRecord(
     val finalGame: String,
     val playerId: String,
     val bbrefId: String,
+    val playerMgr: String
 ) : BaseballRecord
 
 @Serializable

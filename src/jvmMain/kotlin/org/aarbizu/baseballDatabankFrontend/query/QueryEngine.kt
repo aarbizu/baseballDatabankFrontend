@@ -81,8 +81,16 @@ class QueryEngine(private val dbProvider: DBProvider) {
         )
 
     fun minMaxNameLengthValues(): BaseballRecord {
-        val records = query(dbProvider, minMaxNameLengthsSql, emptyList(), minMaxNameLengthsExtract)
-        return records[0]
+        return query(dbProvider, minMaxNameLengthsSql, emptyList(), minMaxNameLengthsExtract)[0]
+    }
+
+    fun orderedByLength(nameOption: String): BaseballRecord {
+        return query(
+            dbProvider,
+            orderedByLengthSql(nameOption),
+            emptyList(),
+            simplePlayerRecordExtractor
+        )[0]
     }
 
     private val minMaxNameLengthsExtract: (ResultSet) -> List<MinMaxValues> = {
@@ -111,7 +119,8 @@ class QueryEngine(private val dbProvider: DBProvider) {
                     debut = it.getString("debut"),
                     finalGame = it.getString("finalgame"),
                     bbrefId = it.getString("bbrefid"),
-                    playerId = it.getString("playerid")
+                    playerId = it.getString("playerid"),
+                    playerMgr = it.getString("playerManager")
                 )
             )
         }

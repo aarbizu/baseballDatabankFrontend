@@ -3,6 +3,8 @@ package org.aarbizu.baseballDatabankFrontend.routes
 import csstype.TextAlign
 import csstype.em
 import kotlinx.coroutines.launch
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 import mui.material.Box
 import mui.material.Button
 import mui.material.ButtonGroup
@@ -21,20 +23,16 @@ import org.aarbizu.baseballDatabankFrontend.MinMaxValues
 import org.aarbizu.baseballDatabankFrontend.NameLengthInputComponents
 import org.aarbizu.baseballDatabankFrontend.PlayerNameLengthParam
 import org.aarbizu.baseballDatabankFrontend.SimplePlayerRecord
-import org.aarbizu.baseballDatabankFrontend.getMinMaxNameLengths
 import org.aarbizu.baseballDatabankFrontend.queryPlayerNameLength
 import org.aarbizu.baseballDatabankFrontend.scope
 import react.VFC
-import react.useEffectOnce
+import react.router.useLocation
 import react.useState
 
-val INIT_MIN_MAX = MinMaxValues("0", "0", "0", "0", "0", "0", "0", "0")
-
 val NameLengthSearch = VFC {
-    var minMaxValues by useState(INIT_MIN_MAX)
     var players by useState(emptyList<SimplePlayerRecord>())
-
-    useEffectOnce { scope.launch { minMaxValues = getMinMaxNameLengths() } }
+    val loc = useLocation()
+    val minMaxValues: MinMaxValues = Json.decodeFromString(loc.state as String)
 
     Box {
         sx { padding = 1.em }
@@ -73,10 +71,10 @@ val NameLengthSearch = VFC {
                         sx { textAlign = TextAlign.right }
                         variant = TypographyVariant.caption
                         +"""
-                            Length Ranges: 
-                                First [${minMaxValues.minFirstName}-${minMaxValues.maxFirstName}] | 
-                                Last [${minMaxValues.minLastName}-${minMaxValues.maxLastName}] | 
-                                First+Last [${minMaxValues.minFirstAndLastName}-${minMaxValues.maxFirstAndLastName}] | 
+                            Length Ranges:
+                                First [${minMaxValues.minFirstName}-${minMaxValues.maxFirstName}] |
+                                Last [${minMaxValues.minLastName}-${minMaxValues.maxLastName}] |
+                                First+Last [${minMaxValues.minFirstAndLastName}-${minMaxValues.maxFirstAndLastName}] |
                                 Full [${minMaxValues.minFullName}-${minMaxValues.maxFullName}]
                         """.trimIndent()
                     }
@@ -86,10 +84,10 @@ val NameLengthSearch = VFC {
                         variant = ButtonGroupVariant.contained
                         color = ButtonGroupColor.secondary
                         size = Size.small
-                        Button { +"Min last name length: ${minMaxValues.minLastName}" }
-                        Button { +"Max last name length: ${minMaxValues.maxLastName}" }
-                        Button { +"Min first name length: ${minMaxValues.minFirstName}" }
-                        Button { +"Max first name length: ${minMaxValues.maxFirstName}" }
+                        Button { +"Shortest last names" }
+                        Button { +"Longest last names" }
+                        Button { +"Shortest first names" }
+                        Button { +"Shortest last names" }
                     }
                 }
             }

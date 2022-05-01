@@ -1,5 +1,24 @@
 package org.aarbizu.baseballDatabankFrontend.query
 
+const val basePlayerSqlSegment =
+    """
+    SELECT
+        COALESCE(p.namegiven, 'unknown') || ' ' || COALESCE(p.namelast, 'unknown')                     as name,
+        COALESCE(p.birthyear, 0) || '-' || COALESCE(p.birthmonth, 0) || '-' || COALESCE(p.birthday, 0) as born,
+        COALESCE(p.debut, 'unknown')                                                                   as debut,
+        COALESCE(p.finalgame, 'unknown')                                                               as finalgame,
+        COALESCE(p.playerid, 'unknown')                                                                as playerid,
+        COALESCE(p.bbrefid, 'unknown')                                                                 as bbrefid,
+        COALESCE(TO_CHAR(m.playermanager), '0')                                                        as playerManager
+    FROM PEOPLE p
+    LEFT JOIN (
+            SELECT playerid, CASE WHEN PLYRMGR = 'Y' THEN 1 ELSE 0 END as playermanager
+            FROM MANAGERS
+            GROUP BY PLAYERID, playermanager
+            HAVING SUM(playermanager) >= 1
+    ) m
+    ON p.PLAYERID = m.PLAYERID"""
+
 fun playerNameRegexSql(
     first: Boolean = true,
     last: Boolean = true,
@@ -55,22 +74,7 @@ fun playerNameLengthSql(nameOption: String): String {
         }
 
     return """
-        SELECT
-            COALESCE(p.namegiven, 'unknown') || ' ' || COALESCE(p.namelast, 'unknown')                     as name,
-            COALESCE(p.birthyear, 0) || '-' || COALESCE(p.birthmonth, 0) || '-' || COALESCE(p.birthday, 0) as born,
-            COALESCE(p.debut, 'unknown')                                                                   as debut,
-            COALESCE(p.finalgame, 'unknown')                                                               as finalgame,
-            COALESCE(p.playerid, 'unknown')                                                                as playerid,
-            COALESCE(p.bbrefid, 'unknown')                                                                 as bbrefid,
-            COALESCE(TO_CHAR(m.playermanager), '0') as playerManager
-        FROM PEOPLE p
-        LEFT JOIN (
-                SELECT playerid, CASE WHEN PLYRMGR = 'Y' THEN 1 ELSE 0 END as playermanager
-                FROM MANAGERS
-                GROUP BY PLAYERID, playermanager
-                HAVING SUM(playermanager) >= 1
-        ) m
-        ON p.PLAYERID = m.PLAYERID
+        $basePlayerSqlSegment
         WHERE LENGTH($namelengthValue) = ?
     """.trimIndent()
 }
@@ -84,3 +88,18 @@ val minMaxNameLengthsSql =
         min(length(namegiven||namelast)) as minFull, max(length(namegiven||namelast)) as maxFull
     from PEOPLE;
     """.trimIndent()
+
+fun orderedByLengthSql(nameField: String): String {
+    val name =
+        when (nameField) {
+            "First" -> "namefirst"
+            "FirstLast" -> "namefirst||namelast"
+            "Full" -> "namegiven||namelast"
+            else -> "namelast"
+        }
+
+    return """
+        $basePlayerSqlSegment
+        ORDER BY LENGTH($name) DESC
+    """.trimIndent()
+}

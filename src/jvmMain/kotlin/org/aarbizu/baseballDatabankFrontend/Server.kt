@@ -7,7 +7,6 @@ import io.ktor.http.HttpMethod
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.call
 import io.ktor.server.application.install
-import io.ktor.server.application.log
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.http.content.resources
 import io.ktor.server.http.content.static
@@ -25,7 +24,9 @@ import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
 import org.aarbizu.baseballDatabankFrontend.config.AppConfig
 import org.aarbizu.baseballDatabankFrontend.db.DataLoader
+import org.aarbizu.baseballDatabankFrontend.query.PreloadedResults
 import org.aarbizu.baseballDatabankFrontend.query.QueryEngine
+import org.aarbizu.baseballDatabankFrontend.query.preloadQueries
 import org.h2.tools.Server
 import org.slf4j.LoggerFactory
 import java.nio.file.Files.readString
@@ -36,12 +37,13 @@ private const val DEFAULT_HTML_DOC = "src/commonMain/resources/index.html"
 class Server(private val config: AppConfig) {
     private lateinit var queries: QueryEngine
     private lateinit var defaultHtmlText: String
+    private lateinit var preloaded: PreloadedResults
 
     fun start() {
         initializeDb(config)
         queries = QueryEngine(config.db)
         defaultHtmlText = readString(Paths.get(DEFAULT_HTML_DOC))
-
+        preloaded = preloadQueries(queries)
         /* this needs to be last since it starts the server loop */
         startBackend(config)
     }
@@ -96,7 +98,7 @@ class Server(private val config: AppConfig) {
                     call.respond(queries.playerNameSearch(param))
                 }
 
-                post(MIN_MAX_VALUES) { call.respond(queries.minMaxNameLengthValues()) }
+                post(MIN_MAX_VALUES) { call.respond(preloaded.minMaxValues) }
 
                 route("/") {
                     route("{...}") {
