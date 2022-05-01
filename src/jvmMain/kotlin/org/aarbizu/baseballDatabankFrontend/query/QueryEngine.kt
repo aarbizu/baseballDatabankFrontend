@@ -2,6 +2,8 @@ package org.aarbizu.baseballDatabankFrontend.query
 
 import com.google.common.base.Stopwatch
 import org.aarbizu.baseballDatabankFrontend.BaseballRecord
+import org.aarbizu.baseballDatabankFrontend.MinMaxValues
+import org.aarbizu.baseballDatabankFrontend.PlayerNameLengthParam
 import org.aarbizu.baseballDatabankFrontend.PlayerNameSearchParam
 import org.aarbizu.baseballDatabankFrontend.PlayerSeasonStatRecord
 import org.aarbizu.baseballDatabankFrontend.SimplePlayerRecord
@@ -62,11 +64,11 @@ class QueryEngine(private val dbProvider: DBProvider) {
             simplePlayerRecordExtractor
         )
 
-    fun playerNamesByLength(length: String) =
+    fun playerNamesByLength(params: PlayerNameLengthParam) =
         query(
             dbProvider,
-            playerNamesByLengthSql,
-            listOf(IntBind("lnameLength", length.toInt())),
+            playerNameLengthSql(params.nameOption),
+            listOf(IntBind("lnameLength", params.nameLength.toInt())),
             simplePlayerRecordExtractor
         )
 
@@ -77,6 +79,27 @@ class QueryEngine(private val dbProvider: DBProvider) {
             emptyList(),
             playerSeasonStatRecordExtractor
         )
+
+    fun minMaxNameLengthValues(): BaseballRecord {
+        val records = query(dbProvider, minMaxNameLengthsSql, emptyList(), minMaxNameLengthsExtract)
+        return records[0]
+    }
+
+    private val minMaxNameLengthsExtract: (ResultSet) -> List<MinMaxValues> = {
+        it.next()
+        listOf(
+            MinMaxValues(
+                minFirstName = it.getString("minFName"),
+                maxFirstName = it.getString("maxFName"),
+                minLastName = it.getString("minLName"),
+                maxLastName = it.getString("maxLName"),
+                minFirstAndLastName = it.getString("minName"),
+                maxFirstAndLastName = it.getString("maxName"),
+                minFullName = it.getString("minFull"),
+                maxFullName = it.getString("maxFull")
+            )
+        )
+    }
 
     private val simplePlayerRecordExtractor: (ResultSet) -> List<SimplePlayerRecord> = {
         val records = mutableListOf<SimplePlayerRecord>()

@@ -1,20 +1,5 @@
 package org.aarbizu.baseballDatabankFrontend.query
 
-val playerNamesByLengthSql =
-// COALESCE returns first non-null argument
-"""
-    SELECT
-        COALESCE(namegiven, 'unknown') || ' ' || COALESCE(namelast, 'unknown') as name,
-        COALESCE(birthyear, 0) || '-' || COALESCE(birthmonth, 0) || '-' || COALESCE(birthday, 0) as born,
-        COALESCE(debut, 'unknown') as debut,
-        COALESCE(finalgame, 'unknown') as finalgame,
-        COALESCE(playerid, 'unknown') as playerid,
-        COALESCE(bbrefid, 'unknown') as bbrefid
-    FROM people
-    WHERE LENGTH(namelast) = ?
-    ORDER BY playerid
-    """.trimIndent()
-
 fun playerNameRegexSql(
     first: Boolean = true,
     last: Boolean = true,
@@ -60,21 +45,13 @@ fun singleSeasonHrTotalsSql(firstOnly: Boolean = true): String {
     """.trimIndent()
 }
 
-fun playerNameLengthSql(
-    firstOnly: Boolean,
-    lastOnly: Boolean,
-    firstAndLast: Boolean,
-    fullName: Boolean
-): String {
+fun playerNameLengthSql(nameOption: String): String {
     val namelengthValue =
-        if (firstOnly) {
-            "namefirst"
-        } else if (lastOnly) {
-            "namelast"
-        } else if (firstAndLast) {
-            "namefirst||namelast"
-        } else {
-            "namegiven||namelast"
+        when (nameOption) {
+            "checkFirst" -> "namefirst"
+            "checkFirstLast" -> "namefirst||namelast"
+            "checkFull" -> "namegiven||namelast"
+            else -> "namelast"
         }
 
     return """
@@ -97,3 +74,13 @@ fun playerNameLengthSql(
         WHERE LENGTH($namelengthValue) = ?
     """.trimIndent()
 }
+
+val minMaxNameLengthsSql =
+    """
+    select
+        min(length(namefirst)) as minFName, max(length(namefirst)) as maxFName,
+        min(length(namelast)) as minLName, max(length(namelast)) as maxLName,
+        min(length(namefirst||namelast)) as minName, max(length(namefirst||namelast)) as maxName,
+        min(length(namegiven||namelast)) as minFull, max(length(namegiven||namelast)) as maxFull
+    from PEOPLE;
+    """.trimIndent()

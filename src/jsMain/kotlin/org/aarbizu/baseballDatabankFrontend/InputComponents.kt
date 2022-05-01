@@ -11,8 +11,9 @@ import mui.material.FormControl
 import mui.material.FormControlLabel
 import mui.material.FormGroup
 import mui.material.FormLabel
-import mui.material.MuiList.Companion.padding
 import mui.material.Paper
+import mui.material.Radio
+import mui.material.RadioGroup
 import mui.material.Stack
 import mui.material.TextField
 import mui.material.Typography
@@ -24,15 +25,14 @@ import react.Props
 import react.ReactNode
 import react.create
 import react.dom.events.FormEventHandler
-import react.dom.html.ReactHTML.div
 import react.dom.html.ReactHTML.form
 import react.dom.html.ReactHTML.legend
 import react.dom.html.ReactHTML.span
 import react.dom.onChange
 import react.useState
 
-external interface TextInputProps : Props {
-    var onSubmit: (String) -> Unit
+external interface NameLengthProps : Props {
+    var onSubmit: (String, String) -> Unit
     var inputLabel: String
     var allowedPattern: (String) -> Boolean
     var title: String
@@ -44,16 +44,17 @@ external interface NameSearchProps : Props {
     var textLabel: String
 }
 
-val TextInputComponent =
-    FC<TextInputProps> { props ->
+val NameLengthInputComponents =
+    FC<NameLengthProps> { props ->
         val (textInputValue, setTextInput) = useState("")
         val (validInput, setValidInput) = useState(true)
+        val (nameOption, setNameOption) = useState("checkLast")
 
         val submitHandler: FormEventHandler<*> = {
             it.preventDefault()
             setTextInput("")
             if (textInputValue.isNotBlank() && validInput) {
-                props.onSubmit(textInputValue)
+                props.onSubmit(textInputValue, nameOption)
             }
         }
 
@@ -77,6 +78,46 @@ val TextInputComponent =
                         val target = event.target as HTMLInputElement
                         setTextInput(target.value)
                         if (!props.allowedPattern(target.value)) setValidInput(false)
+                    }
+                }
+
+                RadioGroup {
+                    sx {
+                        flexDirection = FlexDirection.row
+                        marginLeft = Auto.auto
+                    }
+
+                    defaultValue = "checkLast"
+                    name = "name-length-options"
+                    row = true
+                    value = nameOption
+                    onChange = { _, value -> setNameOption(value) }
+
+                    Typography {
+                        sx { padding = 1.em }
+                        variant = TypographyVariant.subtitle1
+                        component = span
+                        +"Length Options:"
+                    }
+                    FormControlLabel {
+                        label = ReactNode("Last")
+                        value = "checkLast"
+                        control = Radio.create()
+                    }
+                    FormControlLabel {
+                        label = ReactNode("First")
+                        value = "checkFirst"
+                        control = Radio.create()
+                    }
+                    FormControlLabel {
+                        label = ReactNode("First+Last")
+                        value = "checkFirstLast"
+                        control = Radio.create()
+                    }
+                    FormControlLabel {
+                        label = ReactNode("Full")
+                        value = "checkFull"
+                        control = Radio.create()
                     }
                 }
 

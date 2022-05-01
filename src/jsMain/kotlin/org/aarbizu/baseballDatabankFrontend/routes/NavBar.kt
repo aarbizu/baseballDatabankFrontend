@@ -9,26 +9,33 @@ import mui.material.Size
 import mui.material.Toolbar
 import mui.system.sx
 import org.aarbizu.baseballDatabankFrontend.BasicMenu
+import org.aarbizu.baseballDatabankFrontend.MinMaxValues
 import org.aarbizu.baseballDatabankFrontend.myAppTheme
-import react.VFC
+import react.FC
+import react.Props
 import react.router.Outlet
 import react.router.useNavigate
 
-val NavBar = VFC {
-    val navigate = useNavigate()
-    Box {
-        AppBar {
-            position = AppBarPosition.static
-            Toolbar {
-                IconButton {
-                    size = Size.large
-                    sx { color = myAppTheme.palette.secondary.main }
-                    onClick = { navigate("/") }
-                    Home {} /* not the component, the mui icon */
+external interface BaseballAppProps : Props {
+    var minMax: MinMaxValues
+}
+
+val NavBar =
+    FC<BaseballAppProps> {
+        val navigate = useNavigate()
+        Box {
+            AppBar {
+                position = AppBarPosition.static
+                Toolbar {
+                    IconButton {
+                        size = Size.large
+                        sx { color = myAppTheme.palette.secondary.main }
+                        onClick = { navigate("/") }
+                        Home {} /* not the component, the mui icon */
+                    }
+                    BasicMenu { buttonLabel = "Players" }
                 }
-                BasicMenu { buttonLabel = "Players" }
             }
         }
+        Outlet {}
     }
-    Outlet {}
-}

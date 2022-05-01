@@ -3,7 +3,7 @@ package org.aarbizu.baseballDatabankFrontend
 import kotlinx.serialization.Serializable
 
 /** Parameter Types for talking to the backend service */
-@Serializable class PlayerNameLengthParam(val nameLength: String)
+@Serializable class PlayerNameLengthParam(val nameLength: String, val nameOption: String)
 
 @Serializable
 class PlayerNameSearchParam(

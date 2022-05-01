@@ -20,3 +20,15 @@ class PlayerSeasonStatRecord(
     val year: String,
     val statName: String,
 ) : BaseballRecord
+
+@Serializable
+class MinMaxValues(
+    val minFirstName: String,
+    val maxFirstName: String,
+    val minLastName: String,
+    val maxLastName: String,
+    val minFirstAndLastName: String,
+    val maxFirstAndLastName: String,
+    val minFullName: String,
+    val maxFullName: String,
+) : BaseballRecord

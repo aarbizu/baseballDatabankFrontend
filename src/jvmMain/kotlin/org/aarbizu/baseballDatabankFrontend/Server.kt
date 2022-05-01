@@ -7,6 +7,7 @@ import io.ktor.http.HttpMethod
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.call
 import io.ktor.server.application.install
+import io.ktor.server.application.log
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.http.content.resources
 import io.ktor.server.http.content.static
@@ -87,13 +88,15 @@ class Server(private val config: AppConfig) {
                 // LoggerFactory.getLogger(this.javaClass).info(it.buildText()) }
                 post(PLAYER_NAME_LENGTH) {
                     val param = call.receive<PlayerNameLengthParam>()
-                    call.respond(queries.playerNamesByLength(param.nameLength))
+                    call.respond(queries.playerNamesByLength(param))
                 }
 
                 post(PLAYER_NAME) {
                     val param = call.receive<PlayerNameSearchParam>()
                     call.respond(queries.playerNameSearch(param))
                 }
+
+                post(MIN_MAX_VALUES) { call.respond(queries.minMaxNameLengthValues()) }
 
                 route("/") {
                     route("{...}") {
