@@ -33,7 +33,7 @@ val PlayerNameSearch = VFC {
 
             Grid {
                 xl = 6
-                sm = 12
+                xs = 12
                 item = true
                 container = true
                 direction = responsive(GridDirection.column)

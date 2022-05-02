@@ -48,3 +48,12 @@ suspend fun getMinMaxNameLengths(): MinMaxValues {
         .post("$endpoint/$MIN_MAX_VALUES") { contentType(ContentType.Application.Json) }
         .body()
 }
+
+suspend fun getSortedNames(sortedNameParams: NamesSortedByLengthParam): List<SimplePlayerRecord> {
+    return jsonClient
+        .post("$endpoint/$NAMES_SORTED_BY_LENGTH") {
+            contentType(ContentType.Application.Json)
+            setBody(sortedNameParams)
+        }
+        .body()
+}
