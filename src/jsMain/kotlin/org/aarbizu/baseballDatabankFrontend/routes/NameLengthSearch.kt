@@ -52,7 +52,7 @@ val NameLengthSearch = VFC {
             direction = responsive(GridDirection.row)
 
             Grid {
-                xl = 6
+                md = 6
                 xs = 12
                 item = true
                 container = true

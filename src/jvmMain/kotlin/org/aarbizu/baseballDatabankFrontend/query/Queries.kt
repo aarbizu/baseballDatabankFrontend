@@ -34,14 +34,7 @@ fun playerNameRegexSql(
         }
 
     return """
-        SELECT 
-            COALESCE(namefirst || ' ' || namelast, 'unknown') as name,
-            COALESCE(birthyear, 0) || '-' || COALESCE(birthmonth, 0) || '-' || COALESCE(birthday, 0) as born,
-            COALESCE(debut, 'unknown') as debut,
-            COALESCE(finalgame, 'unknown') as finalgame,
-            COALESCE(playerid, 'unknown') as playerid,
-            COALESCE(bbrefid, 'unknown') as bbrefid
-        FROM people
+        $basePlayerSqlSegment
         WHERE REGEXP_LIKE($nameClauseColumn, ?, '${if (caseSensitive) "c" else { "i" }}')
     """.trimIndent()
 }

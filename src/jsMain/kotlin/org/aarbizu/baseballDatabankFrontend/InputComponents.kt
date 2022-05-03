@@ -178,7 +178,7 @@ val NameSearchInput =
                         sx { padding = 1.em }
                         variant = TypographyVariant.subtitle1
                         component = span
-                        +"Match Options:"
+                        +"Match:"
                     }
                     FormControlLabel {
                         control =
@@ -190,7 +190,7 @@ val NameSearchInput =
                                 }
                             }
                                 .create()
-                        label = ReactNode("First name")
+                        label = ReactNode("First")
                     }
                     FormControlLabel {
                         control =
@@ -202,7 +202,7 @@ val NameSearchInput =
                                 }
                             }
                                 .create()
-                        label = ReactNode("Last Name")
+                        label = ReactNode("Last")
                     }
                     FormControlLabel {
                         control =
@@ -216,7 +216,7 @@ val NameSearchInput =
                                 }
                             }
                                 .create()
-                        label = ReactNode("Case Sensitive")
+                        label = ReactNode("Case")
                     }
                 }
                 Paper {

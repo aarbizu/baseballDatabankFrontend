@@ -2,6 +2,7 @@ package org.aarbizu.baseballDatabankFrontend
 
 import csstype.AlignItems
 import csstype.JustifyContent
+import csstype.em
 import mui.material.Grid
 import mui.system.sx
 import react.FC
@@ -15,9 +16,10 @@ val BasicPlayerList =
     FC<BasicPlayerListProps> { props ->
         Grid {
             item = true
-            xl = 6
-            sm = 12
+            md = 6
+            xs = 12
             sx {
+                paddingTop = 0.25.em
                 alignItems = AlignItems.center
                 justifyContent = JustifyContent.left
             }
