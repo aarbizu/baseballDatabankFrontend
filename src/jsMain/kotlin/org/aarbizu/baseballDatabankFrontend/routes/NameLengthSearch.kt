@@ -94,39 +94,8 @@ val NameLengthSearch = VFC {
                             marginLeft = Auto.auto
                             paddingTop = 1.em
                         }
-                        direction = responsive(StackDirection.row)
-                        ButtonGroup {
-                            variant = ButtonGroupVariant.contained
-                            color = ButtonGroupColor.secondary
-                            Button {
-                                size = Size.small
-                                onClick = {
-                                    scope.launch {
-                                        players =
-                                            getSortedNames(
-                                                NamesSortedByLengthParam(
-                                                    type = "last",
-                                                    descending = "true",
-                                                    topN = topNParam
-                                                )
-                                            )
-                                    }
-                                }
-                                +"Longest last names"
-                            }
-                            Button {
-                                size = Size.small
-                                +"N last names"
-                            }
-                            Button {
-                                size = Size.small
-                                +"TopN first names"
-                            }
-                            Button {
-                                size = Size.small
-                                +"BottomN last names"
-                            }
-                        }
+                        direction = responsive(StackDirection.column)
+
                         FormControl {
                             fullWidth = false
                             InputLabel {
@@ -144,6 +113,156 @@ val NameLengthSearch = VFC {
                                         value = it
                                         +it
                                     }
+                                }
+                            }
+                        }
+
+                        Stack {
+                            sx {
+                                marginLeft = Auto.auto
+                                paddingTop = 1.em
+                            }
+                            direction = responsive(StackDirection.row)
+                            ButtonGroup {
+                                variant = ButtonGroupVariant.outlined
+                                color = ButtonGroupColor.secondary
+                                Button {
+                                    size = Size.small
+                                    onClick = {
+                                        scope.launch {
+                                            players =
+                                                getSortedNames(
+                                                    NamesSortedByLengthParam(
+                                                        type = "last",
+                                                        descending = "true",
+                                                        topN = topNParam
+                                                    )
+                                                )
+                                        }
+                                    }
+                                    +"Last name \uD83E\uDC47"
+                                }
+                                Button {
+                                    size = Size.small
+                                    onClick = {
+                                        scope.launch {
+                                            players =
+                                                getSortedNames(
+                                                    NamesSortedByLengthParam(
+                                                        type = "last",
+                                                        descending = "false",
+                                                        topN = topNParam
+                                                    )
+                                                )
+                                        }
+                                    }
+                                    +"last name \uD83E\uDC45"
+                                }
+                                Button {
+                                    size = Size.small
+                                    onClick = {
+                                        scope.launch {
+                                            players =
+                                                getSortedNames(
+                                                    NamesSortedByLengthParam(
+                                                        type = "first",
+                                                        descending = "true",
+                                                        topN = topNParam
+                                                    )
+                                                )
+                                        }
+                                    }
+                                    +"first name \uD83E\uDC47"
+                                }
+                                Button {
+                                    size = Size.small
+                                    onClick = {
+                                        scope.launch {
+                                            players =
+                                                getSortedNames(
+                                                    NamesSortedByLengthParam(
+                                                        type = "first",
+                                                        descending = "false",
+                                                        topN = topNParam
+                                                    )
+                                                )
+                                        }
+                                    }
+                                    +"first name \uD83E\uDC45"
+                                }
+                            }
+                        }
+                        Stack {
+                            sx {
+                                marginLeft = Auto.auto
+                                paddingTop = 1.em
+                            }
+                            ButtonGroup {
+                                variant = ButtonGroupVariant.outlined
+                                color = ButtonGroupColor.secondary
+                                Button {
+                                    size = Size.small
+                                    onClick = {
+                                        scope.launch {
+                                            players =
+                                                getSortedNames(
+                                                    NamesSortedByLengthParam(
+                                                        type = "firstlast",
+                                                        descending = "true",
+                                                        topN = topNParam
+                                                    )
+                                                )
+                                        }
+                                    }
+                                    +"given name \uD83E\uDC47"
+                                }
+                                Button {
+                                    size = Size.small
+                                    onClick = {
+                                        scope.launch {
+                                            players =
+                                                getSortedNames(
+                                                    NamesSortedByLengthParam(
+                                                        type = "firstlast",
+                                                        descending = "false",
+                                                        topN = topNParam
+                                                    )
+                                                )
+                                        }
+                                    }
+                                    +"given name \uD83E\uDC45"
+                                }
+                                Button {
+                                    size = Size.small
+                                    onClick = {
+                                        scope.launch {
+                                            players =
+                                                getSortedNames(
+                                                    NamesSortedByLengthParam(
+                                                        type = "full",
+                                                        descending = "true",
+                                                        topN = topNParam
+                                                    )
+                                                )
+                                        }
+                                    }
+                                    +"full name \uD83E\uDC47"
+                                }
+                                Button {
+                                    size = Size.small
+                                    onClick = {
+                                        scope.launch {
+                                            players =
+                                                getSortedNames(
+                                                    NamesSortedByLengthParam(
+                                                        type = "full",
+                                                        descending = "false",
+                                                        topN = topNParam
+                                                    )
+                                                )
+                                        }
+                                    }
+                                    +"full name \uD83E\uDC45"
                                 }
                             }
                         }

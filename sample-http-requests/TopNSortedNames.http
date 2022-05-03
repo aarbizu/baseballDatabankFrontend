@@ -2,7 +2,7 @@ POST http://localhost:8080/names-by-length
 Content-Type: application/json
 
 {
-  "type": "full",
-  "descending": "true",
+  "type": "first",
+  "descending": "false",
   "topN": "10"
 }

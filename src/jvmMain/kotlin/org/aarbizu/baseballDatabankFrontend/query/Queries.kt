@@ -3,6 +3,9 @@ package org.aarbizu.baseballDatabankFrontend.query
 const val basePlayerSqlSegment =
     """
     SELECT
+        COALESCE(p.namefirst, 'unknown')                                                               as first,
+        COALESCE(p.namelast, 'unknown')                                                                as last,
+        COALESCE(p.namegiven, 'unknown')                                                               as given,
         COALESCE(p.namegiven, 'unknown') || ' ' || COALESCE(p.namelast, 'unknown')                     as name,
         COALESCE(p.birthyear, 0) || '-' || COALESCE(p.birthmonth, 0) || '-' || COALESCE(p.birthday, 0) as born,
         COALESCE(p.debut, 'unknown')                                                                   as debut,
@@ -92,7 +95,28 @@ fun orderedByLengthSql(nameField: String): String {
         }
 
     return """
-        $basePlayerSqlSegment
-        ORDER BY LENGTH($name) DESC
+        SELECT
+            p.namefirst                                                               as first,
+            p.namelast                                                                as last,
+            p.namegiven                                                               as given,
+            p.namegiven || ' ' || COALESCE(p.namelast, 'unknown')                     as name,
+            COALESCE(p.birthyear, 0) || '-' || COALESCE(p.birthmonth, 0) || '-' || COALESCE(p.birthday, 0) as born,
+            COALESCE(p.debut, 'unknown')                                                                   as debut,
+            COALESCE(p.finalgame, 'unknown')                                                               as finalgame,
+            COALESCE(p.playerid, 'unknown')                                                                as playerid,
+            COALESCE(p.bbrefid, 'unknown')                                                                 as bbrefid,
+            COALESCE(TO_CHAR(m.playermanager), '0')                                                        as playerManager
+        FROM PEOPLE p
+        LEFT JOIN (
+            SELECT playerid, CASE WHEN PLYRMGR = 'Y' THEN 1 ELSE 0 END as playermanager
+            FROM MANAGERS
+            GROUP BY PLAYERID, playermanager
+            HAVING SUM(playermanager) >= 1
+        ) m
+        ON p.PLAYERID = m.PLAYERID
+        WHERE p.namefirst IS NOT NULL
+        AND p.namelast IS NOT NULL
+        AND p.namegiven IS NOT NULL
+        ORDER BY LENGTH(p.$name) DESC
     """.trimIndent()
 }

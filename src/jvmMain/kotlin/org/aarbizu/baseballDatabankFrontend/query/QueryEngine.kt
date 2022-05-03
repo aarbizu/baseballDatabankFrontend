@@ -89,7 +89,7 @@ class QueryEngine(private val dbProvider: DBProvider) {
             dbProvider,
             orderedByLengthSql(nameOption),
             emptyList(),
-            simplePlayerRecordExtractor
+            simplePlayerRecordExtractor /* some OLD players are listed as name = 'unknown' */
         )
     }
 
@@ -114,6 +114,9 @@ class QueryEngine(private val dbProvider: DBProvider) {
         while (it.next()) {
             records.add(
                 SimplePlayerRecord(
+                    first = it.getString("first"),
+                    last = it.getString("last"),
+                    given = it.getString("given"),
                     name = it.getString("name"),
                     born = it.getString("born"),
                     debut = it.getString("debut"),

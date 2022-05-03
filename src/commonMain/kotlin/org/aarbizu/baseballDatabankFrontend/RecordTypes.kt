@@ -6,6 +6,9 @@ interface BaseballRecord
 
 @Serializable
 class SimplePlayerRecord(
+    val first: String,
+    val last: String,
+    val given: String,
     val name: String,
     val born: String,
     val debut: String,

@@ -3,6 +3,7 @@ package org.aarbizu.baseballDatabankFrontend.query
 import com.google.common.base.Stopwatch
 import org.aarbizu.baseballDatabankFrontend.BaseballRecord
 import org.aarbizu.baseballDatabankFrontend.NamesSortedByLengthParam
+import org.aarbizu.baseballDatabankFrontend.SimplePlayerRecord
 import java.util.logging.Logger
 
 data class PreloadedResults(
@@ -21,11 +22,11 @@ fun preloadQueries(q: QueryEngine): PreloadedResults {
     val timer = Stopwatch.createStarted()
     val preload =
         PreloadedResults(
-            q.minMaxNameLengthValues(),
-            q.orderedByLength("last"),
-            q.orderedByLength("First"),
-            q.orderedByLength("FirstLast"),
-            q.orderedByLength("Full"),
+            minMaxValues = q.minMaxNameLengthValues(),
+            orderedByLastNameLen = q.orderedByLength("last"),
+            orderedByFirstNameLen = q.orderedByLength("First"),
+            orderedByNameLen = q.orderedByLength("FirstLast"),
+            orderedByFullNameLen = q.orderedByLength("Full"),
         )
     Logger.getLogger("Preload").info("preload queries: $timer")
     return preload
@@ -55,5 +56,6 @@ private fun getTopN(
         } else {
             ((collection.lastIndex - topN)..collection.lastIndex)
         }
-    return collection.slice(range)
+    val retVal = if (desc) collection.slice(range) else collection.slice(range).reversed()
+    return retVal.filter { (it as SimplePlayerRecord).first.isNotEmpty() }
 }
