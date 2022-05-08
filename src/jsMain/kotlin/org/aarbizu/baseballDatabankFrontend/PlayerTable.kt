@@ -2,11 +2,21 @@ package org.aarbizu.baseballDatabankFrontend
 
 import csstype.pct
 import csstype.px
+import csstype.rgb
+import csstype.rgba
+import emotion.styled.StyledComponent
+import emotion.styled.styled
 import kotlinx.js.jso
+import mui.icons.material.SportsBaseballTwoTone
+import mui.material.Box
 import mui.material.Container
+import mui.material.IconButton
 import mui.material.Link
 import mui.material.LinkUnderline
 import mui.material.Paper
+import mui.material.PopperProps
+import mui.material.SpeedDialIcon
+import mui.material.Stack
 import mui.material.Table
 import mui.material.TableBody
 import mui.material.TableCell
@@ -16,18 +26,24 @@ import mui.material.TableFooter
 import mui.material.TableHead
 import mui.material.TablePagination
 import mui.material.TableRow
+import mui.material.Tooltip
 import mui.system.sx
+import mui.types.PropsWithComponent
 import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.HTMLSelectElement
 import react.ChildrenBuilder
+import react.ComponentType
 import react.FC
 import react.Props
+import react.ReactElement
+import react.ReactNode
 import react.create
 import react.dom.aria.ariaLabel
 import react.dom.events.ChangeEventHandler
 import react.dom.events.MouseEvent
 import react.dom.html.AnchorTarget
+import react.dom.html.ReactHTML.div
 import react.dom.html.ReactHTML.th
 import react.key
 import react.useState
@@ -122,34 +138,17 @@ fun ChildrenBuilder.showPlayers(
     tableRows.map {
         TableRow {
             key = it.playerId
-
             TableCell {
                 component = th
                 scope = "row"
                 +it.name
-            }
-
-            TableCell {
-                align = TableCellAlign.right
-                Link {
-                    color = "rgb(0,159,255)"
-                    target = AnchorTarget._blank
-                    href = decorateBbrefId(it.bbrefId)
-                    underline = LinkUnderline.none
-                    +it.bbrefId
+                Tooltip {
+                    title = getPlayerTooltipComponent(it)
+                    arrow = true
+                    IconButton {
+                        SportsBaseballTwoTone()
+                    }
                 }
-            }
-            TableCell {
-                align = TableCellAlign.right
-                +it.born
-            }
-            TableCell {
-                align = TableCellAlign.right
-                +it.debut
-            }
-            TableCell {
-                align = TableCellAlign.right
-                +it.finalGame
             }
         }
     }
@@ -160,4 +159,23 @@ fun ChildrenBuilder.showPlayers(
             TableCell { colSpan = 5 }
         }
     }
+}
+
+fun getPlayerTooltipComponent(record: SimplePlayerRecord): ReactElement<*> {
+    return FC<PlayerTableProps> {
+        Stack {
+            Box {
+                Link {
+                    color = "rgb(0,159,255)"
+                    target = AnchorTarget._blank
+                    href = decorateBbrefId(record.bbrefId)
+                    underline = LinkUnderline.none
+                    +"${record.given} ${record.last}"
+                }
+            }
+            Box { +"dob ${record.born}" }
+            Box { +"debut ${record.debut}" }
+            Box { +"final game ${record.finalGame}"}
+        }
+    }.create()
 }
