@@ -24,7 +24,10 @@ import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
 import org.aarbizu.baseballDatabankFrontend.config.AppConfig
 import org.aarbizu.baseballDatabankFrontend.db.DataLoader
+import org.aarbizu.baseballDatabankFrontend.query.PreloadedResults
 import org.aarbizu.baseballDatabankFrontend.query.QueryEngine
+import org.aarbizu.baseballDatabankFrontend.query.playerNamesSorted
+import org.aarbizu.baseballDatabankFrontend.query.preloadQueries
 import org.h2.tools.Server
 import org.slf4j.LoggerFactory
 import java.nio.file.Files.readString
@@ -40,7 +43,7 @@ class Server(private val config: AppConfig) {
         initializeDb(config)
         queries = QueryEngine(config.db)
         defaultHtmlText = readString(Paths.get(DEFAULT_HTML_DOC))
-
+        PreloadedResults.preloads = preloadQueries(queries)
         /* this needs to be last since it starts the server loop */
         startBackend(config)
     }
@@ -87,12 +90,19 @@ class Server(private val config: AppConfig) {
                 // LoggerFactory.getLogger(this.javaClass).info(it.buildText()) }
                 post(PLAYER_NAME_LENGTH) {
                     val param = call.receive<PlayerNameLengthParam>()
-                    call.respond(queries.playerNamesByLength(param.nameLength))
+                    call.respond(queries.playerNamesByLength(param))
                 }
 
                 post(PLAYER_NAME) {
                     val param = call.receive<PlayerNameSearchParam>()
                     call.respond(queries.playerNameSearch(param))
+                }
+
+                post(MIN_MAX_VALUES) { call.respond(PreloadedResults.preloads.minMaxValues) }
+
+                post(NAMES_SORTED_BY_LENGTH) {
+                    val param = call.receive<NamesSortedByLengthParam>()
+                    call.respond(playerNamesSorted(param))
                 }
 
                 route("/") {

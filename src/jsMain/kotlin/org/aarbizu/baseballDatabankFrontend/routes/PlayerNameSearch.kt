@@ -32,8 +32,8 @@ val PlayerNameSearch = VFC {
             direction = responsive(GridDirection.row)
 
             Grid {
-                xl = 6
-                sm = 12
+                md = 6
+                xs = 12
                 item = true
                 container = true
                 direction = responsive(GridDirection.column)

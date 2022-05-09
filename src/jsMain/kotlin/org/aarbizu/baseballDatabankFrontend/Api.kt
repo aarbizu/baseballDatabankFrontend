@@ -3,6 +3,7 @@ package org.aarbizu.baseballDatabankFrontend
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
@@ -38,6 +39,21 @@ suspend fun queryPlayerName(nameParam: PlayerNameSearchParam): List<SimplePlayer
         .post("$endpoint/$PLAYER_NAME") {
             contentType(ContentType.Application.Json)
             setBody(nameParam)
+        }
+        .body()
+}
+
+suspend fun getMinMaxNameLengths(): MinMaxValues {
+    return jsonClient
+        .post("$endpoint/$MIN_MAX_VALUES") { contentType(ContentType.Application.Json) }
+        .body()
+}
+
+suspend fun getSortedNames(sortedNameParams: NamesSortedByLengthParam): List<SimplePlayerRecord> {
+    return jsonClient
+        .post("$endpoint/$NAMES_SORTED_BY_LENGTH") {
+            contentType(ContentType.Application.Json)
+            setBody(sortedNameParams)
         }
         .body()
 }

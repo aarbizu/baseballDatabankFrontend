@@ -55,7 +55,7 @@ val App = VFC {
                     }
 
                     Route {
-                        path = "lastnamelength"
+                        path = "namelength"
                         element = NameLengthSearch.create()
                     }
 
