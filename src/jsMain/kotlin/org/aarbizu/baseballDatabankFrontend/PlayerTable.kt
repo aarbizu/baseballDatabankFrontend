@@ -3,7 +3,6 @@ package org.aarbizu.baseballDatabankFrontend
 import csstype.TextAlign
 import csstype.pct
 import csstype.px
-import kotlinext.js.getOwnPropertyNames
 import kotlinx.js.jso
 import mui.icons.material.SportsBaseballTwoTone
 import mui.material.Box
@@ -35,7 +34,6 @@ import react.dom.events.ChangeEventHandler
 import react.dom.events.MouseEvent
 import react.dom.html.AnchorTarget
 import react.dom.html.ReactHTML.div
-import react.dom.html.ReactHTML.th
 import react.key
 import react.useState
 import kotlin.math.max
@@ -148,9 +146,9 @@ fun getPlayerTooltipComponent(record: SimplePlayerRecord): ReactElement<*> {
         Stack {
             Box {
                 Link {
-                    color = myAppTheme.palette.secondary.main
+                    color = "rgb(133, 206, 237)"
                     target = AnchorTarget._blank
-                    href = decorateBbrefId(record.bbrefId)
+                    href = decorateBbrefId(record.bbrefId, record.playerMgr)
                     underline = LinkUnderline.none
                     +"${record.given} ${record.last}"
                 }
@@ -158,6 +156,9 @@ fun getPlayerTooltipComponent(record: SimplePlayerRecord): ReactElement<*> {
             Box { +"DOB:  ${record.born}" }
             Box { +"Debut:  ${record.debut}" }
             Box { +"Final game:  ${record.finalGame}" }
+            if (record.playerMgr == "1") {
+                Box { +"** Player Manager" }
+            }
         }
     }
         .create()

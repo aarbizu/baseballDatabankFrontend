@@ -71,17 +71,17 @@ fun playerNameLengthSql(nameOption: String): String {
 
     return """
         $basePlayerSqlSegment
-        WHERE LENGTH($namelengthValue) = ?
+        WHERE LENGTH(REPLACE($namelengthValue, ' ', '')) = ?
     """.trimIndent()
 }
 
 val minMaxNameLengthsSql =
     """
     select
-        min(length(namefirst)) as minFName, max(length(namefirst)) as maxFName,
-        min(length(namelast)) as minLName, max(length(namelast)) as maxLName,
-        min(length(namefirst||namelast)) as minName, max(length(namefirst||namelast)) as maxName,
-        min(length(namegiven||namelast)) as minFull, max(length(namegiven||namelast)) as maxFull
+        min(length(namefirst)) as minFName, max(length(replace(namefirst, ' ', ''))) as maxFName,
+        min(length(namelast)) as minLName, max(length(replace(namelast, ' ', ''))) as maxLName,
+        min(length(namefirst||namelast)) as minName, max(length(replace(namefirst||namelast, ' ', ''))) as maxName,
+        min(length(namegiven||namelast)) as minFull, max(length(replace(namegiven||namelast, ' ', ''))) as maxFull
     from PEOPLE;
     """.trimIndent()
 
@@ -117,6 +117,6 @@ fun orderedByLengthSql(nameField: String): String {
         WHERE p.namefirst IS NOT NULL
         AND p.namelast IS NOT NULL
         AND p.namegiven IS NOT NULL
-        ORDER BY LENGTH(p.$name) DESC
+        ORDER BY LENGTH(REPLACE(p.$name, ' ', '')) DESC
     """.trimIndent()
 }
