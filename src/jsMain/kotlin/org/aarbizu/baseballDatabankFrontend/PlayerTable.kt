@@ -1,11 +1,9 @@
 package org.aarbizu.baseballDatabankFrontend
 
+import csstype.TextAlign
 import csstype.pct
 import csstype.px
-import csstype.rgb
-import csstype.rgba
-import emotion.styled.StyledComponent
-import emotion.styled.styled
+import kotlinext.js.getOwnPropertyNames
 import kotlinx.js.jso
 import mui.icons.material.SportsBaseballTwoTone
 import mui.material.Box
@@ -14,30 +12,23 @@ import mui.material.IconButton
 import mui.material.Link
 import mui.material.LinkUnderline
 import mui.material.Paper
-import mui.material.PopperProps
-import mui.material.SpeedDialIcon
 import mui.material.Stack
 import mui.material.Table
 import mui.material.TableBody
 import mui.material.TableCell
-import mui.material.TableCellAlign
 import mui.material.TableContainer
 import mui.material.TableFooter
-import mui.material.TableHead
 import mui.material.TablePagination
 import mui.material.TableRow
 import mui.material.Tooltip
 import mui.system.sx
-import mui.types.PropsWithComponent
 import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.HTMLSelectElement
 import react.ChildrenBuilder
-import react.ComponentType
 import react.FC
 import react.Props
 import react.ReactElement
-import react.ReactNode
 import react.create
 import react.dom.aria.ariaLabel
 import react.dom.events.ChangeEventHandler
@@ -73,27 +64,6 @@ val PlayerTable =
                 component = Paper.create().type
                 Table {
                     ariaLabel = "players"
-                    TableHead {
-                        TableRow {
-                            TableCell { +"Name" }
-                            TableCell {
-                                align = TableCellAlign.right
-                                +"bbref"
-                            }
-                            TableCell {
-                                align = TableCellAlign.right
-                                +"Born"
-                            }
-                            TableCell {
-                                align = TableCellAlign.right
-                                +"Debut"
-                            }
-                            TableCell {
-                                align = TableCellAlign.right
-                                +"Final Game"
-                            }
-                        }
-                    }
 
                     TableBody { showPlayers(props.playerList, rowsPerPg, currentPg) }
 
@@ -135,17 +105,29 @@ fun ChildrenBuilder.showPlayers(
     val emptyRows =
         if (currentPage > 0) max(0, (1 + currentPage) * rowsPerPage - playerList.size) else 0
 
+    val (tooltips, setTooltip) = useState("")
+
     tableRows.map {
         TableRow {
             key = it.playerId
             TableCell {
-                component = th
+                key = it.playerId
+                sx { textAlign = TextAlign.center }
                 scope = "row"
-                +it.name
+                +"${it.first} ${it.last}"
                 Tooltip {
+                    key = it.playerId
                     title = getPlayerTooltipComponent(it)
                     arrow = true
+                    open = tooltips == it.playerId
                     IconButton {
+                        onClick = { _ ->
+                            if (tooltips == it.playerId) {
+                                setTooltip("")
+                            } else {
+                                setTooltip(it.playerId)
+                            }
+                        }
                         SportsBaseballTwoTone()
                     }
                 }
@@ -166,16 +148,17 @@ fun getPlayerTooltipComponent(record: SimplePlayerRecord): ReactElement<*> {
         Stack {
             Box {
                 Link {
-                    color = "rgb(0,159,255)"
+                    color = myAppTheme.palette.secondary.main
                     target = AnchorTarget._blank
                     href = decorateBbrefId(record.bbrefId)
                     underline = LinkUnderline.none
                     +"${record.given} ${record.last}"
                 }
             }
-            Box { +"dob ${record.born}" }
-            Box { +"debut ${record.debut}" }
-            Box { +"final game ${record.finalGame}"}
+            Box { +"DOB:  ${record.born}" }
+            Box { +"Debut:  ${record.debut}" }
+            Box { +"Final game:  ${record.finalGame}" }
         }
-    }.create()
+    }
+        .create()
 }
