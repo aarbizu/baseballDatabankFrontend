@@ -77,6 +77,8 @@ val PlayerTable =
                                     SelectProps = jso { asDynamic()["native"] = true }
                                     onRowsPerPageChange = handleRppChange
                                     onPageChange = handlePgChange
+                                    showFirstButton = true
+                                    showLastButton = true
                                 }
                             }
                         }
@@ -157,7 +159,7 @@ fun getPlayerTooltipComponent(record: SimplePlayerRecord): ReactElement<*> {
             Box { +"Debut:  ${record.debut}" }
             Box { +"Final game:  ${record.finalGame}" }
             if (record.playerMgr == "1") {
-                Box { +"** Player Manager" }
+                Box { +"Player Manager" }
             }
         }
     }

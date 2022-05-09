@@ -100,13 +100,13 @@ val NameLengthSearch = VFC {
                             fullWidth = false
                             InputLabel {
                                 id = "top-name-select-label"
-                                +"TopN"
+                                +"Player Count"
                             }
                             Select {
                                 labelId = "top-name-select-label"
                                 id = "top-name-select"
                                 value = topNParam.unsafeCast<Nothing?>()
-                                label = ReactNode("TopN")
+                                label = ReactNode("Player Count")
                                 onChange = { event, _ -> topNParam = event.target.value }
                                 listOf("10", "25", "50", "100").forEach {
                                     MenuItem {
