@@ -66,6 +66,7 @@ fun ChildrenBuilder.getDownArrowIcon() {
 val NameLengthSearch = VFC {
     var players by useState(emptyList<SimplePlayerRecord>())
     var topNParam by useState("10")
+    var listTypeProp by useState("default")
     val loc = useLocation()
     val minMaxValues: MinMaxValues = Json.decodeFromString(loc.state as String)
 
@@ -154,6 +155,7 @@ val NameLengthSearch = VFC {
                                 Button {
                                     size = Size.small
                                     onClick = {
+                                        listTypeProp = "last"
                                         scope.launch {
                                             players =
                                                 getSortedNames(
@@ -172,6 +174,7 @@ val NameLengthSearch = VFC {
                                     size = Size.small
                                     onClick = {
                                         scope.launch {
+                                            listTypeProp = "last"
                                             players =
                                                 getSortedNames(
                                                     NamesSortedByLengthParam(
@@ -188,6 +191,7 @@ val NameLengthSearch = VFC {
                                 Button {
                                     size = Size.small
                                     onClick = {
+                                        listTypeProp = "first"
                                         scope.launch {
                                             players =
                                                 getSortedNames(
@@ -206,6 +210,7 @@ val NameLengthSearch = VFC {
                                     size = Size.small
                                     onClick = {
                                         scope.launch {
+                                            listTypeProp = "first"
                                             players =
                                                 getSortedNames(
                                                     NamesSortedByLengthParam(
@@ -232,6 +237,7 @@ val NameLengthSearch = VFC {
                                 Button {
                                     size = Size.small
                                     onClick = {
+                                        listTypeProp = "firstlast"
                                         scope.launch {
                                             players =
                                                 getSortedNames(
@@ -249,6 +255,7 @@ val NameLengthSearch = VFC {
                                 Button {
                                     size = Size.small
                                     onClick = {
+                                        listTypeProp = "firstlast"
                                         scope.launch {
                                             players =
                                                 getSortedNames(
@@ -266,6 +273,7 @@ val NameLengthSearch = VFC {
                                 Button {
                                     size = Size.small
                                     onClick = {
+                                        listTypeProp = "full"
                                         scope.launch {
                                             players =
                                                 getSortedNames(
@@ -284,6 +292,7 @@ val NameLengthSearch = VFC {
                                     size = Size.small
                                     onClick = {
                                         scope.launch {
+                                            listTypeProp = "full"
                                             players =
                                                 getSortedNames(
                                                     NamesSortedByLengthParam(
@@ -303,7 +312,10 @@ val NameLengthSearch = VFC {
                 }
             }
 
-            BasicPlayerList { playerList = players }
+            BasicPlayerList {
+                playerList = players
+                listType = listTypeProp
+            }
         }
     }
 }
