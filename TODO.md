@@ -27,5 +27,5 @@
 - [ ] top-level menu: add hover text over each item to have a description/example of usage
 - [x] work on deployment code
     - [ ] use gitpages? heroku?
-- [ ] fix display of top-n buttons with fontawesome or something for up/down arrows
+- [x] fix display of top-n buttons with fontawesome or something for up/down arrows
 - [ ]
