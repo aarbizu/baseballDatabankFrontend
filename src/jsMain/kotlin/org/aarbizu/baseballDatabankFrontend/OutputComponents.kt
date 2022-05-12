@@ -10,6 +10,7 @@ import react.Props
 
 external interface BasicPlayerListProps : Props {
     var playerList: List<SimplePlayerRecord>
+    var listType: String
 }
 
 val BasicPlayerList =
@@ -24,7 +25,10 @@ val BasicPlayerList =
                 justifyContent = JustifyContent.left
             }
             if (props.playerList.isNotEmpty()) {
-                PlayerTable { playerList = props.playerList }
+                PlayerTable {
+                    playerList = props.playerList
+                    listType = props.listType
+                }
             } else {
                 NoPlayersFound {}
             }

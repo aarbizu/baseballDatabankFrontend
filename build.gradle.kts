@@ -6,7 +6,7 @@ import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 val kotlin = "1.6.20"
 val kotlinLogging = "2.1.21"
 val kotlinxCoroutines = "1.6.0"
-val ktor = "2.0.0"
+val ktor = "2.0.1"
 val gson = "2.9.0"
 val guava = "31.1-jre"
 val systemRules = "1.19.0"
@@ -22,7 +22,7 @@ val react = "18.0.0-pre.329-kotlin-1.6.20"
 val reactRouterDom = "6.3.0-pre.329-kotlin-1.6.20"
 val emotion = "11.9.0-pre.330-kotlin-1.6.20"
 val kotlinMUI = "5.6.2-pre.332-kotlin-1.6.21"
-// TODO -- update these
+
 plugins {
     // Apply the Kotlin JVM plugin to add support for Kotlin.
     kotlin("multiplatform") version "1.6.20"
@@ -36,7 +36,7 @@ plugins {
     idea
 
     // spotless
-    id("com.diffplug.spotless") version "6.4.1"
+    id("com.diffplug.spotless") version "6.6.0"
 
     // versions
     id("com.github.ben-manes.versions") version "0.42.0"
@@ -71,21 +71,6 @@ kotlin {
                 implementation(kotlin("test-annotations-common"))
             }
         }
-        val jvmTest by getting {
-            dependencies {
-                implementation(kotlin("test-junit"))
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-debug:$kotlinxCoroutines")
-                implementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin")
-                implementation("com.github.stefanbirkner:system-rules:$systemRules")
-                implementation("com.google.truth:truth:$truth")
-                implementation("org.junit.jupiter:junit-jupiter-api:$junit")
-                implementation("org.junit.jupiter:junit-jupiter-params:$junit")
-                implementation("io.mockk:mockk:$mockk")
-
-                runtimeOnly("org.junit.platform:junit-platform-console:$junitPlatformConsole")
-                runtimeOnly("org.junit.jupiter:junit-jupiter-engine:$junit")
-            }
-        }
         val jvmMain by getting {
             dependencies {
                 implementation("io.ktor:ktor-server-core:$ktor")
@@ -101,6 +86,21 @@ kotlin {
                 implementation("com.google.code.gson:gson:$gson")
                 implementation("com.google.guava:guava:$guava")
                 implementation("com.h2database:h2:$h2db")
+            }
+        }
+        val jvmTest by getting {
+            dependencies {
+                implementation(kotlin("test-junit"))
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-debug:$kotlinxCoroutines")
+                implementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin")
+                implementation("com.github.stefanbirkner:system-rules:$systemRules")
+                implementation("com.google.truth:truth:$truth")
+                implementation("org.junit.jupiter:junit-jupiter-api:$junit")
+                implementation("org.junit.jupiter:junit-jupiter-params:$junit")
+                implementation("io.mockk:mockk:$mockk")
+
+                runtimeOnly("org.junit.platform:junit-platform-console:$junitPlatformConsole")
+                runtimeOnly("org.junit.jupiter:junit-jupiter-engine:$junit")
             }
         }
         val jsMain by getting {

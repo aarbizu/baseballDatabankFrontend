@@ -6,6 +6,8 @@ import csstype.em
 import kotlinx.coroutines.launch
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
+import mui.icons.material.ArrowDownward
+import mui.icons.material.ArrowUpward
 import mui.material.Box
 import mui.material.Button
 import mui.material.ButtonGroup
@@ -14,12 +16,14 @@ import mui.material.ButtonGroupVariant
 import mui.material.FormControl
 import mui.material.Grid
 import mui.material.GridDirection
+import mui.material.Icon
 import mui.material.InputLabel
 import mui.material.MenuItem
 import mui.material.Select
 import mui.material.Size
 import mui.material.Stack
 import mui.material.StackDirection
+import mui.material.SvgIconSize
 import mui.material.Typography
 import mui.material.styles.TypographyVariant
 import mui.system.responsive
@@ -33,14 +37,36 @@ import org.aarbizu.baseballDatabankFrontend.SimplePlayerRecord
 import org.aarbizu.baseballDatabankFrontend.getSortedNames
 import org.aarbizu.baseballDatabankFrontend.queryPlayerNameLength
 import org.aarbizu.baseballDatabankFrontend.scope
+import react.ChildrenBuilder
 import react.ReactNode
 import react.VFC
 import react.router.useLocation
 import react.useState
 
+fun ChildrenBuilder.getUpArrowIcon() {
+    Icon {
+        sx {
+            fontSize = 1.05.em
+            paddingLeft = 0.5.em
+        }
+        ArrowUpward { fontSize = SvgIconSize.inherit }
+    }
+}
+
+fun ChildrenBuilder.getDownArrowIcon() {
+    Icon {
+        sx {
+            fontSize = 1.05.em
+            paddingLeft = 0.5.em
+        }
+        ArrowDownward { fontSize = SvgIconSize.inherit }
+    }
+}
+
 val NameLengthSearch = VFC {
     var players by useState(emptyList<SimplePlayerRecord>())
     var topNParam by useState("10")
+    var listTypeProp by useState("default")
     val loc = useLocation()
     val minMaxValues: MinMaxValues = Json.decodeFromString(loc.state as String)
 
@@ -129,6 +155,7 @@ val NameLengthSearch = VFC {
                                 Button {
                                     size = Size.small
                                     onClick = {
+                                        listTypeProp = "last"
                                         scope.launch {
                                             players =
                                                 getSortedNames(
@@ -140,12 +167,14 @@ val NameLengthSearch = VFC {
                                                 )
                                         }
                                     }
-                                    +"Last name \uD83E\uDC47"
+                                    +"Last name "
+                                    getDownArrowIcon()
                                 }
                                 Button {
                                     size = Size.small
                                     onClick = {
                                         scope.launch {
+                                            listTypeProp = "last"
                                             players =
                                                 getSortedNames(
                                                     NamesSortedByLengthParam(
@@ -156,11 +185,13 @@ val NameLengthSearch = VFC {
                                                 )
                                         }
                                     }
-                                    +"last name \uD83E\uDC45"
+                                    +"last name "
+                                    getUpArrowIcon()
                                 }
                                 Button {
                                     size = Size.small
                                     onClick = {
+                                        listTypeProp = "first"
                                         scope.launch {
                                             players =
                                                 getSortedNames(
@@ -172,12 +203,14 @@ val NameLengthSearch = VFC {
                                                 )
                                         }
                                     }
-                                    +"first name \uD83E\uDC47"
+                                    +"first name "
+                                    getDownArrowIcon()
                                 }
                                 Button {
                                     size = Size.small
                                     onClick = {
                                         scope.launch {
+                                            listTypeProp = "first"
                                             players =
                                                 getSortedNames(
                                                     NamesSortedByLengthParam(
@@ -188,7 +221,8 @@ val NameLengthSearch = VFC {
                                                 )
                                         }
                                     }
-                                    +"first name \uD83E\uDC45"
+                                    +"first name "
+                                    getUpArrowIcon()
                                 }
                             }
                         }
@@ -203,6 +237,7 @@ val NameLengthSearch = VFC {
                                 Button {
                                     size = Size.small
                                     onClick = {
+                                        listTypeProp = "firstlast"
                                         scope.launch {
                                             players =
                                                 getSortedNames(
@@ -214,11 +249,13 @@ val NameLengthSearch = VFC {
                                                 )
                                         }
                                     }
-                                    +"given name \uD83E\uDC47"
+                                    +"given name "
+                                    getDownArrowIcon()
                                 }
                                 Button {
                                     size = Size.small
                                     onClick = {
+                                        listTypeProp = "firstlast"
                                         scope.launch {
                                             players =
                                                 getSortedNames(
@@ -230,11 +267,13 @@ val NameLengthSearch = VFC {
                                                 )
                                         }
                                     }
-                                    +"given name \uD83E\uDC45"
+                                    +"given name "
+                                    getUpArrowIcon()
                                 }
                                 Button {
                                     size = Size.small
                                     onClick = {
+                                        listTypeProp = "full"
                                         scope.launch {
                                             players =
                                                 getSortedNames(
@@ -246,12 +285,14 @@ val NameLengthSearch = VFC {
                                                 )
                                         }
                                     }
-                                    +"full name \uD83E\uDC47"
+                                    +"full name "
+                                    getDownArrowIcon()
                                 }
                                 Button {
                                     size = Size.small
                                     onClick = {
                                         scope.launch {
+                                            listTypeProp = "full"
                                             players =
                                                 getSortedNames(
                                                     NamesSortedByLengthParam(
@@ -262,7 +303,8 @@ val NameLengthSearch = VFC {
                                                 )
                                         }
                                     }
-                                    +"full name \uD83E\uDC45"
+                                    +"full name "
+                                    getUpArrowIcon()
                                 }
                             }
                         }
@@ -270,7 +312,10 @@ val NameLengthSearch = VFC {
                 }
             }
 
-            BasicPlayerList { playerList = players }
+            BasicPlayerList {
+                playerList = players
+                listType = listTypeProp
+            }
         }
     }
 }

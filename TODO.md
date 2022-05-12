@@ -3,7 +3,7 @@
 - [x] player name search (last name substring)
 - ~~[ ] refactor QueryRoutes to have individual form/query using an interface~~
 - ~~[ ] (WIP) use the ktor param parsing to handle form submits, etc~~
-    - [ ] actually KVars should be usable for all of this: keep tinkering
+    - ~~[ ] actually KVars should be usable for all of this: keep tinkering~~
     - [x] just go with the <String,KVar> map instead of Parameters in route dispatch
 - [x] add tests
     - [x] play around with mockK for mocking
@@ -25,6 +25,7 @@
     - [ ] filterable, as above
 - [ ] add player table column sort toggles. Don't re-query, just sort the result set and re-render
 - [ ] top-level menu: add hover text over each item to have a description/example of usage
-- [ ] work on deployment code
+- [x] work on deployment code
     - [ ] use gitpages? heroku?
-    
+- [x] fix display of top-n buttons with fontawesome or something for up/down arrows
+- [ ]

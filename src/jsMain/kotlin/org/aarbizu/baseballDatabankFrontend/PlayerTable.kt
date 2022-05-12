@@ -40,6 +40,7 @@ import kotlin.math.max
 
 external interface PlayerTableProps : Props {
     var playerList: List<SimplePlayerRecord>
+    var listType: String
 }
 
 val PlayerTable =
@@ -63,7 +64,9 @@ val PlayerTable =
                 Table {
                     ariaLabel = "players"
 
-                    TableBody { showPlayers(props.playerList, rowsPerPg, currentPg) }
+                    TableBody {
+                        showPlayers(props.playerList, props.listType, rowsPerPg, currentPg)
+                    }
 
                     if (props.playerList.size > 10) {
                         TableFooter {
@@ -90,6 +93,7 @@ val PlayerTable =
 
 fun ChildrenBuilder.showPlayers(
     playerList: List<SimplePlayerRecord>,
+    listType: String,
     rowsPerPage: Int,
     currentPage: Int
 ) {
@@ -117,7 +121,7 @@ fun ChildrenBuilder.showPlayers(
                 +"${it.first} ${it.last}"
                 Tooltip {
                     key = it.playerId
-                    title = getPlayerTooltipComponent(it)
+                    title = getPlayerTooltipComponent(it, listType)
                     arrow = true
                     open = tooltips == it.playerId
                     IconButton {
@@ -143,8 +147,9 @@ fun ChildrenBuilder.showPlayers(
     }
 }
 
-fun getPlayerTooltipComponent(record: SimplePlayerRecord): ReactElement<*> {
+fun getPlayerTooltipComponent(record: SimplePlayerRecord, listType: String): ReactElement<*> {
     return FC<PlayerTableProps> {
+        val nameDetail = getNameDetails(record, listType)
         Stack {
             Box {
                 Link {
@@ -155,6 +160,9 @@ fun getPlayerTooltipComponent(record: SimplePlayerRecord): ReactElement<*> {
                     +"${record.given} ${record.last}"
                 }
             }
+            if (nameDetail.isNotEmpty()) {
+                Box { +nameDetail }
+            }
             Box { +"DOB:  ${record.born}" }
             Box { +"Debut:  ${record.debut}" }
             Box { +"Final game:  ${record.finalGame}" }
@@ -164,4 +172,22 @@ fun getPlayerTooltipComponent(record: SimplePlayerRecord): ReactElement<*> {
         }
     }
         .create()
+}
+
+private fun getNameDetails(record: SimplePlayerRecord, listType: String): String {
+    return when (listType) {
+        "first" -> {
+            "First name length: ${record.first.filter { it != ' ' }.length}"
+        }
+        "last" -> {
+            "Last name length: ${record.last.filter { it != ' ' }.length}"
+        }
+        "firstlast" -> {
+            "Given name length: ${(record.first + record.last).filter { it != ' ' }.length}"
+        }
+        "full" -> {
+            "Full name length: ${(record.given + record.last).filter { it != ' '}.length}"
+        }
+        else -> ""
+    }
 }
