@@ -47,7 +47,7 @@ val Home = VFC {
                         fontSize = 2.rem
                         fontWeight = FontWeight.bold
                     }
-                    +"Baseball Databank"
+                    +"fungo|stats"
                 }
             }
         }
