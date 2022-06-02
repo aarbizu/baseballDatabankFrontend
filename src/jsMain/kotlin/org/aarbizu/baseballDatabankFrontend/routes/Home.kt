@@ -31,10 +31,7 @@ val Home = VFC {
                 item = true
                 sx { textAlign = TextAlign.center }
                 Icon {
-                    sx {
-                        fontSize = 10.rem
-                        paddingRight = 0.6.rem
-                    }
+                    sx { fontSize = 10.rem }
                     color = IconColor.secondary
                     SportsBaseballOutlined { fontSize = SvgIconSize.inherit }
                 }

@@ -16,6 +16,8 @@ class PlayerNameSearchParam(
 @Serializable
 class NamesSortedByLengthParam(val type: String, val descending: String, val topN: String)
 
+@Serializable class OffenseStatParam(val stat: String)
+
 private const val bbrefUri = "https://www.baseball-reference.com"
 private const val bbrefSuffix = ".shtml"
 

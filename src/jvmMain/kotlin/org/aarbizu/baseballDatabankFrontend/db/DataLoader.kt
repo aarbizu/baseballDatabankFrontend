@@ -79,6 +79,16 @@ class DataLoader(private val db: DBProvider, private val csvHome: String) {
                     """.trimIndent()
                 )
             }
+
+            log.info("building manager-player index")
+            it.createStatement().use { stmt ->
+                stmt.execute(
+                    """
+                        DROP INDEX IF EXISTS MGR_PLAYER;
+                        CREATE INDEX MGR_PLAYER ON managers ( playerID, plyrmgr );
+                    """.trimIndent()
+                )
+            }
         }
     }
 

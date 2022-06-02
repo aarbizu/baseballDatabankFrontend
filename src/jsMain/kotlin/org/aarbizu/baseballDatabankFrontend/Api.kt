@@ -57,3 +57,9 @@ suspend fun getSortedNames(sortedNameParams: NamesSortedByLengthParam): List<Sim
         }
         .body()
 }
+
+suspend fun getOffenseStatNames(): OffenseStats {
+    return jsonClient
+        .post("$endpoint/$OFFENSE_STATS") { contentType(ContentType.Application.Json) }
+        .body()
+}

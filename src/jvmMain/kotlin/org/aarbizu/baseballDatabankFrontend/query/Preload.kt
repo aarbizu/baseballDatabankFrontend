@@ -3,6 +3,7 @@ package org.aarbizu.baseballDatabankFrontend.query
 import com.google.common.base.Stopwatch
 import org.aarbizu.baseballDatabankFrontend.BaseballRecord
 import org.aarbizu.baseballDatabankFrontend.NamesSortedByLengthParam
+import org.aarbizu.baseballDatabankFrontend.OffenseStats
 import org.aarbizu.baseballDatabankFrontend.SimplePlayerRecord
 import java.util.logging.Logger
 
@@ -11,7 +12,8 @@ data class PreloadedResults(
     val orderedByLastNameLen: List<BaseballRecord>,
     val orderedByFirstNameLen: List<BaseballRecord>,
     val orderedByNameLen: List<BaseballRecord>,
-    val orderedByFullNameLen: List<BaseballRecord>
+    val orderedByFullNameLen: List<BaseballRecord>,
+    val offenseStats: OffenseStats
 ) {
     companion object Instance {
         lateinit var preloads: PreloadedResults
@@ -27,6 +29,7 @@ fun preloadQueries(q: QueryEngine): PreloadedResults {
             orderedByFirstNameLen = q.orderedByLength("First"),
             orderedByNameLen = q.orderedByLength("FirstLast"),
             orderedByFullNameLen = q.orderedByLength("Full"),
+            offenseStats = OffenseStats(OffenseStatsNames.values().map { it.name })
         )
     Logger.getLogger("Preload").info("preload queries: $timer")
     return preload
