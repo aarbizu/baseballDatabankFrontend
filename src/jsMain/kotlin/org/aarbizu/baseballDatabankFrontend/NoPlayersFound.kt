@@ -18,7 +18,7 @@ val NoPlayersFound =
                 textAlign = TextAlign.center
             }
             Typography {
-                variant = TypographyVariant.h2
+                variant = TypographyVariant.h3
                 sx { color = myAppTheme.palette.text.secondary }
                 +"No results"
             }

@@ -35,7 +35,7 @@ class DataLoader(private val db: DBProvider, private val csvHome: String) {
             "HallOfFame" to HallOfFameLoader(),
             "Salaries" to SalariesLoader(),
             "Schools" to SchoolsLoader(),
-            "Teams" to TeamsLoader(),
+            "Teams" to TeamsLoader()
         )
 
     fun loadAllFiles() {

@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 enum class OffenseStatsNames {
-    GAMES,
+    G,
     AB,
     R,
     H,
@@ -20,5 +20,5 @@ enum class OffenseStatsNames {
     HBP,
     SH,
     SF,
-    GIDP,
+    GIDP
 }

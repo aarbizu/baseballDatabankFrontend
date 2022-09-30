@@ -3,6 +3,8 @@ package org.aarbizu.baseballDatabankFrontend.query
 import com.google.common.base.Stopwatch
 import org.aarbizu.baseballDatabankFrontend.BaseballRecord
 import org.aarbizu.baseballDatabankFrontend.MinMaxValues
+import org.aarbizu.baseballDatabankFrontend.OffenseStatParam
+import org.aarbizu.baseballDatabankFrontend.PlayerCareerStatRecord
 import org.aarbizu.baseballDatabankFrontend.PlayerNameLengthParam
 import org.aarbizu.baseballDatabankFrontend.PlayerNameSearchParam
 import org.aarbizu.baseballDatabankFrontend.PlayerSeasonStatRecord
@@ -80,6 +82,9 @@ class QueryEngine(private val dbProvider: DBProvider) {
             playerSeasonStatRecordExtractor
         )
 
+    fun offenseStatLeaders(hittingStatParam: OffenseStatParam) =
+        query(dbProvider, careerStatleader(hittingStatParam.stat), emptyList(), careerStatLeaders)
+
     fun minMaxNameLengthValues(): BaseballRecord {
         return query(dbProvider, minMaxNameLengthsSql, emptyList(), minMaxNameLengthsExtract)[0]
     }
@@ -137,10 +142,22 @@ class QueryEngine(private val dbProvider: DBProvider) {
                 PlayerSeasonStatRecord(
                     year = it.getString("year"),
                     name = it.getString("name"),
-                    statName =
-                    it.getString(
-                        "season_hr"
-                    ), // TODO need to make this able to retrieve an arbitrary stat
+                    statName = it.getString("season_hr")
+                    // TODO need to make this able to retrieve an arbitrary stat
+                )
+            )
+        }
+        records
+    }
+
+    private val careerStatLeaders: (ResultSet) -> List<PlayerCareerStatRecord> = {
+        val records = mutableListOf<PlayerCareerStatRecord>()
+        while (it.next()) {
+            records.add(
+                PlayerCareerStatRecord(
+                    id = it.getString("playerid"),
+                    name = it.getString("name"),
+                    stat = it.getString("stat_total")
                 )
             )
         }

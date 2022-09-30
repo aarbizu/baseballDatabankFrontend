@@ -28,11 +28,11 @@ class BattingLoader : CsvLoader {
                             CS int DEFAULT null,
                             BB int DEFAULT null,
                             SO int DEFAULT null,
-                            IBB varchar,
-                            HBP varchar,
-                            SH varchar,
-                            SF varchar,
-                            GIDP varchar
+                            IBB int DEFAULT null,
+                            HBP int DEFAULT null,
+                            SH int DEFAULT null,
+                            SF int DEFAULT null,
+                            GIDP int DEFAULT null
                         ) AS
                         SELECT * FROM CSVREAD('${csvFile.absolutePath}');
                     """.trimIndent()

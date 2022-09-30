@@ -3,21 +3,21 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent.PASSED
 import org.gradle.api.tasks.testing.logging.TestLogEvent.SKIPPED
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 
-val kotlin = "1.6.20"
-val kotlinLogging = "2.1.21"
-val kotlinxCoroutines = "1.6.0"
-val ktor = "2.0.1"
-val gson = "2.9.0"
+val kotlin = "1.7.20"
+val kotlinLogging = "3.0.0"
+val kotlinxCoroutines = "1.6.4"
+val ktor = "2.1.1"
+val gson = "2.9.1"
 val guava = "31.1-jre"
 val systemRules = "1.19.0"
-val slf4j = "1.7.31"
+val slf4j = "2.0.3"
 val truth = "1.1.3"
-val junit = "5.8.2"
-val junitPlatformConsole = "1.8.2"
-val mockk = "1.12.3"
+val junit = "5.9.1"
+val junitPlatformConsole = "1.9.1"
+val mockk = "1.13.2"
 val testContainers = "1.16.3"
-val h2db = "2.1.210"
-val serialization = "1.3.2"
+val h2db = "2.1.214"
+val serialization = "1.4.0"
 val react = "18.0.0-pre.329-kotlin-1.6.20"
 val reactRouterDom = "6.3.0-pre.329-kotlin-1.6.20"
 val emotion = "11.9.0-pre.330-kotlin-1.6.20"
@@ -25,18 +25,18 @@ val kotlinMUI = "5.6.2-pre.332-kotlin-1.6.21"
 
 plugins {
     // Apply the Kotlin JVM plugin to add support for Kotlin.
-    kotlin("multiplatform") version "1.6.20"
+    kotlin("multiplatform") version "1.7.20"
 
     // Apply the application plugin to add support for building a CLI application.
     application
 
-    kotlin("plugin.serialization") version "1.6.20"
+    kotlin("plugin.serialization") version "1.7.20"
 
     // Apply the idea plugin
     idea
 
     // spotless
-    id("com.diffplug.spotless") version "6.6.0"
+    id("com.diffplug.spotless") version "6.11.0"
 
     // versions
     id("com.github.ben-manes.versions") version "0.42.0"

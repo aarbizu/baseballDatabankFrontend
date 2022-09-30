@@ -63,3 +63,14 @@ suspend fun getOffenseStatNames(): OffenseStats {
         .post("$endpoint/$OFFENSE_STATS") { contentType(ContentType.Application.Json) }
         .body()
 }
+
+suspend fun getOffenseCareerStats(
+    offenseStatParam: OffenseStatParam
+): List<PlayerCareerStatRecord> {
+    return jsonClient
+        .post("$endpoint/$ALL_TIME_HITTING") {
+            contentType(ContentType.Application.Json)
+            setBody(offenseStatParam)
+        }
+        .body()
+}

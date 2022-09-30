@@ -1,0 +1,6 @@
+POST http://localhost:8080/all-time-hitting
+Content-Type: application/json
+
+{
+  "stat": "SH"
+}

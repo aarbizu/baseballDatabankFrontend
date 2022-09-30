@@ -17,6 +17,9 @@ import react.router.Route
 import react.router.Routes
 import react.router.dom.BrowserRouter
 
+const val bbrefUri = "https://www.baseball-reference.com"
+const val bbrefSuffix = ".shtml"
+
 val scope = MainScope()
 
 val myAppTheme =
