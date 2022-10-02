@@ -44,15 +44,6 @@ val StatsMenu =
                 }
                 +"Stats"
             }
-
-            // TODO - need to create the /stats route now
-
-            //            MenuItem {
-            //                onClick = {
-            //                    menuAnchorElem = null
-            //                    navigate("/name")
-            //                }
-            //                +"By Name / Regex"
-            //            }
+            
         }
     }
