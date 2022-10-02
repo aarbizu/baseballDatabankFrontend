@@ -105,6 +105,13 @@ class Server(private val config: AppConfig) {
                     call.respond(playerNamesSorted(param))
                 }
 
+                post(OFFENSE_STATS) { call.respond(PreloadedResults.preloads.offenseStats) }
+
+                post(ALL_TIME_HITTING) {
+                    val params = call.receive<OffenseStatParam>()
+                    call.respond(queries.offenseStatLeaders(params))
+                }
+
                 route("/") {
                     route("{...}") {
                         get { call.respondText(defaultHtmlText, ContentType.Text.Html) }

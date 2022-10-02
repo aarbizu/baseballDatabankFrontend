@@ -6,30 +6,39 @@ import mui.material.MenuItem
 import mui.material.Typography
 import mui.system.sx
 import org.w3c.dom.Element
+import react.ChildrenBuilder
 import react.FC
 import react.Props
+import react.StateSetter
 import react.router.NavigateOptions
 import react.router.useNavigate
 import react.useState
 
 external interface BasicMenuProps : Props {
     var buttonLabel: String
+}
+
+external interface PlayerMenuProps : BasicMenuProps {
     var minMax: String /* json for MinMaxValue */
+}
+
+fun ChildrenBuilder.addMenuButton(setter: StateSetter<Element?>, props: BasicMenuProps) {
+    Button {
+        onClick = { setter(it.currentTarget) }
+        Typography {
+            sx { color = myAppTheme.palette.secondary.main }
+            +props.buttonLabel
+        }
+    }
 }
 
 // TODO pull more into props to make it reusable
 val BasicMenu =
-    FC<BasicMenuProps> { props ->
-        var menuAnchorElem by useState<Element>()
+    FC<PlayerMenuProps> { props ->
+        var (menuAnchorElem, menuAnchorSetter) = useState<Element>()
         val navigate = useNavigate()
 
-        Button {
-            onClick = { menuAnchorElem = it.currentTarget }
-            Typography {
-                sx { color = myAppTheme.palette.secondary.main }
-                +props.buttonLabel
-            }
-        }
+        addMenuButton(menuAnchorSetter, props)
 
         Menu {
             if (menuAnchorElem != null) {
@@ -37,11 +46,11 @@ val BasicMenu =
             }
             open = menuAnchorElem != null
 
-            onClose = { menuAnchorElem = null }
+            onClose = { menuAnchorSetter(null) }
 
             MenuItem {
                 onClick = {
-                    menuAnchorElem = null
+                    menuAnchorSetter(null)
                     navigate(
                         "/namelength",
                         options =

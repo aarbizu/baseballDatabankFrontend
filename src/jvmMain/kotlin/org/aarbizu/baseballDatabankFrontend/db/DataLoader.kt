@@ -35,7 +35,7 @@ class DataLoader(private val db: DBProvider, private val csvHome: String) {
             "HallOfFame" to HallOfFameLoader(),
             "Salaries" to SalariesLoader(),
             "Schools" to SchoolsLoader(),
-            "Teams" to TeamsLoader(),
+            "Teams" to TeamsLoader()
         )
 
     fun loadAllFiles() {
@@ -76,6 +76,16 @@ class DataLoader(private val db: DBProvider, private val csvHome: String) {
                     """
                         DROP INDEX IF EXISTS APP_PLAYER;
                         CREATE INDEX APP_PLAYER ON appearances ( playerID );
+                    """.trimIndent()
+                )
+            }
+
+            log.info("building manager-player index")
+            it.createStatement().use { stmt ->
+                stmt.execute(
+                    """
+                        DROP INDEX IF EXISTS MGR_PLAYER;
+                        CREATE INDEX MGR_PLAYER ON managers ( playerID, plyrmgr );
                     """.trimIndent()
                 )
             }

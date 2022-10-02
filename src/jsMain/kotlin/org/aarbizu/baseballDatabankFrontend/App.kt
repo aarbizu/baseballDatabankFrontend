@@ -10,11 +10,15 @@ import org.aarbizu.baseballDatabankFrontend.routes.NameLengthSearch
 import org.aarbizu.baseballDatabankFrontend.routes.NavBar
 import org.aarbizu.baseballDatabankFrontend.routes.NoMatch
 import org.aarbizu.baseballDatabankFrontend.routes.PlayerNameSearch
+import org.aarbizu.baseballDatabankFrontend.routes.StatsSearch
 import react.VFC
 import react.create
 import react.router.Route
 import react.router.Routes
 import react.router.dom.BrowserRouter
+
+const val bbrefUri = "https://www.baseball-reference.com"
+const val bbrefSuffix = ".shtml"
 
 val scope = MainScope()
 
@@ -62,6 +66,11 @@ val App = VFC {
                     Route {
                         path = "name"
                         element = PlayerNameSearch.create()
+                    }
+
+                    Route {
+                        path = "stats"
+                        element = StatsSearch.create()
                     }
 
                     Route {

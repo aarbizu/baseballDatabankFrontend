@@ -13,7 +13,10 @@ import mui.material.Toolbar
 import mui.system.sx
 import org.aarbizu.baseballDatabankFrontend.BasicMenu
 import org.aarbizu.baseballDatabankFrontend.MinMaxValues
+import org.aarbizu.baseballDatabankFrontend.OffenseStats
+import org.aarbizu.baseballDatabankFrontend.StatsMenu
 import org.aarbizu.baseballDatabankFrontend.getMinMaxNameLengths
+import org.aarbizu.baseballDatabankFrontend.getOffenseStatNames
 import org.aarbizu.baseballDatabankFrontend.myAppTheme
 import org.aarbizu.baseballDatabankFrontend.scope
 import react.VFC
@@ -26,8 +29,14 @@ val INIT_MIN_MAX = MinMaxValues("0", "0", "0", "0", "0", "0", "0", "0")
 
 val NavBar = VFC {
     var minMaxValues by useState(INIT_MIN_MAX)
+    var offenseStatNames by useState(OffenseStats(emptyList()))
 
-    useEffectOnce { scope.launch { minMaxValues = getMinMaxNameLengths() } }
+    useEffectOnce {
+        scope.launch {
+            minMaxValues = getMinMaxNameLengths()
+            offenseStatNames = getOffenseStatNames()
+        }
+    }
 
     val navigate = useNavigate()
     Box {
@@ -40,9 +49,15 @@ val NavBar = VFC {
                     onClick = { navigate("/") }
                     Home {} /* not the component, the mui icon */
                 }
+
                 BasicMenu {
                     buttonLabel = "Players"
                     minMax = Json.encodeToString(minMaxValues)
+                }
+
+                StatsMenu {
+                    buttonLabel = "Stats"
+                    offenseStatLabels = offenseStatNames.statNames
                 }
             }
         }

@@ -120,3 +120,24 @@ fun orderedByLengthSql(nameField: String): String {
         ORDER BY LENGTH(REPLACE(p.$name, ' ', '')) DESC
     """.trimIndent()
 }
+
+fun careerStatleader(statName: String): String {
+    val statNameNormalized =
+        when (statName) {
+            "DOUBLE" -> "\"2B\""
+            "TRIPLE" -> "\"3B\""
+            else -> statName
+        }
+    return """
+        SELECT
+            b.playerid,
+            COALESCE(p.namefirst,'unknown') || ' ' || COALESCE(p.namelast,'unknown') as name,
+            sum($statNameNormalized) as stat_total
+        FROM BATTING b, PEOPLE p
+        WHERE b.PLAYERID = p.PLAYERID
+        GROUP by b.PLAYERID
+        HAVING stat_total > 0
+        ORDER by stat_total desc
+        LIMIT 1000
+    """.trimIndent()
+}
