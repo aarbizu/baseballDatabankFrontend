@@ -14,7 +14,7 @@ fun isSuperVocalic(input: String): Boolean {
             }
             'E',
             'e' -> {
-               eCount += 1
+                eCount += 1
             }
             'I',
             'i' -> {

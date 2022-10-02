@@ -44,6 +44,5 @@ val StatsMenu =
                 }
                 +"Stats"
             }
-            
         }
     }

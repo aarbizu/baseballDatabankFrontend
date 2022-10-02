@@ -44,6 +44,5 @@ class SupervocallicTest {
         assertThat(isSuperVocalic("AZiou")).isFalse()
         assertThat(isSuperVocalic("Barry Bonds")).isFalse()
         assertThat(isSuperVocalic("Juan Encarnacion")).isFalse()
-
     }
 }
