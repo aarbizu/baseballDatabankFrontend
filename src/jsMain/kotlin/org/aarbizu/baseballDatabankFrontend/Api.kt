@@ -3,7 +3,6 @@ package org.aarbizu.baseballDatabankFrontend
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
@@ -64,13 +63,26 @@ suspend fun getOffenseStatNames(): OffenseStats {
         .body()
 }
 
-suspend fun getOffenseCareerStats(
-    offenseStatParam: OffenseStatParam
-): List<PlayerCareerStatRecord> {
+suspend fun getPitchingStatNames(): PitchingStats {
+    return jsonClient
+        .post("$endpoint/$PITCHING_STATS") { contentType(ContentType.Application.Json) }
+        .body()
+}
+
+suspend fun getOffenseCareerStats(offenseStatParam: StatParam): List<PlayerCareerStatRecord> {
     return jsonClient
         .post("$endpoint/$ALL_TIME_HITTING") {
             contentType(ContentType.Application.Json)
             setBody(offenseStatParam)
+        }
+        .body()
+}
+
+suspend fun getPitchingCareerStats(pitchingStatParam: StatParam): List<PlayerCareerStatRecord> {
+    return jsonClient
+        .post("$endpoint/$ALL_TIME_PITCHING") {
+            contentType(ContentType.Application.Json)
+            setBody(pitchingStatParam)
         }
         .body()
 }

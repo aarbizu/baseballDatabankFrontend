@@ -3,10 +3,8 @@ package org.aarbizu.baseballDatabankFrontend
 import csstype.TextAlign
 import csstype.pct
 import csstype.px
-import mui.icons.material.SportsBaseballTwoTone
 import mui.material.Box
 import mui.material.Container
-import mui.material.IconButton
 import mui.material.Link
 import mui.material.LinkUnderline
 import mui.material.Paper
@@ -18,6 +16,7 @@ import mui.material.TableContainer
 import mui.material.TableRow
 import mui.material.Tooltip
 import mui.system.sx
+import org.aarbizu.baseballDatabankFrontend.routes.tooltipButton
 import react.ChildrenBuilder
 import react.FC
 import react.Props
@@ -84,16 +83,7 @@ fun ChildrenBuilder.showPlayers(
                     title = getPlayerTooltipComponent(it, listType)
                     arrow = true
                     open = tooltips == it.playerId
-                    IconButton {
-                        onClick = { _ ->
-                            if (tooltips == it.playerId) {
-                                setTooltip("")
-                            } else {
-                                setTooltip(it.playerId)
-                            }
-                        }
-                        SportsBaseballTwoTone()
-                    }
+                    tooltipButton(it.playerId, tooltips, setTooltip)
                 }
             }
         }

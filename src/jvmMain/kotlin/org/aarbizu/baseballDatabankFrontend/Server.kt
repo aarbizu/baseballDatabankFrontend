@@ -107,9 +107,16 @@ class Server(private val config: AppConfig) {
 
                 post(OFFENSE_STATS) { call.respond(PreloadedResults.preloads.offenseStats) }
 
+                post(PITCHING_STATS) { call.respond(PreloadedResults.preloads.pitchingStats) }
+
                 post(ALL_TIME_HITTING) {
-                    val params = call.receive<OffenseStatParam>()
-                    call.respond(queries.offenseStatLeaders(params))
+                    val param = call.receive<StatParam>()
+                    call.respond(queries.offenseStatLeaders(param))
+                }
+
+                post(ALL_TIME_PITCHING) {
+                    val param = call.receive<StatParam>()
+                    call.respond(queries.pitchingStatLeaders(param))
                 }
 
                 route("/") {

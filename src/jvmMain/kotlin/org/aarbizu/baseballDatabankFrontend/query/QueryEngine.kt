@@ -3,12 +3,12 @@ package org.aarbizu.baseballDatabankFrontend.query
 import com.google.common.base.Stopwatch
 import org.aarbizu.baseballDatabankFrontend.BaseballRecord
 import org.aarbizu.baseballDatabankFrontend.MinMaxValues
-import org.aarbizu.baseballDatabankFrontend.OffenseStatParam
 import org.aarbizu.baseballDatabankFrontend.PlayerCareerStatRecord
 import org.aarbizu.baseballDatabankFrontend.PlayerNameLengthParam
 import org.aarbizu.baseballDatabankFrontend.PlayerNameSearchParam
 import org.aarbizu.baseballDatabankFrontend.PlayerSeasonStatRecord
 import org.aarbizu.baseballDatabankFrontend.SimplePlayerRecord
+import org.aarbizu.baseballDatabankFrontend.StatParam
 import org.aarbizu.baseballDatabankFrontend.db.DBProvider
 import org.slf4j.LoggerFactory
 import java.sql.Connection
@@ -82,8 +82,21 @@ class QueryEngine(private val dbProvider: DBProvider) {
             playerSeasonStatRecordExtractor
         )
 
-    fun offenseStatLeaders(hittingStatParam: OffenseStatParam) =
-        query(dbProvider, careerStatleader(hittingStatParam.stat), emptyList(), careerStatLeaders)
+    fun offenseStatLeaders(hittingStatParam: StatParam) =
+        query(
+            dbProvider,
+            careerStatleader(hittingStatParam.stat, "BATTING"),
+            emptyList(),
+            careerStatLeaders
+        )
+
+    fun pitchingStatLeaders(pitchingStatParam: StatParam) =
+        query(
+            dbProvider,
+            careerStatleader(pitchingStatParam.stat, "PITCHING"),
+            emptyList(),
+            careerStatLeaders
+        )
 
     fun minMaxNameLengthValues(): BaseballRecord {
         return query(dbProvider, minMaxNameLengthsSql, emptyList(), minMaxNameLengthsExtract)[0]

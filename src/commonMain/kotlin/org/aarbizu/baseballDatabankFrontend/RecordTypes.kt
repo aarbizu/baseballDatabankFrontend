@@ -36,5 +36,7 @@ class MinMaxValues(
 
 @Serializable class OffenseStats(val statNames: List<String>) : BaseballRecord
 
+@Serializable class PitchingStats(val statNames: List<String>) : BaseballRecord
+
 @Serializable
 class PlayerCareerStatRecord(val id: String, val name: String, val stat: String) : BaseballRecord
