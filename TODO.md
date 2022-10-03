@@ -17,15 +17,15 @@
     - [ ] managers (reg/postseason)
 - checkbox filters to superlative queries, e.g., top HR hitters whose names are:
     - [ ] palindromes (infeasible, computationally via regex... but maybe doable with string ops)
-    - [ ] supervocalic
-    - [ ] strict supervocalic (exactly one each of vowel)
+    - [x] supervocalic
+    - [x] strict supervocalic (exactly one each of vowel)
 - [ ] basic leaderboards for counting stats 
     - [ ] apply checkbox modifiers, eventually
 - [ ] basic leaderboards for career rate stats 
     - [ ] filterable, as above
 - [ ] add player table column sort toggles. Don't re-query, just sort the result set and re-render
 - [ ] top-level menu: add hover text over each item to have a description/example of usage
-- [x] work on deployment code
-    - [ ] use gitpages? heroku?
+- ~~[x] work on deployment code~~
+    - ~~[ ] use gitpages? heroku?~~
 - [x] fix display of top-n buttons with fontawesome or something for up/down arrows
 - [ ]

@@ -29,18 +29,18 @@ class PitchingLoader : CsvLoader {
                             HR int DEFAULT null,
                             BB int DEFAULT null,
                             SO int DEFAULT null,
-                            BAOpp varchar,
+                            BAOpp double precision DEFAULT null,
                             ERA double precision DEFAULT null,
-                            IBB varchar,
-                            WP varchar,
-                            HBP varchar,
+                            IBB int DEFAULT null,
+                            WP int DEFAULT null,
+                            HBP int DEFAULT null,
                             BK int DEFAULT null,
-                            BFP varchar,
-                            GF varchar,
+                            BFP int DEFAULT null,
+                            GF int DEFAULT null,
                             R int DEFAULT null,
-                            SH varchar,
-                            SF varchar,
-                            GIDP varchar
+                            SH int DEFAULT null,
+                            SF int DEFAULT null,
+                            GIDP int DEFAULT null
                         ) AS
                         SELECT * FROM CSVREAD('${csvFile.absolutePath}');
                     """.trimIndent()
