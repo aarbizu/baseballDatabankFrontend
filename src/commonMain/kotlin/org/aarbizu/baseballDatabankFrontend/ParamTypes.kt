@@ -16,4 +16,4 @@ class PlayerNameSearchParam(
 @Serializable
 class NamesSortedByLengthParam(val type: String, val descending: String, val topN: String)
 
-@Serializable class OffenseStatParam(val stat: String)
+@Serializable class StatParam(val stat: String)

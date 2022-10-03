@@ -30,14 +30,16 @@ import mui.system.responsive
 import mui.system.sx
 import org.aarbizu.baseballDatabankFrontend.BaseballRecord
 import org.aarbizu.baseballDatabankFrontend.CareerStatList
-import org.aarbizu.baseballDatabankFrontend.OffenseStatParam
 import org.aarbizu.baseballDatabankFrontend.PaginationControls
 import org.aarbizu.baseballDatabankFrontend.PlayerCareerStatRecord
+import org.aarbizu.baseballDatabankFrontend.StatNames
+import org.aarbizu.baseballDatabankFrontend.StatParam
 import org.aarbizu.baseballDatabankFrontend.TableProps
 import org.aarbizu.baseballDatabankFrontend.countOfEmptyRows
 import org.aarbizu.baseballDatabankFrontend.decorateBbrefId
 import org.aarbizu.baseballDatabankFrontend.getOffenseCareerStats
 import org.aarbizu.baseballDatabankFrontend.getPageBoundaries
+import org.aarbizu.baseballDatabankFrontend.getPitchingCareerStats
 import org.aarbizu.baseballDatabankFrontend.isSuperVocalic
 import org.aarbizu.baseballDatabankFrontend.scope
 import react.ChildrenBuilder
@@ -56,7 +58,7 @@ val StatsSearch = VFC {
     val loc = useLocation()
     var playerStats by useState(emptyList<PlayerCareerStatRecord>())
     var selectedStat by useState("")
-    val statNames: List<String> = Json.decodeFromString(loc.state as String)
+    val statNames: StatNames = Json.decodeFromString(loc.state as String)
 
     Box {
         sx { padding = 1.em }
@@ -92,9 +94,9 @@ val StatsSearch = VFC {
                         Select {
                             labelId = "hit-stats-select"
                             value = selectedStat.unsafeCast<Nothing?>()
-                            label = ReactNode("Stat")
+                            label = ReactNode("Hitting Stat")
                             onChange = { event, _ -> selectedStat = event.target.value }
-                            statNames.forEach {
+                            statNames.hitting.forEach {
                                 MenuItem {
                                     value = it
                                     +it
@@ -105,19 +107,48 @@ val StatsSearch = VFC {
                             size = Size.small
                             onClick = {
                                 scope.launch {
-                                    playerStats =
-                                        getOffenseCareerStats(OffenseStatParam(selectedStat))
+                                    playerStats = getOffenseCareerStats(StatParam(selectedStat))
                                 }
                             }
                             +"Get Leaders"
                         }
+                    }
+
+                    FormControl {
+                        sx { margin = 1.em }
+                        variant = FormControlVariant.standard
+                        size = Size.small
+                        InputLabel {
+                            id = "pitch-stats-select"
+                            +"Pitching Stat"
+                        }
+                        Select {
+                            labelId = "pitch-stats-select"
+                            value = selectedStat.unsafeCast<Nothing?>()
+                            label = ReactNode("Pitching Stat")
+                            onChange = { event, _ -> selectedStat = event.target.value }
+                            statNames.pitching.forEach {
+                                MenuItem {
+                                    value = it
+                                    +it
+                                }
+                            }
+                        }
                         Button {
                             size = Size.small
                             onClick = {
-                                scope.launch { playerStats = keepSupervocalics(playerStats) }
+                                scope.launch {
+                                    playerStats = getPitchingCareerStats(StatParam(selectedStat))
+                                }
                             }
-                            +"Only Supervocalic"
+                            +"Get Leaders"
                         }
+                    }
+
+                    Button {
+                        size = Size.small
+                        onClick = { scope.launch { playerStats = keepSupervocalics(playerStats) } }
+                        +"Only Supervocalic"
                     }
                 }
             }
@@ -178,16 +209,24 @@ fun ChildrenBuilder.getTooltip(
         title = getBasicToolTip(record.id, record.name)
         arrow = true
         open = tooltip == record.id
-        IconButton {
-            onClick = { _ ->
-                if (tooltip == record.id) {
-                    setTooltip("")
-                } else {
-                    setTooltip(record.id)
-                }
+        tooltipButton(record.id, tooltip, setTooltip)
+    }
+}
+
+fun ChildrenBuilder.tooltipButton(
+    id: String,
+    tooltipString: String,
+    setTooltip: StateSetter<String>
+) {
+    IconButton {
+        onClick = { _ ->
+            if (tooltipString == id) {
+                setTooltip("")
+            } else {
+                setTooltip(id)
             }
-            SportsBaseballTwoTone()
         }
+        SportsBaseballTwoTone()
     }
 }
 
@@ -200,7 +239,7 @@ fun getBasicToolTip(id: String, name: String): ReactElement<*> {
                     target = AnchorTarget._blank
                     href = decorateBbrefId(id, "0")
                     underline = LinkUnderline.none
-                    +name
+                    +"see $name on bbref"
                 }
             }
         }

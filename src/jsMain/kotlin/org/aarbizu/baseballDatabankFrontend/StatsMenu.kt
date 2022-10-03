@@ -1,5 +1,6 @@
 package org.aarbizu.baseballDatabankFrontend
 
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import mui.material.Menu
@@ -12,7 +13,10 @@ import react.useState
 
 external interface StatsMenuProps : BasicMenuProps {
     var offenseStatLabels: List<String>
+    var pitchingStatLabels: List<String>
 }
+
+@Serializable data class StatNames(var hitting: List<String>, var pitching: List<String>)
 
 val StatsMenu =
     FC<StatsMenuProps> { props ->
@@ -38,7 +42,9 @@ val StatsMenu =
                         object : NavigateOptions {
                             override var replace: Boolean? = false
                             override var state: Any? =
-                                Json.encodeToString(props.offenseStatLabels)
+                                Json.encodeToString(
+                                    StatNames(props.offenseStatLabels, props.pitchingStatLabels)
+                                )
                         }
                     )
                 }

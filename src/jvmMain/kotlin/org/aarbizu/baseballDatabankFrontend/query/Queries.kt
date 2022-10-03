@@ -121,7 +121,7 @@ fun orderedByLengthSql(nameField: String): String {
     """.trimIndent()
 }
 
-fun careerStatleader(statName: String): String {
+fun careerStatleader(statName: String, statTable: String): String {
     val statNameNormalized =
         when (statName) {
             "DOUBLE" -> "\"2B\""
@@ -133,7 +133,7 @@ fun careerStatleader(statName: String): String {
             b.playerid,
             COALESCE(p.namefirst,'unknown') || ' ' || COALESCE(p.namelast,'unknown') as name,
             sum($statNameNormalized) as stat_total
-        FROM BATTING b, PEOPLE p
+        FROM $statTable b, PEOPLE p
         WHERE b.PLAYERID = p.PLAYERID
         GROUP by b.PLAYERID
         HAVING stat_total > 0

@@ -14,9 +14,11 @@ import mui.system.sx
 import org.aarbizu.baseballDatabankFrontend.BasicMenu
 import org.aarbizu.baseballDatabankFrontend.MinMaxValues
 import org.aarbizu.baseballDatabankFrontend.OffenseStats
+import org.aarbizu.baseballDatabankFrontend.PitchingStats
 import org.aarbizu.baseballDatabankFrontend.StatsMenu
 import org.aarbizu.baseballDatabankFrontend.getMinMaxNameLengths
 import org.aarbizu.baseballDatabankFrontend.getOffenseStatNames
+import org.aarbizu.baseballDatabankFrontend.getPitchingStatNames
 import org.aarbizu.baseballDatabankFrontend.myAppTheme
 import org.aarbizu.baseballDatabankFrontend.scope
 import react.VFC
@@ -30,11 +32,13 @@ val INIT_MIN_MAX = MinMaxValues("0", "0", "0", "0", "0", "0", "0", "0")
 val NavBar = VFC {
     var minMaxValues by useState(INIT_MIN_MAX)
     var offenseStatNames by useState(OffenseStats(emptyList()))
+    var pitchingStatNNames by useState(PitchingStats(emptyList()))
 
     useEffectOnce {
         scope.launch {
             minMaxValues = getMinMaxNameLengths()
             offenseStatNames = getOffenseStatNames()
+            pitchingStatNNames = getPitchingStatNames()
         }
     }
 
@@ -58,6 +62,7 @@ val NavBar = VFC {
                 StatsMenu {
                     buttonLabel = "Stats"
                     offenseStatLabels = offenseStatNames.statNames
+                    pitchingStatLabels = pitchingStatNNames.statNames
                 }
             }
         }
