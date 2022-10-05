@@ -106,8 +106,10 @@ val StatsSearch = VFC {
                         Button {
                             size = Size.small
                             onClick = {
-                                scope.launch {
-                                    playerStats = getOffenseCareerStats(StatParam(selectedStat))
+                                if (selectedStat.isNotBlank() || selectedStat.isNotEmpty()) {
+                                    scope.launch {
+                                        playerStats = getOffenseCareerStats(StatParam(selectedStat))
+                                    }
                                 }
                             }
                             +"Get Leaders"
@@ -137,8 +139,11 @@ val StatsSearch = VFC {
                         Button {
                             size = Size.small
                             onClick = {
-                                scope.launch {
-                                    playerStats = getPitchingCareerStats(StatParam(selectedStat))
+                                if (selectedStat.isNotBlank() || selectedStat.isNotEmpty()) {
+                                    scope.launch {
+                                        playerStats =
+                                            getPitchingCareerStats(StatParam(selectedStat))
+                                    }
                                 }
                             }
                             +"Get Leaders"
