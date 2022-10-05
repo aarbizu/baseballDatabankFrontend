@@ -9,16 +9,14 @@ import org.aarbizu.baseballDatabankFrontend.routes.showPlayerStats
 import react.FC
 import react.Props
 
-external interface BasicPlayerListProps : Props {
+external interface PlayerListProps : Props {
     var playerList: List<BaseballRecord>
+    var paginationControls: PaginationControls
     var listType: String
 }
 
 val BasicPlayerList =
-    FC<BasicPlayerListProps> { props ->
-        val rowsPerPage = 10
-        val currentPage = 0
-        val paginationControls = getPaginationControls(rowsPerPage, currentPage)
+    FC<PlayerListProps> { props ->
         Grid {
             item = true
             md = 6
@@ -33,8 +31,10 @@ val BasicPlayerList =
                     ariaLabelString = "players"
                     playerList = props.playerList
                     listType = props.listType
-                    pagination = { it.showPageControls(playerList.size, paginationControls) }
-                    tableDataRenderer = { it.showPlayers(playerList, listType, paginationControls) }
+                    pagination = { it.showPageControls(playerList.size, props.paginationControls) }
+                    tableDataRenderer = {
+                        it.showPlayers(playerList, listType, props.paginationControls)
+                    }
                 }
             } else {
                 NoPlayersFound {}
@@ -42,13 +42,8 @@ val BasicPlayerList =
         }
     }
 
-external interface CareerStatListProps : Props {
-    var playerStatList: List<PlayerCareerStatRecord>
-    var paginationControls: PaginationControls
-}
-
 val CareerStatList =
-    FC<CareerStatListProps> { props ->
+    FC<PlayerListProps> { props ->
         Grid {
             item = true
             md = 6
@@ -58,10 +53,10 @@ val CareerStatList =
                 alignItems = AlignItems.center
                 justifyContent = JustifyContent.left
             }
-            if (props.playerStatList.isNotEmpty()) {
+            if (props.playerList.isNotEmpty()) {
                 PlayerTable {
                     ariaLabelString = "career-stats"
-                    playerList = props.playerStatList
+                    playerList = props.playerList
                     listType = "career-stats"
                     pagination = { it.showPageControls(playerList.size, props.paginationControls) }
                     tableDataRenderer = { it.showPlayerStats(playerList, props.paginationControls) }

@@ -34,6 +34,7 @@ import org.aarbizu.baseballDatabankFrontend.NameLengthInputComponents
 import org.aarbizu.baseballDatabankFrontend.NamesSortedByLengthParam
 import org.aarbizu.baseballDatabankFrontend.PlayerNameLengthParam
 import org.aarbizu.baseballDatabankFrontend.SimplePlayerRecord
+import org.aarbizu.baseballDatabankFrontend.getPaginationControls
 import org.aarbizu.baseballDatabankFrontend.getSortedNames
 import org.aarbizu.baseballDatabankFrontend.queryPlayerNameLength
 import org.aarbizu.baseballDatabankFrontend.scope
@@ -65,8 +66,6 @@ fun ChildrenBuilder.getDownArrowIcon() {
 
 val NameLengthSearch = VFC {
     var players by useState(emptyList<SimplePlayerRecord>())
-    var topNParam by useState("10")
-    var listTypeProp by useState("default")
     val loc = useLocation()
     val minMaxValues: MinMaxValues = Json.decodeFromString(loc.state as String)
 
@@ -114,198 +113,236 @@ val NameLengthSearch = VFC {
                                 Full [${minMaxValues.minFullName}-${minMaxValues.maxFullName}]
                         """.trimIndent()
                     }
+                }
+            }
+
+            BasicPlayerList {
+                playerList = players
+                listType = "names-by-given-length"
+                paginationControls = getPaginationControls(10, 0)
+            }
+        }
+    }
+}
+
+val TopNNameLengths = VFC {
+    var players by useState(emptyList<SimplePlayerRecord>())
+    var listTypeProp by useState("default")
+    var topNParam by useState("10")
+    val pagination = getPaginationControls(10, 0)
+
+    Box {
+        sx { padding = 1.em }
+
+        Grid {
+            container = true
+            direction = responsive(GridDirection.row)
+
+            Grid {
+                md = 6
+                xs = 12
+                item = true
+                container = true
+                direction = responsive(GridDirection.column)
+
+                Stack {
+                    sx {
+                        marginLeft = Auto.auto
+                        paddingTop = 1.em
+                    }
+                    direction = responsive(StackDirection.column)
+
+                    FormControl {
+                        fullWidth = false
+                        InputLabel {
+                            id = "top-name-select-label"
+                            +"Player Count"
+                        }
+                        Select {
+                            labelId = "top-name-select-label"
+                            id = "top-name-select"
+                            value = topNParam.unsafeCast<Nothing?>()
+                            label = ReactNode("Player Count")
+                            onChange = { event, _ -> topNParam = event.target.value }
+                            listOf("10", "25", "50", "100").forEach {
+                                MenuItem {
+                                    value = it
+                                    +it
+                                }
+                            }
+                        }
+                    }
 
                     Stack {
                         sx {
                             marginLeft = Auto.auto
                             paddingTop = 1.em
                         }
-                        direction = responsive(StackDirection.column)
-
-                        FormControl {
-                            fullWidth = false
-                            InputLabel {
-                                id = "top-name-select-label"
-                                +"Player Count"
-                            }
-                            Select {
-                                labelId = "top-name-select-label"
-                                id = "top-name-select"
-                                value = topNParam.unsafeCast<Nothing?>()
-                                label = ReactNode("Player Count")
-                                onChange = { event, _ -> topNParam = event.target.value }
-                                listOf("10", "25", "50", "100").forEach {
-                                    MenuItem {
-                                        value = it
-                                        +it
+                        direction = responsive(StackDirection.row)
+                        ButtonGroup {
+                            variant = ButtonGroupVariant.outlined
+                            color = ButtonGroupColor.secondary
+                            Button {
+                                size = Size.small
+                                onClick = {
+                                    listTypeProp = "last"
+                                    scope.launch {
+                                        players =
+                                            getSortedNames(
+                                                NamesSortedByLengthParam(
+                                                    type = "last",
+                                                    descending = "true",
+                                                    topN = topNParam
+                                                )
+                                            )
                                     }
+                                    pagination.setCurrentPg(0)
                                 }
+                                +"Last name "
+                                getDownArrowIcon()
                             }
-                        }
-
-                        Stack {
-                            sx {
-                                marginLeft = Auto.auto
-                                paddingTop = 1.em
-                            }
-                            direction = responsive(StackDirection.row)
-                            ButtonGroup {
-                                variant = ButtonGroupVariant.outlined
-                                color = ButtonGroupColor.secondary
-                                Button {
-                                    size = Size.small
-                                    onClick = {
+                            Button {
+                                size = Size.small
+                                onClick = {
+                                    scope.launch {
                                         listTypeProp = "last"
-                                        scope.launch {
-                                            players =
-                                                getSortedNames(
-                                                    NamesSortedByLengthParam(
-                                                        type = "last",
-                                                        descending = "true",
-                                                        topN = topNParam
-                                                    )
+                                        players =
+                                            getSortedNames(
+                                                NamesSortedByLengthParam(
+                                                    type = "last",
+                                                    descending = "false",
+                                                    topN = topNParam
                                                 )
-                                        }
+                                            )
                                     }
-                                    +"Last name "
-                                    getDownArrowIcon()
+                                    pagination.setCurrentPg(0)
                                 }
-                                Button {
-                                    size = Size.small
-                                    onClick = {
-                                        scope.launch {
-                                            listTypeProp = "last"
-                                            players =
-                                                getSortedNames(
-                                                    NamesSortedByLengthParam(
-                                                        type = "last",
-                                                        descending = "false",
-                                                        topN = topNParam
-                                                    )
+                                +"last name "
+                                getUpArrowIcon()
+                            }
+                            Button {
+                                size = Size.small
+                                onClick = {
+                                    listTypeProp = "first"
+                                    scope.launch {
+                                        players =
+                                            getSortedNames(
+                                                NamesSortedByLengthParam(
+                                                    type = "first",
+                                                    descending = "true",
+                                                    topN = topNParam
                                                 )
-                                        }
+                                            )
                                     }
-                                    +"last name "
-                                    getUpArrowIcon()
+                                    pagination.setCurrentPg(0)
                                 }
-                                Button {
-                                    size = Size.small
-                                    onClick = {
+                                +"first name "
+                                getDownArrowIcon()
+                            }
+                            Button {
+                                size = Size.small
+                                onClick = {
+                                    scope.launch {
                                         listTypeProp = "first"
-                                        scope.launch {
-                                            players =
-                                                getSortedNames(
-                                                    NamesSortedByLengthParam(
-                                                        type = "first",
-                                                        descending = "true",
-                                                        topN = topNParam
-                                                    )
+                                        players =
+                                            getSortedNames(
+                                                NamesSortedByLengthParam(
+                                                    type = "first",
+                                                    descending = "false",
+                                                    topN = topNParam
                                                 )
-                                        }
+                                            )
                                     }
-                                    +"first name "
-                                    getDownArrowIcon()
+                                    pagination.setCurrentPg(0)
                                 }
-                                Button {
-                                    size = Size.small
-                                    onClick = {
-                                        scope.launch {
-                                            listTypeProp = "first"
-                                            players =
-                                                getSortedNames(
-                                                    NamesSortedByLengthParam(
-                                                        type = "first",
-                                                        descending = "false",
-                                                        topN = topNParam
-                                                    )
-                                                )
-                                        }
-                                    }
-                                    +"first name "
-                                    getUpArrowIcon()
-                                }
+                                +"first name "
+                                getUpArrowIcon()
                             }
                         }
-                        Stack {
-                            sx {
-                                marginLeft = Auto.auto
-                                paddingTop = 1.em
+                    }
+                    Stack {
+                        sx {
+                            marginLeft = Auto.auto
+                            paddingTop = 1.em
+                        }
+                        ButtonGroup {
+                            variant = ButtonGroupVariant.outlined
+                            color = ButtonGroupColor.secondary
+                            Button {
+                                size = Size.small
+                                onClick = {
+                                    listTypeProp = "firstlast"
+                                    scope.launch {
+                                        players =
+                                            getSortedNames(
+                                                NamesSortedByLengthParam(
+                                                    type = "firstlast",
+                                                    descending = "true",
+                                                    topN = topNParam
+                                                )
+                                            )
+                                    }
+                                    pagination.setCurrentPg(0)
+                                }
+                                +"given name "
+                                getDownArrowIcon()
                             }
-                            ButtonGroup {
-                                variant = ButtonGroupVariant.outlined
-                                color = ButtonGroupColor.secondary
-                                Button {
-                                    size = Size.small
-                                    onClick = {
-                                        listTypeProp = "firstlast"
-                                        scope.launch {
-                                            players =
-                                                getSortedNames(
-                                                    NamesSortedByLengthParam(
-                                                        type = "firstlast",
-                                                        descending = "true",
-                                                        topN = topNParam
-                                                    )
+                            Button {
+                                size = Size.small
+                                onClick = {
+                                    listTypeProp = "firstlast"
+                                    scope.launch {
+                                        players =
+                                            getSortedNames(
+                                                NamesSortedByLengthParam(
+                                                    type = "firstlast",
+                                                    descending = "false",
+                                                    topN = topNParam
                                                 )
-                                        }
+                                            )
                                     }
-                                    +"given name "
-                                    getDownArrowIcon()
+                                    pagination.setCurrentPg(0)
                                 }
-                                Button {
-                                    size = Size.small
-                                    onClick = {
-                                        listTypeProp = "firstlast"
-                                        scope.launch {
-                                            players =
-                                                getSortedNames(
-                                                    NamesSortedByLengthParam(
-                                                        type = "firstlast",
-                                                        descending = "false",
-                                                        topN = topNParam
-                                                    )
+                                +"given name "
+                                getUpArrowIcon()
+                            }
+                            Button {
+                                size = Size.small
+                                onClick = {
+                                    listTypeProp = "full"
+                                    scope.launch {
+                                        players =
+                                            getSortedNames(
+                                                NamesSortedByLengthParam(
+                                                    type = "full",
+                                                    descending = "true",
+                                                    topN = topNParam
                                                 )
-                                        }
+                                            )
                                     }
-                                    +"given name "
-                                    getUpArrowIcon()
+                                    pagination.setCurrentPg(0)
                                 }
-                                Button {
-                                    size = Size.small
-                                    onClick = {
+                                +"full name "
+                                getDownArrowIcon()
+                            }
+                            Button {
+                                size = Size.small
+                                onClick = {
+                                    scope.launch {
                                         listTypeProp = "full"
-                                        scope.launch {
-                                            players =
-                                                getSortedNames(
-                                                    NamesSortedByLengthParam(
-                                                        type = "full",
-                                                        descending = "true",
-                                                        topN = topNParam
-                                                    )
+                                        players =
+                                            getSortedNames(
+                                                NamesSortedByLengthParam(
+                                                    type = "full",
+                                                    descending = "false",
+                                                    topN = topNParam
                                                 )
-                                        }
+                                            )
                                     }
-                                    +"full name "
-                                    getDownArrowIcon()
+                                    pagination.setCurrentPg(0)
                                 }
-                                Button {
-                                    size = Size.small
-                                    onClick = {
-                                        scope.launch {
-                                            listTypeProp = "full"
-                                            players =
-                                                getSortedNames(
-                                                    NamesSortedByLengthParam(
-                                                        type = "full",
-                                                        descending = "false",
-                                                        topN = topNParam
-                                                    )
-                                                )
-                                        }
-                                    }
-                                    +"full name "
-                                    getUpArrowIcon()
-                                }
+                                +"full name "
+                                getUpArrowIcon()
                             }
                         }
                     }
@@ -314,7 +351,8 @@ val NameLengthSearch = VFC {
 
             BasicPlayerList {
                 playerList = players
-                listType = listTypeProp
+                listType = "names-by-given-length"
+                paginationControls = pagination
             }
         }
     }

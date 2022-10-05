@@ -11,6 +11,7 @@ import org.aarbizu.baseballDatabankFrontend.routes.NavBar
 import org.aarbizu.baseballDatabankFrontend.routes.NoMatch
 import org.aarbizu.baseballDatabankFrontend.routes.PlayerNameSearch
 import org.aarbizu.baseballDatabankFrontend.routes.StatsSearch
+import org.aarbizu.baseballDatabankFrontend.routes.TopNNameLengths
 import react.VFC
 import react.create
 import react.router.Route
@@ -61,6 +62,11 @@ val App = VFC {
                     Route {
                         path = "namelength"
                         element = NameLengthSearch.create()
+                    }
+
+                    Route {
+                        path = "topNNameLengths"
+                        element = TopNNameLengths.create()
                     }
 
                     Route {

@@ -42,7 +42,7 @@ val BasicMenu =
 
         Menu {
             if (menuAnchorElem != null) {
-                anchorEl = { menuAnchorElem as Element }
+                anchorEl = { menuAnchorElem }
             }
             open = menuAnchorElem != null
 
@@ -65,7 +65,15 @@ val BasicMenu =
 
             MenuItem {
                 onClick = {
-                    menuAnchorElem = null
+                    menuAnchorSetter(null)
+                    navigate("/topNNameLengths")
+                }
+                +"TopN Name Lengths"
+            }
+
+            MenuItem {
+                onClick = {
+                    menuAnchorSetter(null)
                     navigate("/name")
                 }
                 +"By Name / Regex"

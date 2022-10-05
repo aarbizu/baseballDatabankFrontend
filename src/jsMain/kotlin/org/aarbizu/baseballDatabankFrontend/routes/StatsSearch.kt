@@ -176,7 +176,7 @@ val StatsSearch = VFC {
             }
 
             CareerStatList {
-                playerStatList = playerStats
+                playerList = playerStats
                 paginationControls = pagination
             }
         }
