@@ -2,5 +2,5 @@ POST http://localhost:8080/all-time-pitching
 Content-Type: application/json
 
 {
-  "stat": "SO"
+  "stat": "ERA"
 }

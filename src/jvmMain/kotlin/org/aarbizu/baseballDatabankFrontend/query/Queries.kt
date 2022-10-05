@@ -126,18 +126,39 @@ fun careerStatleader(statName: String, statTable: String): String {
         when (statName) {
             "DOUBLE" -> "\"2B\""
             "TRIPLE" -> "\"3B\""
+            "IP" -> "IPOUTS"
             else -> statName
         }
+
+    val statClause =
+        when (statNameNormalized) {
+            "IPOUTS" -> "TO_CHAR(sum(round($statNameNormalized/3.0, 1)),'999999.9')"
+            "ERA" ->
+                "TO_CHAR(round(sum(ER*9)/sum(case when IPOUTS > 0 then round(IPOUTS/3.0, 3) else 1 end), 2),'9.99')"
+            else -> "sum($statNameNormalized)"
+        }
+
+    val havingClause =
+        when (statNameNormalized) {
+            "ERA" -> "CAST(stat_total as float) > 0 AND SUM(IPOUTS) > 1000"
+            else -> "CAST(stat_total as float) > 0"
+        }
+
+    val orderByClause =
+        when (statNameNormalized) {
+            "ERA" -> "asc"
+            else -> "desc"
+        }
+
     return """
         SELECT
             b.playerid,
             COALESCE(p.namefirst,'unknown') || ' ' || COALESCE(p.namelast,'unknown') as name,
-            sum($statNameNormalized) as stat_total
+            $statClause as stat_total,
         FROM $statTable b, PEOPLE p
         WHERE b.PLAYERID = p.PLAYERID
         GROUP by b.PLAYERID
-        HAVING stat_total > 0
-        ORDER by stat_total desc
-        LIMIT 1000
+        HAVING $havingClause
+        ORDER by stat_total $orderByClause
     """.trimIndent()
 }
