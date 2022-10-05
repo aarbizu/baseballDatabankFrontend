@@ -11,7 +11,7 @@ enum class PitchingStatsNames {
     CG,
     SHO,
     SV,
-    IPOUTS,
+    IP,
     H,
     ER,
     HR,

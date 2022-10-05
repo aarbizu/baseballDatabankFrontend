@@ -39,6 +39,7 @@ import org.aarbizu.baseballDatabankFrontend.countOfEmptyRows
 import org.aarbizu.baseballDatabankFrontend.decorateBbrefId
 import org.aarbizu.baseballDatabankFrontend.getOffenseCareerStats
 import org.aarbizu.baseballDatabankFrontend.getPageBoundaries
+import org.aarbizu.baseballDatabankFrontend.getPaginationControls
 import org.aarbizu.baseballDatabankFrontend.getPitchingCareerStats
 import org.aarbizu.baseballDatabankFrontend.isSuperVocalic
 import org.aarbizu.baseballDatabankFrontend.scope
@@ -57,8 +58,10 @@ import react.useState
 val StatsSearch = VFC {
     val loc = useLocation()
     var playerStats by useState(emptyList<PlayerCareerStatRecord>())
-    var selectedStat by useState("")
+    var selectedHittingStat by useState("")
+    var selectedPitchingStat by useState("")
     val statNames: StatNames = Json.decodeFromString(loc.state as String)
+    val pagination = getPaginationControls(10, 0)
 
     Box {
         sx { padding = 1.em }
@@ -93,9 +96,9 @@ val StatsSearch = VFC {
                         }
                         Select {
                             labelId = "hit-stats-select"
-                            value = selectedStat.unsafeCast<Nothing?>()
+                            value = selectedHittingStat.unsafeCast<Nothing?>()
                             label = ReactNode("Hitting Stat")
-                            onChange = { event, _ -> selectedStat = event.target.value }
+                            onChange = { event, _ -> selectedHittingStat = event.target.value }
                             statNames.hitting.forEach {
                                 MenuItem {
                                     value = it
@@ -106,9 +109,14 @@ val StatsSearch = VFC {
                         Button {
                             size = Size.small
                             onClick = {
-                                if (selectedStat.isNotBlank() || selectedStat.isNotEmpty()) {
+                                if (
+                                    selectedHittingStat.isNotBlank() ||
+                                    selectedHittingStat.isNotEmpty()
+                                ) {
                                     scope.launch {
-                                        playerStats = getOffenseCareerStats(StatParam(selectedStat))
+                                        pagination.setCurrentPg(0)
+                                        playerStats =
+                                            getOffenseCareerStats(StatParam(selectedHittingStat))
                                     }
                                 }
                             }
@@ -126,9 +134,9 @@ val StatsSearch = VFC {
                         }
                         Select {
                             labelId = "pitch-stats-select"
-                            value = selectedStat.unsafeCast<Nothing?>()
+                            value = selectedPitchingStat.unsafeCast<Nothing?>()
                             label = ReactNode("Pitching Stat")
-                            onChange = { event, _ -> selectedStat = event.target.value }
+                            onChange = { event, _ -> selectedPitchingStat = event.target.value }
                             statNames.pitching.forEach {
                                 MenuItem {
                                     value = it
@@ -139,10 +147,14 @@ val StatsSearch = VFC {
                         Button {
                             size = Size.small
                             onClick = {
-                                if (selectedStat.isNotBlank() || selectedStat.isNotEmpty()) {
+                                if (
+                                    selectedPitchingStat.isNotBlank() ||
+                                    selectedPitchingStat.isNotEmpty()
+                                ) {
                                     scope.launch {
+                                        pagination.setCurrentPg(0)
                                         playerStats =
-                                            getPitchingCareerStats(StatParam(selectedStat))
+                                            getPitchingCareerStats(StatParam(selectedPitchingStat))
                                     }
                                 }
                             }
@@ -152,13 +164,21 @@ val StatsSearch = VFC {
 
                     Button {
                         size = Size.small
-                        onClick = { scope.launch { playerStats = keepSupervocalics(playerStats) } }
+                        onClick = {
+                            scope.launch {
+                                pagination.setCurrentPg(0)
+                                playerStats = keepSupervocalics(playerStats)
+                            }
+                        }
                         +"Only Supervocalic"
                     }
                 }
             }
 
-            CareerStatList { playerStatList = playerStats }
+            CareerStatList {
+                playerStatList = playerStats
+                paginationControls = pagination
+            }
         }
     }
 }

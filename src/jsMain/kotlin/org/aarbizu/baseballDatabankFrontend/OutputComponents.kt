@@ -44,13 +44,11 @@ val BasicPlayerList =
 
 external interface CareerStatListProps : Props {
     var playerStatList: List<PlayerCareerStatRecord>
+    var paginationControls: PaginationControls
 }
 
 val CareerStatList =
     FC<CareerStatListProps> { props ->
-        val rowsPerPage = 10
-        val currentPage = 0
-        val paginationControls = getPaginationControls(rowsPerPage, currentPage)
         Grid {
             item = true
             md = 6
@@ -65,8 +63,8 @@ val CareerStatList =
                     ariaLabelString = "career-stats"
                     playerList = props.playerStatList
                     listType = "career-stats"
-                    pagination = { it.showPageControls(playerList.size, paginationControls) }
-                    tableDataRenderer = { it.showPlayerStats(playerList, paginationControls) }
+                    pagination = { it.showPageControls(playerList.size, props.paginationControls) }
+                    tableDataRenderer = { it.showPlayerStats(playerList, props.paginationControls) }
                 }
             } else {
                 NoPlayersFound {}
