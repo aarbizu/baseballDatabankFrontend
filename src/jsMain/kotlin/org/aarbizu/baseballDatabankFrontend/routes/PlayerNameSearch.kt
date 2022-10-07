@@ -15,6 +15,7 @@ import mui.system.sx
 import org.aarbizu.baseballDatabankFrontend.BasicPlayerList
 import org.aarbizu.baseballDatabankFrontend.NameSearchInput
 import org.aarbizu.baseballDatabankFrontend.SimplePlayerRecord
+import org.aarbizu.baseballDatabankFrontend.getPaginationControls
 import org.aarbizu.baseballDatabankFrontend.myAppTheme
 import org.aarbizu.baseballDatabankFrontend.queryPlayerName
 import org.aarbizu.baseballDatabankFrontend.scope
@@ -23,7 +24,7 @@ import react.useState
 
 val PlayerNameSearch = VFC {
     var players by useState(emptyList<SimplePlayerRecord>())
-
+    val pagination = getPaginationControls(10, 0)
     Box {
         sx { padding = 1.em }
 
@@ -76,7 +77,11 @@ val PlayerNameSearch = VFC {
                 }
             }
 
-            BasicPlayerList { playerList = players }
+            BasicPlayerList {
+                playerList = players
+                listType = "name-search-regex"
+                paginationControls = pagination
+            }
         }
     }
 }
