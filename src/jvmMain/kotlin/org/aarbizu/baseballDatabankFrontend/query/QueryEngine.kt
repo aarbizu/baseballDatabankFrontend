@@ -26,12 +26,12 @@ class QueryEngine(private val dbProvider: DBProvider) {
             val logger = LoggerFactory.getLogger("QueryEngine")
             val timer = Stopwatch.createStarted()
             var records: List<BaseballRecord>
+            // TODO -- preempt db conn usages with a cache based on hash of binds per queryTemplate
             dbProvider.getConnection().use {
                 val rs = statement(it, queryTemplate, binds).executeQuery()
                 logger.info("exec query: $timer")
                 timer.reset()
                 timer.start()
-                // TODO -- caching here, based on a hash of binds and queryTemplate.
                 records = extractor.invoke(rs)
                 logger.info("extract results: $timer")
             }

@@ -3,21 +3,21 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent.PASSED
 import org.gradle.api.tasks.testing.logging.TestLogEvent.SKIPPED
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 
-val kotlin = "1.7.20"
-val kotlinLogging = "3.0.0"
+val kotlin = "1.7.21"
+val kotlinLogging = "3.0.4"
 val kotlinxCoroutines = "1.6.4"
-val ktor = "2.1.1"
-val gson = "2.9.1"
+val ktor = "2.1.3"
+val gson = "2.10"
 val guava = "31.1-jre"
 val systemRules = "1.19.0"
-val slf4j = "2.0.3"
+val slf4j = "2.0.5"
 val truth = "1.1.3"
 val junit = "5.9.1"
 val junitPlatformConsole = "1.9.1"
 val mockk = "1.13.2"
 val testContainers = "1.16.3"
 val h2db = "2.1.214"
-val serialization = "1.4.0"
+val serialization = "1.4.1"
 val react = "18.0.0-pre.329-kotlin-1.6.20"
 val reactRouterDom = "6.3.0-pre.329-kotlin-1.6.20"
 val emotion = "11.9.0-pre.330-kotlin-1.6.20"
@@ -36,10 +36,10 @@ plugins {
     idea
 
     // spotless
-    id("com.diffplug.spotless") version "6.11.0"
+    id("com.diffplug.spotless") version "6.12.0"
 
     // versions
-    id("com.github.ben-manes.versions") version "0.42.0"
+    id("com.github.ben-manes.versions") version "0.44.0"
 }
 
 kotlin {
