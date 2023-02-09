@@ -16,7 +16,8 @@ class CollegePlayingLoader : CsvLoader {
                             yearID int DEFAULT null
                         ) AS
                         SELECT * FROM CSVREAD('${csvFile.absolutePath}');
-                    """.trimIndent()
+                    """
+                        .trimIndent(),
                 )
             }
         }

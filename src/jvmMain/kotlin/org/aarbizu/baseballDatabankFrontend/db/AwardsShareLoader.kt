@@ -20,7 +20,8 @@ class AwardsShareLoader : CsvLoader {
                             votesFirst double precision DEFAULT null
                         ) AS
                         SELECT * FROM CSVREAD('${csvFile.absolutePath}');
-                    """.trimIndent()
+                    """
+                        .trimIndent(),
                 )
             }
         }

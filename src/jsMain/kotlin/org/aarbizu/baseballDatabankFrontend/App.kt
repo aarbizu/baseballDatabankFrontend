@@ -1,8 +1,8 @@
 package org.aarbizu.baseballDatabankFrontend
 
 import csstype.rgba
+import js.core.jso
 import kotlinx.coroutines.MainScope
-import kotlinx.js.jso
 import mui.material.styles.ThemeProvider
 import mui.material.styles.createTheme
 import org.aarbizu.baseballDatabankFrontend.routes.Home
@@ -42,7 +42,7 @@ val myAppTheme =
                     disabled = rgba(0, 0, 0, 0.6)
                 }
             }
-        }
+        },
     )
 
 val App = VFC {

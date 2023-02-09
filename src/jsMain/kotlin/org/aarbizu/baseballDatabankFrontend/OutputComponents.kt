@@ -4,6 +4,7 @@ import csstype.AlignItems
 import csstype.JustifyContent
 import csstype.em
 import mui.material.Grid
+import mui.material.GridProps
 import mui.system.sx
 import org.aarbizu.baseballDatabankFrontend.routes.showPlayerStats
 import react.FC
@@ -14,6 +15,14 @@ external interface PlayerListProps : Props {
     var paginationControls: PaginationControls
     var listType: String
 }
+
+inline var GridProps.xs: Any?
+    get() = asDynamic().xs
+    set(value) { asDynamic().xs = value }
+
+inline var GridProps.md: Any?
+    get() = asDynamic().md
+    set(value) { asDynamic().md = value }
 
 val BasicPlayerList =
     FC<PlayerListProps> { props ->

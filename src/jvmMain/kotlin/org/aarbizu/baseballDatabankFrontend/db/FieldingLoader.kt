@@ -31,7 +31,8 @@ class FieldingLoader : CsvLoader {
                             ZR varchar
                         ) AS
                         SELECT * FROM CSVREAD('${csvFile.absolutePath}');
-                    """.trimIndent()
+                    """
+                        .trimIndent(),
                 )
             }
         }

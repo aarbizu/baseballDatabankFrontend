@@ -36,8 +36,10 @@ import org.aarbizu.baseballDatabankFrontend.PlayerNameLengthParam
 import org.aarbizu.baseballDatabankFrontend.SimplePlayerRecord
 import org.aarbizu.baseballDatabankFrontend.getPaginationControls
 import org.aarbizu.baseballDatabankFrontend.getSortedNames
+import org.aarbizu.baseballDatabankFrontend.md
 import org.aarbizu.baseballDatabankFrontend.queryPlayerNameLength
 import org.aarbizu.baseballDatabankFrontend.scope
+import org.aarbizu.baseballDatabankFrontend.xs
 import react.ChildrenBuilder
 import react.ReactNode
 import react.VFC
@@ -111,7 +113,8 @@ val NameLengthSearch = VFC {
                                 Last [${minMaxValues.minLastName}-${minMaxValues.maxLastName}] |
                                 First+Last [${minMaxValues.minFirstAndLastName}-${minMaxValues.maxFirstAndLastName}] |
                                 Full [${minMaxValues.minFullName}-${minMaxValues.maxFullName}]
-                        """.trimIndent()
+                        """
+                            .trimIndent()
                     }
                 }
             }
@@ -192,8 +195,8 @@ val TopNNameLengths = VFC {
                                                 NamesSortedByLengthParam(
                                                     type = "last",
                                                     descending = "true",
-                                                    topN = topNParam
-                                                )
+                                                    topN = topNParam,
+                                                ),
                                             )
                                     }
                                     pagination.setCurrentPg(0)
@@ -211,8 +214,8 @@ val TopNNameLengths = VFC {
                                                 NamesSortedByLengthParam(
                                                     type = "last",
                                                     descending = "false",
-                                                    topN = topNParam
-                                                )
+                                                    topN = topNParam,
+                                                ),
                                             )
                                     }
                                     pagination.setCurrentPg(0)
@@ -230,8 +233,8 @@ val TopNNameLengths = VFC {
                                                 NamesSortedByLengthParam(
                                                     type = "first",
                                                     descending = "true",
-                                                    topN = topNParam
-                                                )
+                                                    topN = topNParam,
+                                                ),
                                             )
                                     }
                                     pagination.setCurrentPg(0)
@@ -249,8 +252,8 @@ val TopNNameLengths = VFC {
                                                 NamesSortedByLengthParam(
                                                     type = "first",
                                                     descending = "false",
-                                                    topN = topNParam
-                                                )
+                                                    topN = topNParam,
+                                                ),
                                             )
                                     }
                                     pagination.setCurrentPg(0)
@@ -278,8 +281,8 @@ val TopNNameLengths = VFC {
                                                 NamesSortedByLengthParam(
                                                     type = "firstlast",
                                                     descending = "true",
-                                                    topN = topNParam
-                                                )
+                                                    topN = topNParam,
+                                                ),
                                             )
                                     }
                                     pagination.setCurrentPg(0)
@@ -297,8 +300,8 @@ val TopNNameLengths = VFC {
                                                 NamesSortedByLengthParam(
                                                     type = "firstlast",
                                                     descending = "false",
-                                                    topN = topNParam
-                                                )
+                                                    topN = topNParam,
+                                                ),
                                             )
                                     }
                                     pagination.setCurrentPg(0)
@@ -316,8 +319,8 @@ val TopNNameLengths = VFC {
                                                 NamesSortedByLengthParam(
                                                     type = "full",
                                                     descending = "true",
-                                                    topN = topNParam
-                                                )
+                                                    topN = topNParam,
+                                                ),
                                             )
                                     }
                                     pagination.setCurrentPg(0)
@@ -335,8 +338,8 @@ val TopNNameLengths = VFC {
                                                 NamesSortedByLengthParam(
                                                     type = "full",
                                                     descending = "false",
-                                                    topN = topNParam
-                                                )
+                                                    topN = topNParam,
+                                                ),
                                             )
                                     }
                                     pagination.setCurrentPg(0)

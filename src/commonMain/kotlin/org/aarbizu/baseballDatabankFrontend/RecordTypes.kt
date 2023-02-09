@@ -15,7 +15,7 @@ class SimplePlayerRecord(
     val finalGame: String,
     val playerId: String,
     val bbrefId: String,
-    val playerMgr: String
+    val playerMgr: String,
 ) : BaseballRecord
 
 @Serializable
@@ -31,7 +31,7 @@ class MinMaxValues(
     val minFirstAndLastName: String,
     val maxFirstAndLastName: String,
     val minFullName: String,
-    val maxFullName: String
+    val maxFullName: String,
 ) : BaseballRecord
 
 @Serializable class OffenseStats(val statNames: List<String>) : BaseballRecord

@@ -8,7 +8,7 @@ data class TestPlayerRecord(val id: String, val games: Int, val pos: Int) {
             val records = mutableListOf<TestPlayerRecord>()
             while (rs.next()) {
                 records.add(
-                    TestPlayerRecord(rs.getString("id"), rs.getInt("games"), rs.getInt("pos"))
+                    TestPlayerRecord(rs.getString("id"), rs.getInt("games"), rs.getInt("pos")),
                 )
             }
             records

@@ -19,7 +19,7 @@ val jsonClient = HttpClient {
             Json {
                 prettyPrint = true
                 isLenient = true
-            }
+            },
         )
     }
 }

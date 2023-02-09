@@ -9,23 +9,28 @@ fun isSuperVocalic(input: String): Boolean {
     input.forEach {
         when (it) {
             'A',
-            'a' -> {
+            'a',
+            -> {
                 aCount += 1
             }
             'E',
-            'e' -> {
+            'e',
+            -> {
                 eCount += 1
             }
             'I',
-            'i' -> {
+            'i',
+            -> {
                 iCount += 1
             }
             'O',
-            'o' -> {
+            'o',
+            -> {
                 oCount += 1
             }
             'U',
-            'u' -> {
+            'u',
+            -> {
                 uCount += 1
             }
         }

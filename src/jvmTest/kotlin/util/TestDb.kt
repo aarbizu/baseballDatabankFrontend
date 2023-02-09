@@ -4,7 +4,8 @@ fun upsertPlayerSql(id: String, gamesPlayed: Int, position: Int): String {
     return """
         INSERT INTO players
         VALUES ('$id', '$gamesPlayed', '$position')
-    """.trimIndent()
+    """
+        .trimIndent()
 }
 
 val createTableSql =
@@ -15,4 +16,5 @@ val createTableSql =
         games int DEFAULT null,
         pos int DEFAULT null
     );
-    """.trimIndent()
+    """
+        .trimIndent()

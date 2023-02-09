@@ -16,9 +16,11 @@ import org.aarbizu.baseballDatabankFrontend.BasicPlayerList
 import org.aarbizu.baseballDatabankFrontend.NameSearchInput
 import org.aarbizu.baseballDatabankFrontend.SimplePlayerRecord
 import org.aarbizu.baseballDatabankFrontend.getPaginationControls
+import org.aarbizu.baseballDatabankFrontend.md
 import org.aarbizu.baseballDatabankFrontend.myAppTheme
 import org.aarbizu.baseballDatabankFrontend.queryPlayerName
 import org.aarbizu.baseballDatabankFrontend.scope
+import org.aarbizu.baseballDatabankFrontend.xs
 import react.VFC
 import react.useState
 
@@ -54,7 +56,8 @@ val PlayerNameSearch = VFC {
                         }
                         +"""
                         Search by partial name match or regex
-                        """.trimIndent()
+                        """
+                            .trimIndent()
                     }
 
                     Typography {
@@ -67,7 +70,8 @@ val PlayerNameSearch = VFC {
                         }
                         +"""
                         [ e.g., partial: "Bond" | regex: ".(?:na){2}" ]
-                        """.trimIndent()
+                        """
+                            .trimIndent()
                     }
 
                     NameSearchInput {

@@ -34,7 +34,8 @@ class AppearancesLoader : CsvLoader {
                             G_pr varchar
                         ) AS
                         SELECT * FROM CSVREAD('${csvFile.absolutePath}');
-                    """.trimIndent()
+                    """
+                        .trimIndent(),
                 )
             }
         }

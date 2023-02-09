@@ -1,11 +1,11 @@
 package org.aarbizu.baseballDatabankFrontend
 
+import history.LocationState
 import mui.material.Button
 import mui.material.Menu
 import mui.material.MenuItem
 import mui.material.Typography
 import mui.system.sx
-import org.w3c.dom.Element
 import react.ChildrenBuilder
 import react.FC
 import react.Props
@@ -13,6 +13,7 @@ import react.StateSetter
 import react.router.NavigateOptions
 import react.router.useNavigate
 import react.useState
+import web.dom.Element
 
 external interface BasicMenuProps : Props {
     var buttonLabel: String
@@ -51,14 +52,7 @@ val BasicMenu =
             MenuItem {
                 onClick = {
                     menuAnchorSetter(null)
-                    navigate(
-                        "/namelength",
-                        options =
-                        object : NavigateOptions {
-                            override var replace: Boolean? = false
-                            override var state: Any? = props.minMax
-                        }
-                    )
+                    navigate("/namelength")
                 }
                 +"By Name Length"
             }

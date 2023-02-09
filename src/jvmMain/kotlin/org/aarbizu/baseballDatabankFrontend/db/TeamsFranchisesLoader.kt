@@ -17,7 +17,8 @@ class TeamsFranchisesLoader : CsvLoader {
                             NAassoc varchar
                          ) AS
                         SELECT * FROM CSVREAD('${csvFile.absolutePath}');
-                    """.trimIndent()
+                    """
+                        .trimIndent(),
                 )
             }
         }

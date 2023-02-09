@@ -28,5 +28,5 @@ enum class PitchingStatsNames {
     R,
     SH,
     SF,
-    GIDP
+    GIDP,
 }

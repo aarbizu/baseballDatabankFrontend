@@ -21,7 +21,7 @@ class QueryEngine(private val dbProvider: DBProvider) {
             dbProvider: DBProvider,
             queryTemplate: String,
             binds: List<Bind<*>>,
-            extractor: (ResultSet) -> List<BaseballRecord>
+            extractor: (ResultSet) -> List<BaseballRecord>,
         ): List<BaseballRecord> {
             val logger = LoggerFactory.getLogger("QueryEngine")
             val timer = Stopwatch.createStarted()
@@ -42,7 +42,7 @@ class QueryEngine(private val dbProvider: DBProvider) {
         private fun statement(
             conn: Connection,
             queryTemplate: String,
-            binds: List<Bind<*>>
+            binds: List<Bind<*>>,
         ): PreparedStatement {
             val logger = LoggerFactory.getLogger("QueryEngine")
             val stmt = conn.prepareStatement(queryTemplate)
@@ -63,7 +63,7 @@ class QueryEngine(private val dbProvider: DBProvider) {
             dbProvider,
             playerNameRegexSql(params.matchFirstName, params.matchLastName, params.caseSensitive),
             listOf(StrBind("nameRegex", params.nameSearchString)),
-            simplePlayerRecordExtractor
+            simplePlayerRecordExtractor,
         )
 
     fun playerNamesByLength(params: PlayerNameLengthParam) =
@@ -71,7 +71,7 @@ class QueryEngine(private val dbProvider: DBProvider) {
             dbProvider,
             playerNameLengthSql(params.nameOption),
             listOf(IntBind("lnameLength", params.nameLength.toInt())),
-            simplePlayerRecordExtractor
+            simplePlayerRecordExtractor,
         )
 
     fun singleSeasonHrTotals(firstOnly: Boolean = true) =
@@ -79,7 +79,7 @@ class QueryEngine(private val dbProvider: DBProvider) {
             dbProvider,
             singleSeasonHrTotalsSql(firstOnly),
             emptyList(),
-            playerSeasonStatRecordExtractor
+            playerSeasonStatRecordExtractor,
         )
 
     fun offenseStatLeaders(hittingStatParam: StatParam) =
@@ -87,7 +87,7 @@ class QueryEngine(private val dbProvider: DBProvider) {
             dbProvider,
             careerStatleader(hittingStatParam.stat, "BATTING"),
             emptyList(),
-            careerStatLeaders
+            careerStatLeaders,
         )
 
     fun pitchingStatLeaders(pitchingStatParam: StatParam) =
@@ -95,7 +95,7 @@ class QueryEngine(private val dbProvider: DBProvider) {
             dbProvider,
             careerStatleader(pitchingStatParam.stat, "PITCHING"),
             emptyList(),
-            careerStatLeaders
+            careerStatLeaders,
         )
 
     fun minMaxNameLengthValues(): BaseballRecord {
@@ -107,7 +107,7 @@ class QueryEngine(private val dbProvider: DBProvider) {
             dbProvider,
             orderedByLengthSql(nameOption),
             emptyList(),
-            simplePlayerRecordExtractor /* some OLD players are listed as name = 'unknown' */
+            simplePlayerRecordExtractor, /* some OLD players are listed as name = 'unknown' */
         )
     }
 
@@ -122,8 +122,8 @@ class QueryEngine(private val dbProvider: DBProvider) {
                 minFirstAndLastName = it.getString("minName"),
                 maxFirstAndLastName = it.getString("maxName"),
                 minFullName = it.getString("minFull"),
-                maxFullName = it.getString("maxFull")
-            )
+                maxFullName = it.getString("maxFull"),
+            ),
         )
     }
 
@@ -141,8 +141,8 @@ class QueryEngine(private val dbProvider: DBProvider) {
                     finalGame = it.getString("finalgame"),
                     bbrefId = it.getString("bbrefid"),
                     playerId = it.getString("playerid"),
-                    playerMgr = it.getString("playerManager")
-                )
+                    playerMgr = it.getString("playerManager"),
+                ),
             )
         }
         records
@@ -155,9 +155,9 @@ class QueryEngine(private val dbProvider: DBProvider) {
                 PlayerSeasonStatRecord(
                     year = it.getString("year"),
                     name = it.getString("name"),
-                    statName = it.getString("season_hr")
+                    statName = it.getString("season_hr"),
                     // TODO need to make this able to retrieve an arbitrary stat
-                )
+                ),
             )
         }
         records
@@ -170,8 +170,8 @@ class QueryEngine(private val dbProvider: DBProvider) {
                 PlayerCareerStatRecord(
                     id = it.getString("playerid"),
                     name = it.getString("name"),
-                    stat = it.getString("stat_total")
-                )
+                    stat = it.getString("stat_total"),
+                ),
             )
         }
         records

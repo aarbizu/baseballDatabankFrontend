@@ -35,7 +35,7 @@ class DataLoader(private val db: DBProvider, private val csvHome: String) {
             "HallOfFame" to HallOfFameLoader(),
             "Salaries" to SalariesLoader(),
             "Schools" to SchoolsLoader(),
-            "Teams" to TeamsLoader()
+            "Teams" to TeamsLoader(),
         )
 
     fun loadAllFiles() {
@@ -56,7 +56,8 @@ class DataLoader(private val db: DBProvider, private val csvHome: String) {
                     """
                         DROP INDEX IF EXISTS PEOPLE_PLAYER;
                         CREATE INDEX PEOPLE_PLAYER ON people ( playerID );
-                    """.trimIndent()
+                    """
+                        .trimIndent(),
                 )
             }
 
@@ -66,7 +67,8 @@ class DataLoader(private val db: DBProvider, private val csvHome: String) {
                     """
                         DROP INDEX IF EXISTS APP_TEAM;
                         CREATE INDEX APP_TEAM ON appearances ( teamID );
-                    """.trimIndent()
+                    """
+                        .trimIndent(),
                 )
             }
 
@@ -76,7 +78,8 @@ class DataLoader(private val db: DBProvider, private val csvHome: String) {
                     """
                         DROP INDEX IF EXISTS APP_PLAYER;
                         CREATE INDEX APP_PLAYER ON appearances ( playerID );
-                    """.trimIndent()
+                    """
+                        .trimIndent(),
                 )
             }
 
@@ -86,7 +89,8 @@ class DataLoader(private val db: DBProvider, private val csvHome: String) {
                     """
                         DROP INDEX IF EXISTS MGR_PLAYER;
                         CREATE INDEX MGR_PLAYER ON managers ( playerID, plyrmgr );
-                    """.trimIndent()
+                    """
+                        .trimIndent(),
                 )
             }
         }

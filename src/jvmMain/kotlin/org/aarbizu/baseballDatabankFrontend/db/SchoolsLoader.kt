@@ -18,7 +18,8 @@ class SchoolsLoader : CsvLoader {
                             country varchar
                         ) AS
                         SELECT * FROM CSVREAD('${csvFile.absolutePath}');
-                    """.trimIndent()
+                    """
+                        .trimIndent(),
                 )
             }
         }
