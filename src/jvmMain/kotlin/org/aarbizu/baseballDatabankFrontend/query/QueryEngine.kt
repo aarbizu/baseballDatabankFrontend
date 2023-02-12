@@ -15,7 +15,17 @@ import java.sql.Connection
 import java.sql.PreparedStatement
 import java.sql.ResultSet
 
-class QueryEngine(private val dbProvider: DBProvider) {
+object NoneDbProvider : DBProvider {
+    override fun getConnection(): Connection {
+        // no op
+        throw UnsupportedOperationException("no db ready")
+    }
+
+    override fun stats() { /*no op*/ }
+}
+object NoneQueryEngine : QueryEngine(NoneDbProvider)
+
+open class QueryEngine(private val dbProvider: DBProvider) {
     companion object DbDriver {
         fun query(
             dbProvider: DBProvider,

@@ -1,5 +1,2 @@
 POST http://localhost:8080/min-max
 Content-Type: application/json
-
-{
-}

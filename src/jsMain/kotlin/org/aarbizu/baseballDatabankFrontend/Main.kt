@@ -1,8 +1,8 @@
 package org.aarbizu.baseballDatabankFrontend
 
-import web.dom.document
 import react.create
 import react.dom.client.createRoot
+import web.dom.document
 
 fun main() {
     val container = document.getElementById("root") ?: error("Couldn't find container!")

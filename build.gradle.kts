@@ -25,6 +25,7 @@ val emotion = "11.10.5-pre.494"
 val kotlinMUIIcons = "5.10.9-pre.494"
 val kotlinMUI = "5.9.1-pre.494"
 val kotlinBrowser = "1.0.0-pre.492"
+val redux = "0.5.5"
 
 plugins {
     // Apply the Kotlin JVM plugin to add support for Kotlin.
@@ -66,6 +67,7 @@ kotlin {
             dependencies {
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serialization")
                 implementation("io.ktor:ktor-client-core:$ktor")
+                implementation("org.reduxkotlin:redux-kotlin-threadsafe:$redux")
             }
         }
         val commonTest by getting {

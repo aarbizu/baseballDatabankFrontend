@@ -12,6 +12,7 @@ import org.aarbizu.baseballDatabankFrontend.routes.NoMatch
 import org.aarbizu.baseballDatabankFrontend.routes.PlayerNameSearch
 import org.aarbizu.baseballDatabankFrontend.routes.StatsSearch
 import org.aarbizu.baseballDatabankFrontend.routes.TopNNameLengths
+import org.reduxkotlin.createThreadSafeStore
 import react.VFC
 import react.create
 import react.router.Route
@@ -22,6 +23,29 @@ const val bbrefUri = "https://www.baseball-reference.com"
 const val bbrefSuffix = ".shtml"
 
 val scope = MainScope()
+
+data class BBStore(
+    var minMaxNameValues: String,
+    var pitchingStatNames: List<String>,
+    var hittingStateNames: List<String>,
+)
+
+data class AddMinMaxValues(val text: String)
+data class AddPitchingStatNames(val text: String)
+data class AddHittingStatNames(val text: String)
+
+typealias Reducer<State> = (state: State, action: Any) -> State
+val nonAlphaRex = """[\[\]"]""".toRegex()
+val reducer: Reducer<BBStore> = { state, action ->
+    when (action) {
+        is AddMinMaxValues -> state.copy(minMaxNameValues = JSON.parse(action.text))
+        is AddPitchingStatNames -> state.copy(pitchingStatNames = action.text.replace(nonAlphaRex, "").split(","))
+        is AddHittingStatNames -> state.copy(hittingStateNames = action.text.replace(nonAlphaRex, "").split(","))
+        else -> state
+    }
+}
+
+val store = createThreadSafeStore(reducer, BBStore("", emptyList(), emptyList()))
 
 val myAppTheme =
     createTheme(

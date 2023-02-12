@@ -5,6 +5,7 @@ import io.ktor.client.call.body
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
+import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
@@ -42,10 +43,10 @@ suspend fun queryPlayerName(nameParam: PlayerNameSearchParam): List<SimplePlayer
         .body()
 }
 
-suspend fun getMinMaxNameLengths(): MinMaxValues {
+suspend fun getMinMaxNameLengths(): String {
     return jsonClient
         .post("$endpoint/$MIN_MAX_VALUES") { contentType(ContentType.Application.Json) }
-        .body()
+        .bodyAsText()
 }
 
 suspend fun getSortedNames(sortedNameParams: NamesSortedByLengthParam): List<SimplePlayerRecord> {
@@ -57,16 +58,16 @@ suspend fun getSortedNames(sortedNameParams: NamesSortedByLengthParam): List<Sim
         .body()
 }
 
-suspend fun getOffenseStatNames(): OffenseStats {
+suspend fun getOffenseStatNames(): String {
     return jsonClient
         .post("$endpoint/$OFFENSE_STATS") { contentType(ContentType.Application.Json) }
-        .body()
+        .bodyAsText()
 }
 
-suspend fun getPitchingStatNames(): PitchingStats {
+suspend fun getPitchingStatNames(): String {
     return jsonClient
         .post("$endpoint/$PITCHING_STATS") { contentType(ContentType.Application.Json) }
-        .body()
+        .bodyAsText()
 }
 
 suspend fun getOffenseCareerStats(offenseStatParam: StatParam): List<PlayerCareerStatRecord> {

@@ -4,8 +4,6 @@ import csstype.TextAlign
 import csstype.em
 import csstype.px
 import kotlinx.coroutines.launch
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.json.Json
 import mui.icons.material.SportsBaseballTwoTone
 import mui.material.Box
 import mui.material.Button
@@ -44,6 +42,7 @@ import org.aarbizu.baseballDatabankFrontend.getPitchingCareerStats
 import org.aarbizu.baseballDatabankFrontend.isSuperVocalic
 import org.aarbizu.baseballDatabankFrontend.md
 import org.aarbizu.baseballDatabankFrontend.scope
+import org.aarbizu.baseballDatabankFrontend.store
 import org.aarbizu.baseballDatabankFrontend.xs
 import react.ChildrenBuilder
 import react.FC
@@ -52,16 +51,14 @@ import react.ReactNode
 import react.StateSetter
 import react.VFC
 import react.create
-import react.router.useLocation
 import react.useState
 import web.window.WindowTarget
 
 val StatsSearch = VFC {
-    val loc = useLocation()
     var playerStats by useState(emptyList<PlayerCareerStatRecord>())
     var selectedHittingStat by useState("")
     var selectedPitchingStat by useState("")
-    val statNames: StatNames = StatNames(listOf("hitting"), listOf("pitching"))
+    val statNames = StatNames(store.getState().hittingStateNames, store.getState().pitchingStatNames)
     val pagination = getPaginationControls(10, 0)
 
     Box {
@@ -102,8 +99,8 @@ val StatsSearch = VFC {
                             onChange = { event, _ -> selectedHittingStat = event.target.value }
                             statNames.hitting.forEach {
                                 MenuItem {
-                                    value = it
-                                    +it
+                                    value = it.trim()
+                                    +it.trim()
                                 }
                             }
                         }
@@ -140,8 +137,8 @@ val StatsSearch = VFC {
                             onChange = { event, _ -> selectedPitchingStat = event.target.value }
                             statNames.pitching.forEach {
                                 MenuItem {
-                                    value = it
-                                    +it
+                                    value = it.trim()
+                                    +it.trim()
                                 }
                             }
                         }
