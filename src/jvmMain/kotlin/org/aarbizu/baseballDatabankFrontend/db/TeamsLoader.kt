@@ -71,7 +71,8 @@ class TeamsLoader : CsvLoader {
                             teamIDretro varchar
                         ) AS
                         SELECT * FROM CSVREAD('${csvFile.absolutePath}');
-                    """.trimIndent()
+                    """
+                        .trimIndent(),
                 )
             }
         }
@@ -106,7 +107,8 @@ class TeamsLoader : CsvLoader {
                             teamIDretro varchar
                         ) AS
                         SELECT * FROM CSVREAD('${csvFile.absolutePath}');
-                    """.trimIndent()
+                    """
+                        .trimIndent(),
                 )
             }
         }

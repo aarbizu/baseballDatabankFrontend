@@ -149,8 +149,8 @@ val NameSearchInput =
                     nameSearchString = nameSearchString,
                     matchFirstName = firstNameMatchToggle,
                     matchLastName = lastNameMatchToggle,
-                    caseSensitive = caseSensitiveMatchToggle
-                )
+                    caseSensitive = caseSensitiveMatchToggle,
+                ),
             )
         }
 

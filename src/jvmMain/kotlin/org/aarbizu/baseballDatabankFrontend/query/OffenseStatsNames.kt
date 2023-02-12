@@ -20,5 +20,5 @@ enum class OffenseStatsNames {
     HBP,
     SH,
     SF,
-    GIDP
+    GIDP,
 }

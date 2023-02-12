@@ -18,7 +18,8 @@ class SalariesLoader : CsvLoader {
                             salary int DEFAULT null
                         ) AS
                         SELECT * FROM CSVREAD('${csvFile.absolutePath}');
-                    """.trimIndent()
+                    """
+                        .trimIndent(),
                 )
             }
         }

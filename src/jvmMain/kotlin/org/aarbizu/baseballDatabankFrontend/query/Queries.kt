@@ -25,7 +25,7 @@ const val basePlayerSqlSegment =
 fun playerNameRegexSql(
     first: Boolean = true,
     last: Boolean = true,
-    caseSensitive: Boolean = false
+    caseSensitive: Boolean = false,
 ): String {
     val nameClauseColumn =
         if (first && last) {
@@ -39,7 +39,8 @@ fun playerNameRegexSql(
     return """
         $basePlayerSqlSegment
         WHERE REGEXP_LIKE($nameClauseColumn, ?, '${if (caseSensitive) "c" else { "i" }}')
-    """.trimIndent()
+    """
+        .trimIndent()
 }
 
 fun singleSeasonHrTotalsSql(firstOnly: Boolean = true): String {
@@ -57,7 +58,8 @@ fun singleSeasonHrTotalsSql(firstOnly: Boolean = true): String {
         WHERE b.playerid = p.playerid
         GROUP BY playername, yearid
         ORDER BY season_hr desc
-    """.trimIndent()
+    """
+        .trimIndent()
 }
 
 fun playerNameLengthSql(nameOption: String): String {
@@ -72,7 +74,8 @@ fun playerNameLengthSql(nameOption: String): String {
     return """
         $basePlayerSqlSegment
         WHERE LENGTH(REPLACE($namelengthValue, ' ', '')) = ?
-    """.trimIndent()
+    """
+        .trimIndent()
 }
 
 val minMaxNameLengthsSql =
@@ -83,7 +86,8 @@ val minMaxNameLengthsSql =
         min(length(namefirst||namelast)) as minName, max(length(replace(namefirst||namelast, ' ', ''))) as maxName,
         min(length(namegiven||namelast)) as minFull, max(length(replace(namegiven||namelast, ' ', ''))) as maxFull
     from PEOPLE;
-    """.trimIndent()
+    """
+        .trimIndent()
 
 fun orderedByLengthSql(nameField: String): String {
     val name =
@@ -118,7 +122,8 @@ fun orderedByLengthSql(nameField: String): String {
         AND p.namelast IS NOT NULL
         AND p.namegiven IS NOT NULL
         ORDER BY LENGTH(REPLACE(p.$name, ' ', '')) DESC
-    """.trimIndent()
+    """
+        .trimIndent()
 }
 
 fun careerStatleader(statName: String, statTable: String): String {
@@ -160,5 +165,6 @@ fun careerStatleader(statName: String, statTable: String): String {
         GROUP by b.PLAYERID
         HAVING $havingClause
         ORDER by stat_total $orderByClause
-    """.trimIndent()
+    """
+        .trimIndent()
 }

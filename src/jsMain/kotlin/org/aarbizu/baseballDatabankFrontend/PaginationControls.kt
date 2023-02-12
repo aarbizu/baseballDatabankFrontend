@@ -1,22 +1,22 @@
 package org.aarbizu.baseballDatabankFrontend
 
-import kotlinx.js.jso
+import js.core.jso
 import mui.material.TableFooter
 import mui.material.TablePagination
 import mui.material.TableRow
-import org.w3c.dom.HTMLButtonElement
-import org.w3c.dom.HTMLElement
-import org.w3c.dom.HTMLSelectElement
 import react.ChildrenBuilder
 import react.StateSetter
 import react.dom.events.ChangeEventHandler
 import react.dom.events.MouseEvent
+import web.html.HTMLButtonElement
+import web.html.HTMLElement
+import web.html.HTMLSelectElement
 
 class PaginationControls(
     val rowsPerPage: Int,
     val setRowsPerPg: StateSetter<Int>,
     val currentPage: Int,
-    val setCurrentPg: StateSetter<Int>
+    val setCurrentPg: StateSetter<Int>,
 ) {
 
     val handleRppChange: ChangeEventHandler<HTMLElement> = { event ->

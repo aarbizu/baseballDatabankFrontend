@@ -32,8 +32,9 @@ class SupervocallicTest {
             zzzzzzzz
             
             u
-                """.trimIndent()
-            )
+                """
+                    .trimIndent(),
+            ),
         )
             .isTrue()
 

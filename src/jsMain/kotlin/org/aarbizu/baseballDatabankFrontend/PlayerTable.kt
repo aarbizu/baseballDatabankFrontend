@@ -23,9 +23,8 @@ import react.Props
 import react.ReactElement
 import react.create
 import react.dom.aria.ariaLabel
-import react.dom.html.AnchorTarget
-import react.key
 import react.useState
+import web.window.WindowTarget
 import kotlin.math.max
 
 external interface TableProps : Props {
@@ -62,11 +61,11 @@ val PlayerTable =
 fun ChildrenBuilder.showPlayers(
     playerList: List<BaseballRecord>,
     listType: String,
-    pagination: PaginationControls
+    pagination: PaginationControls,
 ) {
     val tableRows =
         getPageBoundaries(playerList, pagination.rowsPerPage, pagination.currentPage)
-            as List<SimplePlayerRecord>
+            .unsafeCast<List<SimplePlayerRecord>>()
     val emptyRows = countOfEmptyRows(playerList, pagination.rowsPerPage, pagination.currentPage)
     val (tooltips, setTooltip) = useState("")
 
@@ -116,7 +115,7 @@ fun getPlayerTooltipComponent(record: SimplePlayerRecord, listType: String): Rea
             Box {
                 Link {
                     color = "rgb(133, 206, 237)"
-                    target = AnchorTarget._blank
+                    target = WindowTarget._blank
                     href = decorateBbrefId(record.bbrefId, record.playerMgr)
                     underline = LinkUnderline.none
                     +"${record.given} ${record.last}"

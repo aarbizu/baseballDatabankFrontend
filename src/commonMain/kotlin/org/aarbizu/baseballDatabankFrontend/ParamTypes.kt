@@ -10,7 +10,7 @@ class PlayerNameSearchParam(
     val nameSearchString: String,
     val matchFirstName: Boolean = false,
     val matchLastName: Boolean = false,
-    val caseSensitive: Boolean = false
+    val caseSensitive: Boolean = false,
 )
 
 @Serializable

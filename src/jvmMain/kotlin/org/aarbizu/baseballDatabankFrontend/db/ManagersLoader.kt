@@ -23,7 +23,8 @@ class ManagersLoader : CsvLoader {
                             plyrMgr varchar
                         ) AS
                         SELECT * FROM CSVREAD('${csvFile.absolutePath}');
-                    """.trimIndent()
+                    """
+                        .trimIndent(),
                 )
             }
         }

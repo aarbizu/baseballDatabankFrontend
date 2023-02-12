@@ -19,7 +19,8 @@ class AwardsLoader : CsvLoader {
                             notes varchar
                         ) AS 
                         SELECT * FROM CSVREAD('${csvFile.absolutePath}');
-                    """.trimIndent()
+                    """
+                        .trimIndent(),
                 )
             }
         }

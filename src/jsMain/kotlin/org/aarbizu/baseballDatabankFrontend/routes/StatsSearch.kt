@@ -4,8 +4,6 @@ import csstype.TextAlign
 import csstype.em
 import csstype.px
 import kotlinx.coroutines.launch
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.json.Json
 import mui.icons.material.SportsBaseballTwoTone
 import mui.material.Box
 import mui.material.Button
@@ -42,7 +40,10 @@ import org.aarbizu.baseballDatabankFrontend.getPageBoundaries
 import org.aarbizu.baseballDatabankFrontend.getPaginationControls
 import org.aarbizu.baseballDatabankFrontend.getPitchingCareerStats
 import org.aarbizu.baseballDatabankFrontend.isSuperVocalic
+import org.aarbizu.baseballDatabankFrontend.md
 import org.aarbizu.baseballDatabankFrontend.scope
+import org.aarbizu.baseballDatabankFrontend.store
+import org.aarbizu.baseballDatabankFrontend.xs
 import react.ChildrenBuilder
 import react.FC
 import react.ReactElement
@@ -50,17 +51,14 @@ import react.ReactNode
 import react.StateSetter
 import react.VFC
 import react.create
-import react.dom.html.AnchorTarget
-import react.key
-import react.router.useLocation
 import react.useState
+import web.window.WindowTarget
 
 val StatsSearch = VFC {
-    val loc = useLocation()
     var playerStats by useState(emptyList<PlayerCareerStatRecord>())
     var selectedHittingStat by useState("")
     var selectedPitchingStat by useState("")
-    val statNames: StatNames = Json.decodeFromString(loc.state as String)
+    val statNames = StatNames(store.getState().hittingStateNames, store.getState().pitchingStatNames)
     val pagination = getPaginationControls(10, 0)
 
     Box {
@@ -101,8 +99,8 @@ val StatsSearch = VFC {
                             onChange = { event, _ -> selectedHittingStat = event.target.value }
                             statNames.hitting.forEach {
                                 MenuItem {
-                                    value = it
-                                    +it
+                                    value = it.trim()
+                                    +it.trim()
                                 }
                             }
                         }
@@ -139,8 +137,8 @@ val StatsSearch = VFC {
                             onChange = { event, _ -> selectedPitchingStat = event.target.value }
                             statNames.pitching.forEach {
                                 MenuItem {
-                                    value = it
-                                    +it
+                                    value = it.trim()
+                                    +it.trim()
                                 }
                             }
                         }
@@ -189,11 +187,11 @@ fun keepSupervocalics(players: List<PlayerCareerStatRecord>): List<PlayerCareerS
 
 fun ChildrenBuilder.showPlayerStats(
     playerList: List<BaseballRecord>,
-    pagination: PaginationControls
+    pagination: PaginationControls,
 ) {
     val tableRows =
         getPageBoundaries(playerList, pagination.rowsPerPage, pagination.currentPage)
-            as List<PlayerCareerStatRecord>
+            .unsafeCast<List<PlayerCareerStatRecord>>()
     val emptyRows = countOfEmptyRows(playerList, pagination.rowsPerPage, pagination.currentPage)
     val (tooltip, setTooltip) = useState("")
 
@@ -227,7 +225,7 @@ fun ChildrenBuilder.showPlayerStats(
 fun ChildrenBuilder.getTooltip(
     record: PlayerCareerStatRecord,
     tooltip: String,
-    setTooltip: StateSetter<String>
+    setTooltip: StateSetter<String>,
 ) {
     Tooltip {
         key = record.id
@@ -241,7 +239,7 @@ fun ChildrenBuilder.getTooltip(
 fun ChildrenBuilder.tooltipButton(
     id: String,
     tooltipString: String,
-    setTooltip: StateSetter<String>
+    setTooltip: StateSetter<String>,
 ) {
     IconButton {
         onClick = { _ ->
@@ -261,7 +259,7 @@ fun getBasicToolTip(id: String, name: String): ReactElement<*> {
             Box {
                 Link {
                     color = "rgb(133, 206, 237)"
-                    target = AnchorTarget._blank
+                    target = WindowTarget._blank
                     href = decorateBbrefId(id, "0")
                     underline = LinkUnderline.none
                     +"see $name on bbref"

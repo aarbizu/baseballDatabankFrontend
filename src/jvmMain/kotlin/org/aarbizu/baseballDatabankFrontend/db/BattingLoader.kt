@@ -35,7 +35,8 @@ class BattingLoader : CsvLoader {
                             GIDP int DEFAULT null
                         ) AS
                         SELECT * FROM CSVREAD('${csvFile.absolutePath}');
-                    """.trimIndent()
+                    """
+                        .trimIndent(),
                 )
             }
         }

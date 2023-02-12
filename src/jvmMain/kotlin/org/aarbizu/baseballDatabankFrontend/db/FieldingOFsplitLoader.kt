@@ -31,7 +31,8 @@ class FieldingOFsplitLoader : CsvLoader {
                             ZR double precision
                         ) AS
                         SELECT * FROM CSVREAD('${csvFile.absolutePath}');
-                    """.trimIndent()
+                    """
+                        .trimIndent(),
                 )
             }
         }

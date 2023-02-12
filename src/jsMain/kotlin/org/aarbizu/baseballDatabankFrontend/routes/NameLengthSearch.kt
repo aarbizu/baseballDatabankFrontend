@@ -4,8 +4,6 @@ import csstype.Auto
 import csstype.TextAlign
 import csstype.em
 import kotlinx.coroutines.launch
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.json.Json
 import mui.icons.material.ArrowDownward
 import mui.icons.material.ArrowUpward
 import mui.material.Box
@@ -29,19 +27,20 @@ import mui.material.styles.TypographyVariant
 import mui.system.responsive
 import mui.system.sx
 import org.aarbizu.baseballDatabankFrontend.BasicPlayerList
-import org.aarbizu.baseballDatabankFrontend.MinMaxValues
 import org.aarbizu.baseballDatabankFrontend.NameLengthInputComponents
 import org.aarbizu.baseballDatabankFrontend.NamesSortedByLengthParam
 import org.aarbizu.baseballDatabankFrontend.PlayerNameLengthParam
 import org.aarbizu.baseballDatabankFrontend.SimplePlayerRecord
 import org.aarbizu.baseballDatabankFrontend.getPaginationControls
 import org.aarbizu.baseballDatabankFrontend.getSortedNames
+import org.aarbizu.baseballDatabankFrontend.md
 import org.aarbizu.baseballDatabankFrontend.queryPlayerNameLength
 import org.aarbizu.baseballDatabankFrontend.scope
+import org.aarbizu.baseballDatabankFrontend.store
+import org.aarbizu.baseballDatabankFrontend.xs
 import react.ChildrenBuilder
 import react.ReactNode
 import react.VFC
-import react.router.useLocation
 import react.useState
 
 fun ChildrenBuilder.getUpArrowIcon() {
@@ -65,10 +64,8 @@ fun ChildrenBuilder.getDownArrowIcon() {
 }
 
 val NameLengthSearch = VFC {
+    val minMaxValues = store.getState().minMaxNameValues.asDynamic()
     var players by useState(emptyList<SimplePlayerRecord>())
-    val loc = useLocation()
-    val minMaxValues: MinMaxValues = Json.decodeFromString(loc.state as String)
-
     Box {
         sx { padding = 1.em }
 
@@ -111,7 +108,8 @@ val NameLengthSearch = VFC {
                                 Last [${minMaxValues.minLastName}-${minMaxValues.maxLastName}] |
                                 First+Last [${minMaxValues.minFirstAndLastName}-${minMaxValues.maxFirstAndLastName}] |
                                 Full [${minMaxValues.minFullName}-${minMaxValues.maxFullName}]
-                        """.trimIndent()
+                        """
+                            .trimIndent()
                     }
                 }
             }
@@ -192,8 +190,8 @@ val TopNNameLengths = VFC {
                                                 NamesSortedByLengthParam(
                                                     type = "last",
                                                     descending = "true",
-                                                    topN = topNParam
-                                                )
+                                                    topN = topNParam,
+                                                ),
                                             )
                                     }
                                     pagination.setCurrentPg(0)
@@ -211,8 +209,8 @@ val TopNNameLengths = VFC {
                                                 NamesSortedByLengthParam(
                                                     type = "last",
                                                     descending = "false",
-                                                    topN = topNParam
-                                                )
+                                                    topN = topNParam,
+                                                ),
                                             )
                                     }
                                     pagination.setCurrentPg(0)
@@ -230,8 +228,8 @@ val TopNNameLengths = VFC {
                                                 NamesSortedByLengthParam(
                                                     type = "first",
                                                     descending = "true",
-                                                    topN = topNParam
-                                                )
+                                                    topN = topNParam,
+                                                ),
                                             )
                                     }
                                     pagination.setCurrentPg(0)
@@ -249,8 +247,8 @@ val TopNNameLengths = VFC {
                                                 NamesSortedByLengthParam(
                                                     type = "first",
                                                     descending = "false",
-                                                    topN = topNParam
-                                                )
+                                                    topN = topNParam,
+                                                ),
                                             )
                                     }
                                     pagination.setCurrentPg(0)
@@ -278,8 +276,8 @@ val TopNNameLengths = VFC {
                                                 NamesSortedByLengthParam(
                                                     type = "firstlast",
                                                     descending = "true",
-                                                    topN = topNParam
-                                                )
+                                                    topN = topNParam,
+                                                ),
                                             )
                                     }
                                     pagination.setCurrentPg(0)
@@ -297,8 +295,8 @@ val TopNNameLengths = VFC {
                                                 NamesSortedByLengthParam(
                                                     type = "firstlast",
                                                     descending = "false",
-                                                    topN = topNParam
-                                                )
+                                                    topN = topNParam,
+                                                ),
                                             )
                                     }
                                     pagination.setCurrentPg(0)
@@ -316,8 +314,8 @@ val TopNNameLengths = VFC {
                                                 NamesSortedByLengthParam(
                                                     type = "full",
                                                     descending = "true",
-                                                    topN = topNParam
-                                                )
+                                                    topN = topNParam,
+                                                ),
                                             )
                                     }
                                     pagination.setCurrentPg(0)
@@ -335,8 +333,8 @@ val TopNNameLengths = VFC {
                                                 NamesSortedByLengthParam(
                                                     type = "full",
                                                     descending = "false",
-                                                    topN = topNParam
-                                                )
+                                                    topN = topNParam,
+                                                ),
                                             )
                                     }
                                     pagination.setCurrentPg(0)

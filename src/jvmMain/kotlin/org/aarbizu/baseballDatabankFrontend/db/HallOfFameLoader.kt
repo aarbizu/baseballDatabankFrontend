@@ -22,7 +22,8 @@ class HallOfFameLoader : CsvLoader {
                             needed_note varchar
                         ) AS
                         SELECT * FROM CSVREAD('${csvFile.absolutePath}');
-                    """.trimIndent()
+                    """
+                        .trimIndent(),
                 )
             }
         }

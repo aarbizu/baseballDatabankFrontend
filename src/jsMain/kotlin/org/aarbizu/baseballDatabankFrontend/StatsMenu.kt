@@ -1,15 +1,12 @@
 package org.aarbizu.baseballDatabankFrontend
 
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import mui.material.Menu
 import mui.material.MenuItem
-import org.w3c.dom.Element
 import react.FC
-import react.router.NavigateOptions
 import react.router.useNavigate
 import react.useState
+import web.dom.Element
 
 external interface StatsMenuProps : BasicMenuProps {
     var offenseStatLabels: List<String>
@@ -36,17 +33,7 @@ val StatsMenu =
             MenuItem {
                 onClick = {
                     menuAnchorSetter(null)
-                    navigate(
-                        "/stats",
-                        options =
-                        object : NavigateOptions {
-                            override var replace: Boolean? = false
-                            override var state: Any? =
-                                Json.encodeToString(
-                                    StatNames(props.offenseStatLabels, props.pitchingStatLabels)
-                                )
-                        }
-                    )
+                    navigate("/stats")
                 }
                 +"Stats"
             }

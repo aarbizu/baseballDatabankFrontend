@@ -5,6 +5,7 @@ import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
 import io.ktor.serialization.kotlinx.json.json
+import io.ktor.server.application.Application
 import io.ktor.server.application.call
 import io.ktor.server.application.install
 import io.ktor.server.engine.embeddedServer
@@ -24,26 +25,30 @@ import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
 import org.aarbizu.baseballDatabankFrontend.config.AppConfig
 import org.aarbizu.baseballDatabankFrontend.db.DataLoader
+import org.aarbizu.baseballDatabankFrontend.query.NoneQueryEngine
 import org.aarbizu.baseballDatabankFrontend.query.PreloadedResults
 import org.aarbizu.baseballDatabankFrontend.query.QueryEngine
 import org.aarbizu.baseballDatabankFrontend.query.playerNamesSorted
 import org.aarbizu.baseballDatabankFrontend.query.preloadQueries
+import org.aarbizu.baseballDatabankFrontend.query.toJsonArray
 import org.h2.tools.Server
 import org.slf4j.LoggerFactory
 import java.nio.file.Files.readString
 import java.nio.file.Paths
 
 private const val DEFAULT_HTML_DOC = "src/commonMain/resources/index.html"
+val defaultHtmlText: String = readString(Paths.get(DEFAULT_HTML_DOC))
+
+data class QueryEngineService(var engine: QueryEngine)
+
+val queryService = QueryEngineService(NoneQueryEngine)
 
 class Server(private val config: AppConfig) {
-    private lateinit var queries: QueryEngine
-    private lateinit var defaultHtmlText: String
 
     fun start() {
         initializeDb(config)
-        queries = QueryEngine(config.db)
-        defaultHtmlText = readString(Paths.get(DEFAULT_HTML_DOC))
-        PreloadedResults.preloads = preloadQueries(queries)
+        queryService.engine = QueryEngine(config.db)
+        PreloadedResults.preloads = preloadQueries(queryService.engine)
         /* this needs to be last since it starts the server loop */
         startBackend(config)
     }
@@ -69,65 +74,67 @@ class Server(private val config: AppConfig) {
     }
 
     private fun startBackend(config: AppConfig) {
-        embeddedServer(Netty, config.port) {
-            install(ContentNegotiation) { json() }
-            install(CORS) {
-                allowMethod(HttpMethod.Options)
-                allowMethod(HttpMethod.Get)
-                allowMethod(HttpMethod.Post)
-                allowHeader(HttpHeaders.AccessControlAllowOrigin)
-                allowHeader(HttpHeaders.Authorization)
-                allowHeader(HttpHeaders.ContentType)
-                allowNonSimpleContentTypes = true
-                allowSameOrigin = true
-                allowCredentials = true
-                anyHost()
-            }
-            install(Compression) { gzip() }
+        embeddedServer(Netty, config.port, module = Application::databankBackend)
+            .start(wait = true)
+    }
+}
 
-            routing {
-                //                trace {
-                // LoggerFactory.getLogger(this.javaClass).info(it.buildText()) }
-                post(PLAYER_NAME_LENGTH) {
-                    val param = call.receive<PlayerNameLengthParam>()
-                    call.respond(queries.playerNamesByLength(param))
-                }
+fun Application.databankBackend() {
+    install(ContentNegotiation) { json() }
+    install(CORS) {
+        allowMethod(HttpMethod.Options)
+        allowMethod(HttpMethod.Get)
+        allowMethod(HttpMethod.Post)
+        allowHeader(HttpHeaders.AccessControlAllowOrigin)
+        allowHeader(HttpHeaders.Authorization)
+        allowHeader(HttpHeaders.ContentType)
+        allowNonSimpleContentTypes = true
+        allowSameOrigin = true
+        allowCredentials = true
+        anyHost()
+    }
+    install(Compression) { gzip() }
 
-                post(PLAYER_NAME) {
-                    val param = call.receive<PlayerNameSearchParam>()
-                    call.respond(queries.playerNameSearch(param))
-                }
+    routing {
+        //                trace {
+        // LoggerFactory.getLogger(this.javaClass).info(it.buildText()) }
+        post(PLAYER_NAME_LENGTH) {
+            val param = call.receive<PlayerNameLengthParam>()
+            call.respond(queryService.engine.playerNamesByLength(param))
+        }
 
-                post(MIN_MAX_VALUES) { call.respond(PreloadedResults.preloads.minMaxValues) }
+        post(PLAYER_NAME) {
+            val param = call.receive<PlayerNameSearchParam>()
+            call.respond(queryService.engine.playerNameSearch(param))
+        }
 
-                post(NAMES_SORTED_BY_LENGTH) {
-                    val param = call.receive<NamesSortedByLengthParam>()
-                    call.respond(playerNamesSorted(param))
-                }
+        post(MIN_MAX_VALUES) { call.respond(PreloadedResults.preloads.minMaxValues) }
 
-                post(OFFENSE_STATS) { call.respond(PreloadedResults.preloads.offenseStats) }
+        post(NAMES_SORTED_BY_LENGTH) {
+            val param = call.receive<NamesSortedByLengthParam>()
+            call.respond(playerNamesSorted(param))
+        }
 
-                post(PITCHING_STATS) { call.respond(PreloadedResults.preloads.pitchingStats) }
+        post(OFFENSE_STATS) { call.respond(toJsonArray(PreloadedResults.preloads.offenseStats.statNames)) }
 
-                post(ALL_TIME_HITTING) {
-                    val param = call.receive<StatParam>()
-                    call.respond(queries.offenseStatLeaders(param))
-                }
+        post(PITCHING_STATS) { call.respond(toJsonArray(PreloadedResults.preloads.pitchingStats.statNames)) }
 
-                post(ALL_TIME_PITCHING) {
-                    val param = call.receive<StatParam>()
-                    call.respond(queries.pitchingStatLeaders(param))
-                }
+        post(ALL_TIME_HITTING) {
+            val param = call.receive<StatParam>()
+            call.respond(queryService.engine.offenseStatLeaders(param))
+        }
 
-                route("/") {
-                    route("{...}") {
-                        get { call.respondText(defaultHtmlText, ContentType.Text.Html) }
-                    }
-                }
+        post(ALL_TIME_PITCHING) {
+            val param = call.receive<StatParam>()
+            call.respond(queryService.engine.pitchingStatLeaders(param))
+        }
 
-                static("/static") { resources("") }
+        route("/") {
+            route("{...}") {
+                get { call.respondText(defaultHtmlText, ContentType.Text.Html) }
             }
         }
-            .start(wait = true)
+
+        static("/static") { resources("") }
     }
 }

@@ -82,7 +82,8 @@ class NewDbTest {
                                 startingPos int DEFAULT null
                             ) AS 
                             SELECT * FROM CSVREAD('${fileOne.absolutePath}');
-                        """.trimIndent()
+                        """
+                            .trimIndent(),
                     )
                 }
             }
@@ -93,7 +94,8 @@ class NewDbTest {
                         stmt.executeQuery(
                             """
                         SELECT COUNT(*) from ${fileOne.nameWithoutExtension}
-                            """.trimIndent()
+                            """
+                                .trimIndent(),
                         )
 
                     rs.next()
@@ -127,7 +129,8 @@ class NewDbTest {
                     stmt.executeQuery(
                         """
                     SELECT COUNT(*) from people
-                        """.trimIndent()
+                        """
+                            .trimIndent(),
                     )
                 rs.next()
                 val playerCount = rs.getInt(1)
