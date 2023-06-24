@@ -16,7 +16,6 @@ import mui.material.TextField
 import mui.material.Typography
 import mui.material.styles.TypographyVariant
 import mui.system.sx
-import org.w3c.dom.HTMLInputElement
 import react.FC
 import react.Props
 import react.ReactNode
@@ -29,6 +28,7 @@ import react.useState
 import web.cssom.Auto
 import web.cssom.FlexDirection
 import web.cssom.em
+import web.html.HTMLInputElement
 
 external interface NameLengthProps : Props {
     var onSubmit: (String, String) -> Unit
@@ -64,7 +64,6 @@ val NameLengthInputComponents =
 
                 FormLabel {
                     sx { marginLeft = Auto.auto }
-//                    component = legend
                     +props.title
                 }
 
@@ -74,7 +73,7 @@ val NameLengthInputComponents =
                     value = textInputValue
                     onChange = { event ->
                         setValidInput(true)
-                        val target = event.target as HTMLInputElement
+                        val target = event.target.asDynamic().unsafeCast<HTMLInputElement>()
                         setTextInput(target.value)
                         if (!props.allowedPattern(target.value)) setValidInput(false)
                     }
@@ -163,7 +162,7 @@ val NameSearchInput =
                     value = nameSearchString
                     sx { marginLeft = Auto.auto }
                     onChange = { event ->
-                        val target = event.target as HTMLInputElement
+                        val target = event.target.asDynamic().unsafeCast<HTMLInputElement>()
                         setNameSearchString(target.value)
                     }
                 }
