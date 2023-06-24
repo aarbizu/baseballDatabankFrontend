@@ -1,8 +1,5 @@
 package org.aarbizu.baseballDatabankFrontend.routes
 
-import csstype.Auto
-import csstype.TextAlign
-import csstype.em
 import kotlinx.coroutines.launch
 import mui.icons.material.ArrowDownward
 import mui.icons.material.ArrowUpward
@@ -42,6 +39,9 @@ import react.ChildrenBuilder
 import react.ReactNode
 import react.VFC
 import react.useState
+import web.cssom.Auto
+import web.cssom.TextAlign
+import web.cssom.em
 
 fun ChildrenBuilder.getUpArrowIcon() {
     Icon {

@@ -11,8 +11,18 @@ import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.browser.window
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.modules.SerializersModule
+import kotlinx.serialization.modules.polymorphic
+import kotlinx.serialization.modules.subclass
 
 val endpoint = window.location.origin
+
+val serializers = SerializersModule {
+    polymorphic(BaseballRecord::class) {
+        subclass(SimplePlayerRecord::class)
+        subclass(PlayerCareerStatRecord::class)
+    }
+}
 
 val jsonClient = HttpClient {
     install(ContentNegotiation) {
@@ -20,6 +30,8 @@ val jsonClient = HttpClient {
             Json {
                 prettyPrint = true
                 isLenient = true
+                ignoreUnknownKeys = true
+                serializersModule = serializers
             },
         )
     }

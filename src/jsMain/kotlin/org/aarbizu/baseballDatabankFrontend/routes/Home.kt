@@ -1,9 +1,5 @@
 package org.aarbizu.baseballDatabankFrontend.routes
 
-import csstype.FontWeight
-import csstype.JustifyContent
-import csstype.TextAlign
-import csstype.rem
 import mui.icons.material.SportsBaseballOutlined
 import mui.material.Container
 import mui.material.Grid
@@ -15,6 +11,10 @@ import mui.material.Typography
 import mui.system.responsive
 import mui.system.sx
 import react.VFC
+import web.cssom.FontWeight
+import web.cssom.JustifyContent
+import web.cssom.TextAlign
+import web.cssom.rem
 
 val Home = VFC {
     Container {

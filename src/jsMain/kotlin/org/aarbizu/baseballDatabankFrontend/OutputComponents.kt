@@ -1,14 +1,14 @@
 package org.aarbizu.baseballDatabankFrontend
 
-import csstype.AlignItems
-import csstype.JustifyContent
-import csstype.em
 import mui.material.Grid
 import mui.material.GridProps
 import mui.system.sx
 import org.aarbizu.baseballDatabankFrontend.routes.showPlayerStats
 import react.FC
 import react.Props
+import web.cssom.AlignItems
+import web.cssom.JustifyContent
+import web.cssom.em
 
 external interface PlayerListProps : Props {
     var playerList: List<BaseballRecord>

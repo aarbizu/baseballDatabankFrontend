@@ -1,8 +1,5 @@
 package org.aarbizu.baseballDatabankFrontend
 
-import csstype.TextAlign
-import csstype.pct
-import csstype.px
 import mui.material.Box
 import mui.material.Container
 import mui.material.Link
@@ -24,6 +21,9 @@ import react.ReactElement
 import react.create
 import react.dom.aria.ariaLabel
 import react.useState
+import web.cssom.TextAlign
+import web.cssom.pct
+import web.cssom.px
 import web.window.WindowTarget
 import kotlin.math.max
 

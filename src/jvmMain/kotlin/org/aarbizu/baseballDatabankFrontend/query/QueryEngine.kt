@@ -117,7 +117,7 @@ open class QueryEngine(private val dbProvider: DBProvider) {
             dbProvider,
             orderedByLengthSql(nameOption),
             emptyList(),
-            simplePlayerRecordExtractor, /* some OLD players are listed as name = 'unknown' */
+            simplePlayerRecordExtractor, // some OLD players are listed as name = 'unknown'
         )
     }
 
