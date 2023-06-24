@@ -9,8 +9,8 @@ import io.ktor.server.application.Application
 import io.ktor.server.application.call
 import io.ktor.server.application.install
 import io.ktor.server.engine.embeddedServer
-import io.ktor.server.http.content.resources
-import io.ktor.server.http.content.static
+import io.ktor.server.http.content.staticFiles
+import io.ktor.server.http.content.staticResources
 import io.ktor.server.netty.Netty
 import io.ktor.server.plugins.compression.Compression
 import io.ktor.server.plugins.compression.gzip
@@ -33,6 +33,7 @@ import org.aarbizu.baseballDatabankFrontend.query.preloadQueries
 import org.aarbizu.baseballDatabankFrontend.query.toJsonArray
 import org.h2.tools.Server
 import org.slf4j.LoggerFactory
+import java.io.File
 import java.nio.file.Files.readString
 import java.nio.file.Paths
 
@@ -135,6 +136,8 @@ fun Application.databankBackend() {
             }
         }
 
-        static("/static") { resources("") }
+        staticFiles("/static", File(""))
+
+        staticResources("/static", "")
     }
 }
