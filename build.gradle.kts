@@ -7,46 +7,46 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 val kotlin = "1.8.10"
 val kotlinLogging = "3.0.4"
 val kotlinxCoroutines = "1.6.4"
-val ktor = "2.2.3"
-val gson = "2.10.1"
-val guava = "31.1-jre"
+val ktor = "2.3.1"
+val guava = "32.0.1-jre"
 val systemRules = "1.19.0"
-val slf4j = "2.0.6"
-val truth = "1.1.3"
+val slf4j = "2.0.7"
+val truth = "1.1.5"
 val junit = "5.9.2"
 val junitPlatformConsole = "1.9.2"
-val mockk = "1.13.4"
+val mockk = "1.13.5"
 val testContainers = "1.16.3"
 val h2db = "2.1.214"
-val serialization = "1.4.1"
-val react = "18.2.0-pre.494"
-val reactRouterDom = "6.3.0-pre.494"
-val emotion = "11.10.5-pre.494"
-val kotlinMUIIcons = "5.10.9-pre.494"
-val kotlinMUI = "5.9.1-pre.494"
-val kotlinBrowser = "1.0.0-pre.492"
-val redux = "0.5.5"
+val serialization = "1.5.1"
+val react = "18.2.0-pre.572"
+val reactRouterDom = "6.3.0-pre.506"
+val emotion = "11.11.1-pre.572"
+val kotlinMUIIcons = "5.11.16-pre.572"
+val kotlinMUI = "5.13.5-pre.572"
+val kotlinBrowser = "1.0.0-pre.572"
+val redux = "0.6.1"
 
 plugins {
     // Apply the Kotlin JVM plugin to add support for Kotlin.
-    kotlin("multiplatform") version "1.8.10"
+    kotlin("multiplatform") version "1.8.22"
 
     // Apply the application plugin to add support for building a CLI application.
     application
 
-    kotlin("plugin.serialization") version "1.8.10"
+    kotlin("plugin.serialization") version "1.8.22"
 
     // Apply the idea plugin
     idea
 
     // spotless
-    id("com.diffplug.spotless") version "6.14.1"
+    id("com.diffplug.spotless") version "6.19.0"
 
     // versions
-    id("com.github.ben-manes.versions") version "0.45.0"
+    id("com.github.ben-manes.versions") version "0.47.0"
 }
 
 kotlin {
+    jvmToolchain(11)
     jvm {
         withJava()
 
@@ -66,6 +66,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serialization")
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:$serialization")
                 implementation("io.ktor:ktor-client-core:$ktor")
                 implementation("org.reduxkotlin:redux-kotlin-threadsafe:$redux")
             }
@@ -88,7 +89,6 @@ kotlin {
                 implementation("io.github.microutils:kotlin-logging:$kotlinLogging")
                 implementation("org.slf4j:slf4j-api:$slf4j")
                 implementation("org.slf4j:slf4j-simple:$slf4j")
-                implementation("com.google.code.gson:gson:$gson")
                 implementation("com.google.guava:guava:$guava")
                 implementation("com.h2database:h2:$h2db")
             }
@@ -176,6 +176,26 @@ distributions {
     }
 }
 
+tasks.getByName("distTar") {
+    dependsOn("allMetadataJar")
+    dependsOn("jsJar")
+}
+
+tasks.getByName("distZip") {
+    dependsOn("allMetadataJar")
+    dependsOn("jsJar")
+}
+
+tasks.getByName("jsBrowserProductionWebpack") {
+    dependsOn("jsProductionExecutableCompileSync")
+    dependsOn("jsDevelopmentExecutableCompileSync")
+}
+
+tasks.getByName("jsBrowserDevelopmentWebpack") {
+    dependsOn("jsDevelopmentExecutableCompileSync")
+    dependsOn("jsProductionExecutableCompileSync")
+}
+
 tasks.getByName<Jar>("jvmJar") {
     val taskName = if (project.hasProperty("isProduction") ||
         project.gradle.startParameter.taskNames.contains("installDist")
@@ -186,6 +206,7 @@ tasks.getByName<Jar>("jvmJar") {
     }
     val webpackTask = tasks.getByName<KotlinWebpack>(taskName)
     dependsOn(webpackTask) // make sure JS gets compiled first
+    dependsOn(tasks.getByName("jsDevelopmentExecutableCompileSync"))
     from(File(webpackTask.destinationDirectory, webpackTask.outputFileName)) // bring output file along into the JAR
 }
 

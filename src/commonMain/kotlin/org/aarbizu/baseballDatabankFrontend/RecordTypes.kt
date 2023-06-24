@@ -2,7 +2,8 @@ package org.aarbizu.baseballDatabankFrontend
 
 import kotlinx.serialization.Serializable
 
-interface BaseballRecord
+@Serializable
+sealed interface BaseballRecord
 
 @Serializable
 class SimplePlayerRecord(

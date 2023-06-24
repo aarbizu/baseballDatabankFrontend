@@ -1,6 +1,5 @@
 package org.aarbizu.baseballDatabankFrontend
 
-import csstype.rgba
 import js.core.jso
 import kotlinx.coroutines.MainScope
 import mui.material.styles.ThemeProvider
@@ -12,12 +11,13 @@ import org.aarbizu.baseballDatabankFrontend.routes.NoMatch
 import org.aarbizu.baseballDatabankFrontend.routes.PlayerNameSearch
 import org.aarbizu.baseballDatabankFrontend.routes.StatsSearch
 import org.aarbizu.baseballDatabankFrontend.routes.TopNNameLengths
-import org.reduxkotlin.createThreadSafeStore
+import org.reduxkotlin.threadsafe.createThreadSafeStore
 import react.VFC
 import react.create
 import react.router.Route
 import react.router.Routes
 import react.router.dom.BrowserRouter
+import web.cssom.rgb
 
 const val bbrefUri = "https://www.baseball-reference.com"
 const val bbrefSuffix = ".shtml"
@@ -61,9 +61,9 @@ val myAppTheme =
                     darker = "rgb(166,76,31)"
                 }
                 text = jso {
-                    primary = rgba(0, 0, 0, 0.87)
-                    secondary = rgba(145, 145, 145, 0.8)
-                    disabled = rgba(0, 0, 0, 0.6)
+                    primary = rgb(0, 0, 0, 0.87)
+                    secondary = rgb(145, 145, 145, 0.8)
+                    disabled = rgb(0, 0, 0, 0.6)
                 }
             }
         },

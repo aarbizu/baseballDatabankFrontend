@@ -1,12 +1,12 @@
 package org.aarbizu.baseballDatabankFrontend.routes
 
-import csstype.Auto
-import csstype.pct
 import mui.material.Box
 import mui.material.Typography
 import mui.material.styles.TypographyVariant
 import mui.system.sx
 import react.VFC
+import web.cssom.Auto
+import web.cssom.pct
 
 val NoMatch = VFC {
     Box {

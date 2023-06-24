@@ -1,8 +1,5 @@
 package org.aarbizu.baseballDatabankFrontend.routes
 
-import csstype.FontStyle
-import csstype.TextAlign
-import csstype.em
 import kotlinx.coroutines.launch
 import mui.material.Box
 import mui.material.Grid
@@ -23,6 +20,9 @@ import org.aarbizu.baseballDatabankFrontend.scope
 import org.aarbizu.baseballDatabankFrontend.xs
 import react.VFC
 import react.useState
+import web.cssom.FontStyle
+import web.cssom.TextAlign
+import web.cssom.em
 
 val PlayerNameSearch = VFC {
     var players by useState(emptyList<SimplePlayerRecord>())

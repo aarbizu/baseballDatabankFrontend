@@ -1,8 +1,5 @@
 package org.aarbizu.baseballDatabankFrontend.routes
 
-import csstype.TextAlign
-import csstype.em
-import csstype.px
 import kotlinx.coroutines.launch
 import mui.icons.material.SportsBaseballTwoTone
 import mui.material.Box
@@ -52,6 +49,9 @@ import react.StateSetter
 import react.VFC
 import react.create
 import react.useState
+import web.cssom.TextAlign
+import web.cssom.em
+import web.cssom.px
 import web.window.WindowTarget
 
 val StatsSearch = VFC {

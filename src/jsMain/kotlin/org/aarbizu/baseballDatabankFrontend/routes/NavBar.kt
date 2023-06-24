@@ -44,7 +44,7 @@ val NavBar = VFC {
                     size = Size.large
                     sx { color = myAppTheme.palette.secondary.main }
                     onClick = { navigate("/") }
-                    Home {} /* not the component, the mui icon */
+                    Home {} // not the component, the MUI icon
                 }
 
                 BasicMenu {

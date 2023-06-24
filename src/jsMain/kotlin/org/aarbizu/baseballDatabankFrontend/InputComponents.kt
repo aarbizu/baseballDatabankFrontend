@@ -1,8 +1,5 @@
 package org.aarbizu.baseballDatabankFrontend
 
-import csstype.Auto
-import csstype.FlexDirection
-import csstype.em
 import mui.material.Alert
 import mui.material.AlertColor
 import mui.material.AlertTitle
@@ -26,10 +23,12 @@ import react.ReactNode
 import react.create
 import react.dom.events.FormEventHandler
 import react.dom.html.ReactHTML.form
-import react.dom.html.ReactHTML.legend
 import react.dom.html.ReactHTML.span
 import react.dom.onChange
 import react.useState
+import web.cssom.Auto
+import web.cssom.FlexDirection
+import web.cssom.em
 
 external interface NameLengthProps : Props {
     var onSubmit: (String, String) -> Unit
@@ -65,7 +64,7 @@ val NameLengthInputComponents =
 
                 FormLabel {
                     sx { marginLeft = Auto.auto }
-                    component = legend
+//                    component = legend
                     +props.title
                 }
 
