@@ -57,11 +57,14 @@ kotlin {
             }
         }
     }
+
     js(IR) {
         browser {
             binaries.executable()
         }
     }
+
+    @Suppress("UNUSED_VARIABLE")
     sourceSets {
         val commonMain by getting {
             dependencies {
