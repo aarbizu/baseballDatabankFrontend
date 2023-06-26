@@ -3,7 +3,14 @@ package org.aarbizu.baseballDatabankFrontend.db
 import org.slf4j.LoggerFactory
 import java.io.File
 
-class DataLoader(private val db: DBProvider, private val csvHome: String) {
+const val CSV_FILES_PATH = "/csv"
+
+val defaultCsvLocation: () -> File? = { object { }.javaClass.getResource(CSV_FILES_PATH)?.let { File(it.toURI()) } }
+
+class DataLoader(
+    private val db: DBProvider,
+    private val csvLocationProvider: () -> File? = defaultCsvLocation,
+) {
     private val log = LoggerFactory.getLogger(this.javaClass)
 
     private val fileLoaders =
@@ -97,6 +104,10 @@ class DataLoader(private val db: DBProvider, private val csvHome: String) {
     }
 
     fun getCsvFiles(): List<File> {
-        return File(csvHome).walkTopDown().filter { it.isFile && it.extension == "csv" }.toList()
+        return getCsvFiles(csvLocationProvider.invoke())
+    }
+
+    private fun getCsvFiles(dir: File?): List<File> {
+        return dir?.walkTopDown()?.filter { it.isFile && it.extension == "csv" }?.toList().orEmpty()
     }
 }

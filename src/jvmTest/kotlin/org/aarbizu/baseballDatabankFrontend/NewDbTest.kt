@@ -4,6 +4,7 @@ import com.google.common.truth.Truth.assertThat
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import org.aarbizu.baseballDatabankFrontend.config.ServerConfig
+import org.aarbizu.baseballDatabankFrontend.db.CSV_FILES_PATH
 import org.aarbizu.baseballDatabankFrontend.db.DBProvider
 import org.aarbizu.baseballDatabankFrontend.db.DataLoader
 import org.h2.jdbcx.JdbcConnectionPool
@@ -13,6 +14,8 @@ import util.createTableSql
 import util.upsertPlayerSql
 import java.io.File
 import java.sql.ResultSet
+
+private const val PROD_RESOURCES = "src/commonMain/resources"
 
 @ExtendWith(MockKExtension::class)
 class NewDbTest {
@@ -62,46 +65,45 @@ class NewDbTest {
         System.setProperty("jdbc.drivers", currentDrivers)
         val jdbcUrl = "jdbc:h2:mem:stats;DB_CLOSE_DELAY=-1"
         val connPool = JdbcConnectionPool.create(jdbcUrl, "stats", "stats")
-        val fileOne = File("src/main/resources/csv/core/AllstarFull.csv")
+        val fileOne = File("$PROD_RESOURCES$CSV_FILES_PATH/core/AllstarFull.csv")
 
-        if (fileOne.canRead()) {
-            val simplename = fileOne.nameWithoutExtension
-            connPool.connection.use {
-                it.createStatement().use { stmt ->
-                    stmt.execute(
+        assertThat(fileOne.canRead())
+        val simplename = fileOne.nameWithoutExtension
+        connPool.connection.use {
+            it.createStatement().use { stmt ->
+                stmt.execute(
+                    """
+                        DROP TABLE IF EXISTS $simplename;
+                        CREATE TABLE $simplename(
+                            playerId text,
+                            yearId int default null,
+                            gameNum int DEFAULT null,
+                            gameID text,
+                            teamID text,
+                            lgID text,
+                            GP int DEFAULT null,
+                            startingPos int DEFAULT null
+                        ) AS 
+                        SELECT * FROM CSVREAD('${fileOne.absolutePath}');
+                    """
+                        .trimIndent(),
+                )
+            }
+        }
+
+        connPool.connection.use {
+            it.createStatement().use { stmt ->
+                val rs =
+                    stmt.executeQuery(
                         """
-                            DROP TABLE IF EXISTS $simplename;
-                            CREATE TABLE $simplename(
-                                playerId text,
-                                yearId int default null,
-                                gameNum int DEFAULT null,
-                                gameID text,
-                                teamID text,
-                                lgID text,
-                                GP int DEFAULT null,
-                                startingPos int DEFAULT null
-                            ) AS 
-                            SELECT * FROM CSVREAD('${fileOne.absolutePath}');
+                    SELECT COUNT(*) from ${fileOne.nameWithoutExtension}
                         """
                             .trimIndent(),
                     )
-                }
-            }
 
-            connPool.connection.use {
-                it.createStatement().use { stmt ->
-                    val rs =
-                        stmt.executeQuery(
-                            """
-                        SELECT COUNT(*) from ${fileOne.nameWithoutExtension}
-                            """
-                                .trimIndent(),
-                        )
-
-                    rs.next()
-                    val rows = rs.getInt(1)
-                    assertThat(rows).isEqualTo(5454)
-                }
+                rs.next()
+                val rows = rs.getInt(1)
+                assertThat(rows).isEqualTo(5454)
             }
         }
     }
@@ -110,7 +112,8 @@ class NewDbTest {
     fun `list all csv files`() {
         var fileCount = 0
         val expectedFileCount = 28 // as of 4/3/2022, when copied from baseballdatabank repo
-        DataLoader(dbmock, ServerConfig.csvHome).getCsvFiles().forEach {
+        val prodCsv = { File("$PROD_RESOURCES$CSV_FILES_PATH") }
+        DataLoader(dbmock, prodCsv).getCsvFiles().forEach {
             assertThat(it.isFile && it.extension == "csv")
             assertThat(it.canRead())
             fileCount += 1
@@ -120,7 +123,8 @@ class NewDbTest {
 
     @Test
     fun `test initializing db`() {
-        val dataLoader = DataLoader(ServerConfig.db, ServerConfig.csvHome)
+        val prodCsv = { File("$PROD_RESOURCES$CSV_FILES_PATH") }
+        val dataLoader = DataLoader(ServerConfig.db, prodCsv)
         dataLoader.loadAllFiles()
         dataLoader.buildIndexes()
         ServerConfig.db.getConnection().use {

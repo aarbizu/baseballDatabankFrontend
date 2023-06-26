@@ -60,7 +60,7 @@ class Server(private val config: AppConfig) {
         val timer = Stopwatch.createStarted()
 
         // load csv files into the db
-        val dataLoader = DataLoader(config.db, config.csvHome)
+        val dataLoader = DataLoader(config.db)
         dataLoader.loadAllFiles()
         dataLoader.buildIndexes()
         config.db.stats()
