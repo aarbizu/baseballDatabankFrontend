@@ -215,6 +215,9 @@ tasks.getByName<Jar>("jvmJar") {
 
 tasks.create("stage") {
     dependsOn("installDist")
+    doLast {
+        delete(fileTree("build").exclude("libs"))
+    }
 }
 
 tasks.getByName<JavaExec>("run") {
