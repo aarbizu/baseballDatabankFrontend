@@ -31,6 +31,7 @@ import org.aarbizu.baseballDatabankFrontend.query.QueryEngine
 import org.aarbizu.baseballDatabankFrontend.query.playerNamesSorted
 import org.aarbizu.baseballDatabankFrontend.query.preloadQueries
 import org.aarbizu.baseballDatabankFrontend.query.toJsonArray
+import org.aarbizu.baseballDatabankFrontend.retrosheet.TeamInfo
 import org.h2.tools.Server
 import org.slf4j.LoggerFactory
 import java.io.File
@@ -47,11 +48,19 @@ val queryService = QueryEngineService(NoneQueryEngine)
 class Server(private val config: AppConfig) {
 
     fun start() {
+        /* process retrosheet data */
+        initializeRetrosheet()
+        /* init db */
         initializeDb(config)
         queryService.engine = QueryEngine(config.db)
         PreloadedResults.preloads = preloadQueries(queryService.engine)
         /* this needs to be last since it starts the server loop */
         startBackend(config)
+    }
+
+    private fun initializeRetrosheet() {
+        /* initialize historical team info */
+        TeamInfo().initializeMap()
     }
 
     private fun initializeDb(config: AppConfig) {
