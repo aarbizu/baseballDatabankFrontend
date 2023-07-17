@@ -6,9 +6,9 @@ import org.aarbizu.baseballDatabankFrontend.retrosheet.TeamInfo
 import org.junit.jupiter.api.Test
 import java.io.File
 import java.io.FileInputStream
-import java.net.URL
 
 const val RESOURCES = "src/commonMain/resources"
+
 class RetrosheetTests {
 
     @Test
@@ -46,8 +46,10 @@ class RetrosheetTests {
     fun `getting game logs for given year`() {
         val fileUrl = File("$RESOURCES/retrosheet/team-abbreviations.csv").toURI().toURL()
         TeamInfo.teamInfoMap = TeamInfo().readHistoricalTeamInfo { fileUrl }
-        val gl = GameLogs()
-        val gameLogs = gl.getGameLogs("1989") { FileInputStream("$RESOURCES/retrosheet/gl1871_2022.zip") }
+        val gl = GameLogs { FileInputStream("$RESOURCES/retrosheet/gl1871_2022.zip") }
+        val gameLogs = gl.getGameLogs("1989")
         assertThat(gameLogs.size).isGreaterThan(1)
+
+        println(gameLogs[0].toString())
     }
 }

@@ -1,5 +1,8 @@
 package org.aarbizu.baseballDatabankFrontend.retrosheet
 
+import com.google.common.cache.CacheBuilder
+import com.google.common.cache.CacheLoader
+import com.google.common.cache.LoadingCache
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
 import java.util.zip.ZipInputStream
@@ -7,12 +10,16 @@ import java.util.zip.ZipInputStream
 /**
  * Retrieve GameLog info from retrosheet archive.
  */
-class GameLogs {
 
-    //TODO cache the read from the archive so we're not doing a full processing every time
+class GameLogs(private val logProvider: () -> InputStream? = gameLogArchiveProvider) {
+
+    private val seasonGameLogCache: LoadingCache<String, List<SimpleGameLog>> = CacheBuilder.newBuilder()
+        .build(
+            CacheLoader.from { year: String? -> year?.let { getGameLogs(year, logProvider) } }
+        )
 
     fun getGameLogs(year: String): List<SimpleGameLog> {
-        return getGameLogs(year, gameLogArchiveProvider)
+        return seasonGameLogCache.get(year)
     }
 
     internal fun getGameLogs(year: String, provider: () -> InputStream?): List<SimpleGameLog> {
