@@ -182,7 +182,7 @@ val StatsSearch = VFC {
 }
 
 fun keepSupervocalics(players: List<PlayerCareerStatRecord>): List<PlayerCareerStatRecord> {
-    return players.filter { isSuperVocalic(it.name) }
+    return players.filter { it.name.isSuperVocalic() }
 }
 
 fun ChildrenBuilder.showPlayerStats(

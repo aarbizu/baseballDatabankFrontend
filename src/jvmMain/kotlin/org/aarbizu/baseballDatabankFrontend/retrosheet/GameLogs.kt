@@ -10,7 +10,6 @@ import java.util.zip.ZipInputStream
 /**
  * Retrieve GameLog info from retrosheet archive.
  */
-
 class GameLogs(private val logProvider: () -> InputStream? = gameLogArchiveProvider) {
 
     private val seasonGameLogCache: LoadingCache<String, List<SimpleGameLog>> = CacheBuilder.newBuilder()
@@ -22,24 +21,27 @@ class GameLogs(private val logProvider: () -> InputStream? = gameLogArchiveProvi
         return seasonGameLogCache.get(year)
     }
 
-    internal fun getGameLogs(year: String, provider: () -> InputStream?): List<SimpleGameLog> {
+    private fun getGameLogs(year: String, provider: () -> InputStream?): List<SimpleGameLog> {
         return getGameLogFromArchive(year, provider)
             .filter {
                 it.isNotEmpty()
             }
+            .map { it.replace("\"", "") }
             .map {
                 it.split(",")
             }.map {
-                val visitingTeam = TeamInfo.teamInfoMap[it[3].replace("\"", "")]
-                val homeTeam = TeamInfo.teamInfoMap[it[6].replace("\"", "")]
+                val visitingTeam = TeamInfo.teamInfoMap[it[3]]
+                val homeTeam = TeamInfo.teamInfoMap[it[6]]
                 SimpleGameLog(
-                    it[0].replace("\"", ""),
-                    "${visitingTeam?.city} ${visitingTeam?.name}",
+                    it[0],
+                    it[3],
                     "${visitingTeam?.league}",
-                    it[9].replace("\"", ""),
-                    "${homeTeam?.city} ${homeTeam?.name}",
+                    it[9],
+                    it[3],
+                    it[6],
                     "${homeTeam?.league}",
-                    it[10].replace("\"", "")
+                    it[10],
+                    it[6]
                 )
             }
     }

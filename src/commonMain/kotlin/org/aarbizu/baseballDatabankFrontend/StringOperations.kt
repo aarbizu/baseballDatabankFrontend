@@ -1,12 +1,12 @@
 package org.aarbizu.baseballDatabankFrontend
 
-fun isSuperVocalic(input: String): Boolean {
+fun String.isSuperVocalic(): Boolean {
     var aCount = 0
     var eCount = 0
     var iCount = 0
     var oCount = 0
     var uCount = 0
-    input.forEach {
+    this.forEach {
         when (it) {
             'A',
             'a',
