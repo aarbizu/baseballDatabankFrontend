@@ -25,6 +25,8 @@ val kotlinMUIIcons = "5.11.16-pre.572"
 val kotlinMUI = "5.13.5-pre.572"
 val kotlinBrowser = "1.0.0-pre.572"
 val redux = "0.6.1"
+val letsplotkotlin = "4.4.1"
+val letsplotcommon = "3.2.0"
 
 plugins {
     // Apply the Kotlin JVM plugin to add support for Kotlin.
@@ -94,6 +96,8 @@ kotlin {
                 implementation("org.slf4j:slf4j-simple:$slf4j")
                 implementation("com.google.guava:guava:$guava")
                 implementation("com.h2database:h2:$h2db")
+                implementation("org.jetbrains.lets-plot:lets-plot-common:$letsplotcommon")
+                implementation("org.jetbrains.lets-plot:lets-plot-kotlin-jvm:$letsplotkotlin")
             }
         }
         val jvmTest by getting {

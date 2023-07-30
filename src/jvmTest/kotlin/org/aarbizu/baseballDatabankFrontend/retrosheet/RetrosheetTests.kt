@@ -1,11 +1,21 @@
 package org.aarbizu.baseballDatabankFrontend.retrosheet
 
 import com.google.common.truth.Truth.assertThat
+import jetbrains.datalore.plot.PlotSvgExport
+import org.jetbrains.letsPlot.geom.geomDensity
+import org.jetbrains.letsPlot.geom.geomLabel
+import org.jetbrains.letsPlot.geom.geomStep
+import org.jetbrains.letsPlot.ggsize
+import org.jetbrains.letsPlot.intern.Plot
+import org.jetbrains.letsPlot.intern.toSpec
+import org.jetbrains.letsPlot.label.ggtitle
+import org.jetbrains.letsPlot.label.ylab
+import org.jetbrains.letsPlot.letsPlot
 import org.junit.jupiter.api.Test
+import java.awt.Desktop
 import java.io.File
 import java.io.FileInputStream
-import java.util.LinkedHashMap
-import kotlin.math.ln1p
+import java.time.LocalDate
 
 const val RESOURCES = "src/commonMain/resources"
 
@@ -121,25 +131,27 @@ class RetrosheetTests {
     @Test
     fun `get 2021 standings`() {
         val log2021 = getYearLog("2021")
-        val standingds2021 = Standings.of(log2021)
-        assertThat(standingds2021).isNotNull()
-        assertThat(standingds2021.teamRecordsByDivision.size).isEqualTo(6)
-        assertThat(standingds2021.teamRecordsByDivision.keys).isEqualTo(setOf(ALE1998, ALW2013, ALC1998, NLE2012, NLW1998, NLC2013))
-        assertThat(standingds2021.teamRecordsByDivision[ALE1998]!!.size).isEqualTo(5)
-        assertThat(standingds2021.teamRecordsByDivision[ALW2013]!!.size).isEqualTo(5)
-        assertThat(standingds2021.teamRecordsByDivision[ALC1998]!!.size).isEqualTo(5)
-        assertThat(standingds2021.teamRecordsByDivision[NLE2012]!!.size).isEqualTo(5)
-        assertThat(standingds2021.teamRecordsByDivision[NLW1998]!!.size).isEqualTo(5)
-        assertThat(standingds2021.teamRecordsByDivision[NLC2013]!!.size).isEqualTo(5)
+        val standings2021 = Standings.of(log2021)
+        assertThat(standings2021).isNotNull()
+        assertThat(standings2021.teamRecordsByDivision.size).isEqualTo(6)
+        assertThat(standings2021.teamRecordsByDivision.keys).isEqualTo(setOf(ALE1998, ALW2013, ALC1998, NLE2012, NLW1998, NLC2013))
+        assertThat(standings2021.teamRecordsByDivision[ALE1998]!!.size).isEqualTo(5)
+        assertThat(standings2021.teamRecordsByDivision[ALW2013]!!.size).isEqualTo(5)
+        assertThat(standings2021.teamRecordsByDivision[ALC1998]!!.size).isEqualTo(5)
+        assertThat(standings2021.teamRecordsByDivision[NLE2012]!!.size).isEqualTo(5)
+        assertThat(standings2021.teamRecordsByDivision[NLW1998]!!.size).isEqualTo(5)
+        assertThat(standings2021.teamRecordsByDivision[NLC2013]!!.size).isEqualTo(5)
 
-        println("division name -> ${divToName(standingds2021.teamRecordsByDivision.keys.first())}")
-        println(standingds2021)
+        println("division name -> ${divToName(standings2021.teamRecordsByDivision.keys.first())}")
+        println(standings2021)
+        val summaries = standings2021.summaries()
+        assertThat(summaries.keys.size).isEqualTo(6)
     }
 
     @Test
     fun `standings incrementing`() {
         val initialStandings = Standings(mutableMapOf(
-            NL1901 to mutableListOf(TeamRecord("NY1", w = 1, l = 1, t = 0))
+            NL1901 to mutableListOf(TeamRecord("NY1", w = 1, l = 1, t = 0), TeamRecord("PIT", 0, 0 , 0))
         ))
 
         val incremental = Standings(mutableMapOf(
@@ -154,8 +166,82 @@ class RetrosheetTests {
 
     @Test
     fun dayByDayResults() {
-        val dayByDay = SeasonProgress().teamByTeamDailyResults(getYearLog("1901"))
+        val seasonProgress = SeasonProgress()
+        val dayByDay = seasonProgress.teamByTeamDailyResults(getYearLog("1901"))
+
         assertThat(dayByDay.size).isGreaterThan(0)
+
+        val (dates, pct) = dayByDay["BSN"]
+            ?.filterNot { it.first.isEmpty() }
+            ?.map {
+                val date = LocalDate.parse(it.first, logDateFormat)
+                Pair(date.format(graphDateFormat), it.second)
+            }
+            ?.unzip()!!
+
+        val (_, pct2) = dayByDay["PIT"]
+            ?.filterNot { it.first.isEmpty() }
+            ?.map {
+                val date = LocalDate.parse(it.first, logDateFormat)
+                Pair(date.format(graphDateFormat), it.second)
+            }
+            ?.unzip()!!
+
+        val data = mapOf(
+            "1901" to dates,
+            "PIT" to pct2,
+            "BSN" to pct
+        )
+
+        val plot = letsPlot(data) +
+                geomStep(color = "blue") { x = "1901"; y = "BSN" } +
+                geomLabel(data = mapOf("BSN" to listOf("BSN")), fontface = "bold", color = "blue",
+                    x = data["1901"]?.lastIndex!! - 3, y = data["BSN"]?.last() as Double) { label = "BSN" } +
+                geomStep(color = "red") { x = "1901"; y = "PIT" } +
+                geomLabel(data = mapOf("PIT" to listOf("PIT")), fontface = "bold", color = "red",
+                    x = data["1901"]?.lastIndex!! - 3, y =  data["PIT"]?.last() as Double
+                ) { label = "PIT" }+
+                ggsize(width = 1000, height = 625) +
+                ggtitle("foo", "subfoo") +
+                ylab("winning pct")
+
+        val content = PlotSvgExport.buildSvgImageFromRawSpecs(plot.toSpec())
+//        val content = PlotHtmlExport.buildHtmlFromRawSpecs(plot.toSpec(), scriptUrl(VersionChecker.letsPlotJsVersion))
+
+        val dir = File(System.getProperty("user.dir"), "BSN-1901-day-by-day")
+        dir.mkdir()
+        val file = File(dir.canonicalPath, "test-BSN-1901-plot.html")
+        file.createNewFile()
+        file.writeText(content)
+
+        Desktop.getDesktop().browse(file.toURI())
+    }
+
+    @Test
+    fun testPlotFunction() {
+        val seasonProgress = SeasonProgress()
+        val dayByDay = seasonProgress.teamByTeamDailyResults(getYearLog("1901"))
+
+        assertThat(dayByDay.size).isGreaterThan(0)
+
+        val plot = seasonProgress.plot("1901", dayByDay, "NL")
+        localBrowserPlot(plot, "1901nl")
+
+        val plot2 = seasonProgress.plot("1901", dayByDay, "AL")
+        localBrowserPlot(plot2, "1901al")
+    }
+
+    private fun localBrowserPlot(plot: Plot, name: String) {
+        val content = PlotSvgExport.buildSvgImageFromRawSpecs(plot.toSpec())
+//        val content = PlotHtmlExport.buildHtmlFromRawSpecs(plot.toSpec(), scriptUrl(VersionChecker.letsPlotJsVersion))
+
+        val dir = File(System.getProperty("user.dir"), name)
+        dir.mkdir()
+        val file = File(dir.canonicalPath, "${name}plot.html")
+        file.createNewFile()
+        file.writeText(content)
+
+        Desktop.getDesktop().browse(file.toURI())
     }
 
     @Test
@@ -180,6 +266,32 @@ class RetrosheetTests {
 
         val newStandings = initialStandings.deepCopy()
         assertThat(newStandings === initialStandings).isFalse()
+
+    }
+
+    @Test
+    fun displayGraph() {
+        val rand = java.util.Random()
+        val n = 200
+        val data = mapOf(
+            "x" to List(n) { rand.nextGaussian() }
+        )
+
+        val plot = letsPlot(data) + geomDensity(
+            color = "dark-green",
+            fill = "green",
+            alpha = .3,
+            size = 2.0
+        ) { x = "x" }
+        val content = PlotSvgExport.buildSvgImageFromRawSpecs(plot.toSpec())
+
+        val dir = File(System.getProperty("user.dir"), "lets-plot-images")
+        dir.mkdir()
+        val file = File(dir.canonicalPath, "my_plot.html")
+        file.createNewFile()
+        file.writeText(content)
+
+        Desktop.getDesktop().browse(file.toURI())
 
     }
 

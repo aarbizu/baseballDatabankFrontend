@@ -13,6 +13,7 @@ import java.time.format.DateTimeFormatter
  *  -  [NL history](https://en.wikipedia.org/wiki/National_League_(baseball))
  */
 val logDateFormat: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMdd")
+val graphDateFormat: DateTimeFormatter = DateTimeFormatter.ofPattern("MMM dd")
 
 data class Team(
     val abbrev: String,
@@ -46,6 +47,10 @@ data class TeamRecord(val team: String, var w: Int, var l: Int, var t: Int) {
         return this.copy(w = (this.w + inc.w), l = (this.l + inc.l),  t = (this.t + inc.t))
     }
 
+    fun toDatum(): Pair<String, Double> {
+        return Pair(team, if ((w + l + t == 0)) 0.0 else (w.toDouble() / (w + l + t).toDouble()))
+    }
+
     override fun toString(): String = "$team - W$w L$l T$t"
 }
 
@@ -62,7 +67,7 @@ fun initialStandings(mlbYear: MLB): Standings {
     )
 }
 
-class Standings(val teamRecordsByDivision: Map<Division, List<TeamRecord>>) {
+class Standings(val teamRecordsByDivision: Map<Division, List<TeamRecord>>, val asOf: String = "") {
     operator fun plus(inc: Standings): Standings {
         val toUpdate = deepCopy().teamRecordsByDivision
 
@@ -74,7 +79,7 @@ class Standings(val teamRecordsByDivision: Map<Division, List<TeamRecord>>) {
             }
         }
 
-        return Standings(toUpdate)
+        return Standings(toUpdate, inc.asOf)
     }
 
     override fun toString(): String {
@@ -87,6 +92,13 @@ class Standings(val teamRecordsByDivision: Map<Division, List<TeamRecord>>) {
         }
     }
 
+    fun summaries(): Map<Division, List<Pair<String,Double>>> {
+        return teamRecordsByDivision.mapValues { (_, value) ->
+            value.map { it.toDatum() }
+        }
+    }
+
+
     fun deepCopy(): Standings {
         val copy = mutableMapOf<Division, List<TeamRecord>>()
         teamRecordsByDivision.forEach { (k, v) ->
@@ -98,7 +110,7 @@ class Standings(val teamRecordsByDivision: Map<Division, List<TeamRecord>>) {
     }
 
     companion object {
-        fun of(log: List<SimpleGameLog>): Standings {
+        fun of(log: List<SimpleGameLog>, date: String = ""): Standings {
             val records = mutableMapOf<Division, MutableList<TeamRecord>>()
             val year = LocalDate.parse(log.first().date, logDateFormat).year
             val teams = MLBTeams.of(year)
@@ -119,7 +131,7 @@ class Standings(val teamRecordsByDivision: Map<Division, List<TeamRecord>>) {
                     records[visitorDiv!!] = visitorDivRecs
                 }
             }
-            return Standings(records)
+            return Standings(records, date)
         }
 
         private fun updateRecord(teamRecords: MutableList<TeamRecord>, toUpdate: String, added: String) {
@@ -216,6 +228,11 @@ sealed interface League {
 }
 sealed interface Division {
     fun teams(): List<String> // return a map of three-letter abbrs from team-abbreviations.csv to team name
+
+    fun toTeamNames(): List<String> = teams().sorted().map {
+        val t = TeamInfo.teamInfoMap[it]!!
+        "${t.abbrev} ${t.city} ${t.name}"
+    }
 }
 
 sealed interface NL : League
