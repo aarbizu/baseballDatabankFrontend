@@ -227,7 +227,7 @@ class RetrosheetTests {
                 "testPlots" +
                 File.separator +
                 "BSN-1901-day-by-day"))
-        val file = Files.createFile(Paths.get(dir.pathString, "test-BSN-1901-plot.html"))
+        val file = Paths.get(dir.pathString, "test-BSN-1901-plot.html")
         file.writeText(content)
         Desktop.getDesktop().browse(file.toUri())
     }
