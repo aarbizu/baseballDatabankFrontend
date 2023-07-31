@@ -11,15 +11,29 @@ import org.jetbrains.letsPlot.intern.toSpec
 import org.jetbrains.letsPlot.label.ggtitle
 import org.jetbrains.letsPlot.label.ylab
 import org.jetbrains.letsPlot.letsPlot
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import java.awt.Desktop
 import java.io.File
 import java.io.FileInputStream
+import java.nio.file.Files
+import java.nio.file.Paths
 import java.time.LocalDate
+import kotlin.io.path.pathString
+import kotlin.io.path.writeText
 
 const val RESOURCES = "src/commonMain/resources"
 
 class RetrosheetTests {
+
+    companion object {
+        @JvmStatic
+        @BeforeAll
+        fun `init team info for tests`() {
+            val fileUrl = Paths.get("$RESOURCES/retrosheet/team-abbreviations.csv").toUri().toURL()
+            TeamInfo.teamInfoMap = TeamInfo().readHistoricalTeamInfo { fileUrl }
+        }
+    }
 
     @Test
     fun `read archive resource`() {
@@ -45,7 +59,7 @@ class RetrosheetTests {
 
     @Test
     fun `reading historical team info`() {
-        val fileUrl = File("$RESOURCES/retrosheet/team-abbreviations.csv").toURI().toURL()
+        val fileUrl = Paths.get("$RESOURCES/retrosheet/team-abbreviations.csv").toUri().toURL()
         val teamInfoMap = TeamInfo().readHistoricalTeamInfo { fileUrl }
 
         assertThat(teamInfoMap["SFN"]!!.name).isEqualTo("Giants")
@@ -208,40 +222,55 @@ class RetrosheetTests {
         val content = PlotSvgExport.buildSvgImageFromRawSpecs(plot.toSpec())
 //        val content = PlotHtmlExport.buildHtmlFromRawSpecs(plot.toSpec(), scriptUrl(VersionChecker.letsPlotJsVersion))
 
-        val dir = File(System.getProperty("user.dir"), "BSN-1901-day-by-day")
-        dir.mkdir()
-        val file = File(dir.canonicalPath, "test-BSN-1901-plot.html")
-        file.createNewFile()
+        val dir = Files.createDirectories(Paths.get(System.getProperty("user.dir") +
+                File.separator +
+                "testPlots" +
+                File.separator +
+                "BSN-1901-day-by-day"))
+        val file = Files.createFile(Paths.get(dir.pathString, "test-BSN-1901-plot.html"))
         file.writeText(content)
-
-        Desktop.getDesktop().browse(file.toURI())
+        Desktop.getDesktop().browse(file.toUri())
     }
 
     @Test
     fun testPlotFunction() {
         val seasonProgress = SeasonProgress()
-        val dayByDay = seasonProgress.teamByTeamDailyResults(getYearLog("1901"))
 
-        assertThat(dayByDay.size).isGreaterThan(0)
-
-        val plot = seasonProgress.plot("1901", dayByDay, "NL")
+        val plot = seasonProgress.plotDayByDayStandingsHelper("1901", "NL", testGameLogsProvider())
         localBrowserPlot(plot, "1901nl")
 
-        val plot2 = seasonProgress.plot("1901", dayByDay, "AL")
+        val plot2 = seasonProgress.plotDayByDayStandingsHelper("1901", "AL", testGameLogsProvider())
         localBrowserPlot(plot2, "1901al")
+    }
+
+    @Test
+    fun testPlotFunction1989Divisions() {
+        val seasonProgress = SeasonProgress()
+
+        val nlePlot = seasonProgress.plotDayByDayStandingsHelper("1989", "NLE", testGameLogsProvider())
+        localBrowserPlot(nlePlot,  "1989nle")
+
+        val nlwPlot = seasonProgress.plotDayByDayStandingsHelper("1989", "NLW", testGameLogsProvider())
+        localBrowserPlot(nlwPlot, "1989nlw")
+
+        val alePlot = seasonProgress.plotDayByDayStandingsHelper("1989", "ALE", testGameLogsProvider())
+        localBrowserPlot(alePlot,  "1989ale")
+
+        val alwPlot = seasonProgress.plotDayByDayStandingsHelper("1989", "ALW", testGameLogsProvider())
+        localBrowserPlot(alwPlot, "1989alw")
     }
 
     private fun localBrowserPlot(plot: Plot, name: String) {
         val content = PlotSvgExport.buildSvgImageFromRawSpecs(plot.toSpec())
 //        val content = PlotHtmlExport.buildHtmlFromRawSpecs(plot.toSpec(), scriptUrl(VersionChecker.letsPlotJsVersion))
 
-        val dir = File(System.getProperty("user.dir"), name)
-        dir.mkdir()
-        val file = File(dir.canonicalPath, "${name}plot.html")
-        file.createNewFile()
+        val dir = Files.createDirectories(Paths.get(System.getProperty("user.dir") +
+            File.separator +
+            "testPlots" +
+            File.separator, name))
+        val file = Paths.get(dir.pathString, "${name}plot.html")
         file.writeText(content)
-
-        Desktop.getDesktop().browse(file.toURI())
+        Desktop.getDesktop().browse(file.toUri())
     }
 
     @Test
@@ -266,7 +295,6 @@ class RetrosheetTests {
 
         val newStandings = initialStandings.deepCopy()
         assertThat(newStandings === initialStandings).isFalse()
-
     }
 
     @Test
@@ -285,20 +313,19 @@ class RetrosheetTests {
         ) { x = "x" }
         val content = PlotSvgExport.buildSvgImageFromRawSpecs(plot.toSpec())
 
-        val dir = File(System.getProperty("user.dir"), "lets-plot-images")
-        dir.mkdir()
-        val file = File(dir.canonicalPath, "my_plot.html")
-        file.createNewFile()
+        val dir = Files.createDirectories(Paths.get(System.getProperty("user.dir") +
+            File.separator +
+            "testPlots" +
+            File.separator, "lets-plot-images"))
+        val file = Paths.get(dir.pathString, "my_plot.html")
         file.writeText(content)
-
-        Desktop.getDesktop().browse(file.toURI())
-
+        Desktop.getDesktop().browse(file.toUri())
     }
 
+    private fun testGameLogsProvider() = GameLogs { FileInputStream("$RESOURCES/retrosheet/gl1871_2022.zip") }
+
     private fun getYearLog(year: String): List<SimpleGameLog> {
-        val fileUrl = File("$RESOURCES/retrosheet/team-abbreviations.csv").toURI().toURL()
-        TeamInfo.teamInfoMap = TeamInfo().readHistoricalTeamInfo { fileUrl }
-        val gl = GameLogs { FileInputStream("$RESOURCES/retrosheet/gl1871_2022.zip") }
+        val gl = testGameLogsProvider()
         return gl.getGameLogs(year)
     }
 

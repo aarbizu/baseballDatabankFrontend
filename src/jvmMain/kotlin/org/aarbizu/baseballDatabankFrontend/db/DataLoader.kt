@@ -3,8 +3,7 @@ package org.aarbizu.baseballDatabankFrontend.db
 import org.slf4j.LoggerFactory
 import java.io.File
 
-const val CSV_FILES_PATH = "/csv"
-
+val CSV_FILES_PATH = "${File.separator}csv"
 val defaultCsvLocation: () -> File? = { object { }.javaClass.getResource(CSV_FILES_PATH)?.let { File(it.toURI()) } }
 
 class DataLoader(

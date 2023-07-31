@@ -4,12 +4,14 @@ import com.google.common.cache.CacheBuilder
 import com.google.common.cache.CacheLoader
 import com.google.common.cache.LoadingCache
 import java.io.ByteArrayOutputStream
+import java.io.File
 import java.io.InputStream
 import java.util.zip.ZipInputStream
 
 /**
  * Retrieve GameLog info from retrosheet archive.
  */
+val RETROSHEET_GAMELOGS_ARCHIVE = "${File.separator}retrosheet${File.separator}gl1871_2022.zip"
 class GameLogs(private val logProvider: () -> InputStream? = gameLogArchiveProvider) {
 
     private val seasonGameLogCache: LoadingCache<String, List<SimpleGameLog>> = CacheBuilder.newBuilder()
@@ -63,6 +65,8 @@ class GameLogs(private val logProvider: () -> InputStream? = gameLogArchiveProvi
     }
 
     companion object {
-        val gameLogArchiveProvider: () -> InputStream? = { object { }.javaClass.getResourceAsStream("gl1871_2022.zip") }
+        val gameLogArchiveProvider: () -> InputStream? = {
+            object { }.javaClass.getResourceAsStream(RETROSHEET_GAMELOGS_ARCHIVE)
+        }
     }
 }

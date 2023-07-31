@@ -2,10 +2,14 @@ package org.aarbizu.baseballDatabankFrontend.retrosheet
 
 import java.io.File
 import java.net.URL
+import java.nio.file.FileSystem
+import java.nio.file.Files
 
 /**
  * Historical team info
  */
+
+val RETROSHEET_PATH = "${File.separator}retrosheet${File.separator}team-abbreviations.csv"
 class TeamInfo {
 
     fun initializeMap() {
@@ -25,7 +29,7 @@ class TeamInfo {
 
     companion object {
         val teamNameInfoProvider: () -> URL? = {
-            object{ }.javaClass.getResource("team-abbreviations.csv")
+            object{ }.javaClass.getResource(RETROSHEET_PATH)?.toURI()?.toURL()
         }
 
         var teamInfoMap: Map<String, Team> = emptyMap()

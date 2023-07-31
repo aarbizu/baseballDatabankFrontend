@@ -98,7 +98,6 @@ class Standings(val teamRecordsByDivision: Map<Division, List<TeamRecord>>, val 
         }
     }
 
-
     fun deepCopy(): Standings {
         val copy = mutableMapOf<Division, List<TeamRecord>>()
         teamRecordsByDivision.forEach { (k, v) ->

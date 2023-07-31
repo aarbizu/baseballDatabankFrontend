@@ -1,40 +1,93 @@
 package org.aarbizu.baseballDatabankFrontend.retrosheet
 
+import com.google.common.cache.CacheBuilder
+import com.google.common.cache.CacheLoader
+import com.google.common.cache.LoadingCache
+import jetbrains.datalore.plot.PlotSvgExport
 import org.jetbrains.letsPlot.geom.geomLabel
 import org.jetbrains.letsPlot.geom.geomStep
 import org.jetbrains.letsPlot.ggsize
 import org.jetbrains.letsPlot.intern.Plot
+import org.jetbrains.letsPlot.intern.toSpec
 import org.jetbrains.letsPlot.label.ggtitle
 import org.jetbrains.letsPlot.label.ylab
 import org.jetbrains.letsPlot.letsPlot
 import java.time.LocalDate
 
+/**
+ * Gruvbox palette
+ */
+//val plotColors = listOf(
+//    "#9d0006",
+//    "#79740e",
+//    "#b57614",
+//    "#076678",
+//    "#8f3f71",
+//    "#427b58",
+//    "#af3a03",
+//    "#d65d0e",
+//    "#fb4934",
+//    "#83a598",
+//    "#d3869b",
+//    "#d79921",
+//    "#458588",
+//    "#cc241d",
+//    "#fe8019",
+//    "#3c3836",
+//    "#b16286"
+//)
+
+
+/**
+ * Solarized palette, then some generic colors
+ */
 val plotColors = listOf(
-    "#9d0006",
-    "#79740e",
-    "#b57614",
-    "#076678",
-    "#8f3f71",
-    "#427b58",
-    "#af3a03",
-    "#d65d0e",
-    "#fb4934",
-    "#83a598",
-    "#d3869b",
-    "#d79921",
-    "#458588",
-    "#cc241d",
-    "#fe8019",
-    "#3c3836",
-    "#b16286"
+    "#b58900",
+    "#cb4b16",
+    "#dc322f",
+    "#d33682",
+    "#6c71c4",
+    "#268bd2",
+    "#2aa198",
+    "#859900",
+    "#586e76",
+    "red",
+    "blue",
+    "green",
+    "orange",
+    "cyan",
+    "black",
+    "purple",
 )
+
 /**
  * Take a game log and produce a day-by-day tally of wins and losses per team
  */
 class SeasonProgress {
 
+    private val plotCache: LoadingCache<Pair<String,String>, String> = CacheBuilder.newBuilder()
+        .build(
+            CacheLoader.from { (year: String?, division: String?) ->
+                innerPlotDayByDayStandings(year, division)
+            }
+        )
+
+    fun plotDayByDayStandings(year: String, division: String): String {
+        return plotCache.get(Pair(year, division))
+    }
+
+    private fun innerPlotDayByDayStandings(year: String, division: String): String {
+        val plot = plotDayByDayStandingsHelper(year, division, GameLogs())
+        return PlotSvgExport.buildSvgImageFromRawSpecs(plot.toSpec())
+    }
+
+    internal fun plotDayByDayStandingsHelper(year: String, division: String, gameLogs: GameLogs): Plot {
+        val teamByTeamDailyResults = teamByTeamDailyResults(gameLogs.getGameLogs(year))
+        return plot(year, division, teamByTeamDailyResults)
+    }
+
     //TODO -- maybe refactor the List<> or the Pair<> into objects?
-    fun teamByTeamDailyResults(results: List<SimpleGameLog>): Map<String, List<Pair<String, Double>>> {
+    internal fun teamByTeamDailyResults(results: List<SimpleGameLog>): Map<String, List<Pair<String, Double>>> {
         val progressiveStandings = standingsByDay(results)
 
         val teamSeasonProgress = mutableMapOf<String, MutableList<Pair<String,Double>>>()
@@ -73,7 +126,7 @@ class SeasonProgress {
             .runningFold(baseStandings) { acc, standings -> acc + standings }
     }
 
-    fun plot(year: String, dailyResults: Map<String, List<Pair<String, Double>>>, div: String): Plot {
+    private fun plot(year: String, div: String, dailyResults: Map<String, List<Pair<String, Double>>>): Plot {
         require(div.isNotEmpty() && div.isNotBlank()) { "Invalid division" }
         require(year == dailyResults.entries.first().value.last().first.subSequence(0,4)) { "$year doesn't match data" }
         val mlb = MLBTeams.of(year.toInt())
@@ -90,7 +143,7 @@ class SeasonProgress {
         }
 
         val plot = letsPlot(data)
-        val lastXIdx = data[year]?.lastIndex!! - 3
+        val lastXIdx = data[year]?.lastIndex!! - 10
 
         val graphFeatures = division.teams().mapIndexed { index, team ->
             geomStep(color = plotColors[index]) { x = year; y = team } +
@@ -120,6 +173,4 @@ class SeasonProgress {
             }
             ?.unzip()!!
 
-
 }
-
