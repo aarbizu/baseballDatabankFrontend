@@ -13,14 +13,9 @@ import org.jetbrains.letsPlot.label.ylab
 import org.jetbrains.letsPlot.letsPlot
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
-import java.awt.Desktop
-import java.io.File
 import java.io.FileInputStream
-import java.nio.file.Files
 import java.nio.file.Paths
 import java.time.LocalDate
-import kotlin.io.path.pathString
-import kotlin.io.path.writeText
 
 const val RESOURCES = "src/commonMain/resources"
 
@@ -231,22 +226,22 @@ class RetrosheetTests {
             ggsize(width = 1000, height = 625) +
             ggtitle("foo", "subfoo") +
             ylab("winning pct")
-
-        val content = PlotSvgExport.buildSvgImageFromRawSpecs(plot.toSpec())
-//        val content = PlotHtmlExport.buildHtmlFromRawSpecs(plot.toSpec(), scriptUrl(VersionChecker.letsPlotJsVersion))
-
-        val dir = Files.createDirectories(
-            Paths.get(
-                System.getProperty("user.dir") +
-                    File.separator +
-                    "testPlots" +
-                    File.separator +
-                    "BSN-1901-day-by-day",
-            ),
-        )
-        val file = Paths.get(dir.pathString, "test-BSN-1901-plot.html")
-        file.writeText(content)
-        Desktop.getDesktop().browse(file.toUri())
+        // TODO headless testing needed
+//        val content = PlotSvgExport.buildSvgImageFromRawSpecs(plot.toSpec())
+//       val content = PlotHtmlExport.buildHtmlFromRawSpecs(plot.toSpec(), scriptUrl(VersionChecker.letsPlotJsVersion))
+//
+//        val dir = Files.createDirectories(
+//            Paths.get(
+//                System.getProperty("user.dir") +
+//                    File.separator +
+//                    "testPlots" +
+//                    File.separator +
+//                    "BSN-1901-day-by-day",
+//            ),
+//        )
+//        val file = Paths.get(dir.pathString, "test-BSN-1901-plot.html")
+//        file.writeText(content)
+//        Desktop.getDesktop().browse(file.toUri())
     }
 
     @Test
@@ -278,21 +273,22 @@ class RetrosheetTests {
     }
 
     private fun localBrowserPlot(plot: Plot, name: String) {
-        val content = PlotSvgExport.buildSvgImageFromRawSpecs(plot.toSpec())
-//        val content = PlotHtmlExport.buildHtmlFromRawSpecs(plot.toSpec(), scriptUrl(VersionChecker.letsPlotJsVersion))
-
-        val dir = Files.createDirectories(
-            Paths.get(
-                System.getProperty("user.dir") +
-                    File.separator +
-                    "testPlots" +
-                    File.separator,
-                name,
-            ),
-        )
-        val file = Paths.get(dir.pathString, "${name}plot.html")
-        file.writeText(content)
-        Desktop.getDesktop().browse(file.toUri())
+        // TODO headless browser style plz, k thx
+//        val content = PlotSvgExport.buildSvgImageFromRawSpecs(plot.toSpec())
+// //        val content = PlotHtmlExport.buildHtmlFromRawSpecs(plot.toSpec(), scriptUrl(VersionChecker.letsPlotJsVersion))
+//
+//        val dir = Files.createDirectories(
+//            Paths.get(
+//                System.getProperty("user.dir") +
+//                    File.separator +
+//                    "testPlots" +
+//                    File.separator,
+//                name,
+//            ),
+//        )
+//        val file = Paths.get(dir.pathString, "${name}plot.html")
+//        file.writeText(content)
+//        Desktop.getDesktop().browse(file.toUri())
     }
 
     @Test
@@ -336,19 +332,19 @@ class RetrosheetTests {
             size = 2.0,
         ) { x = "x" }
         val content = PlotSvgExport.buildSvgImageFromRawSpecs(plot.toSpec())
-
-        val dir = Files.createDirectories(
-            Paths.get(
-                System.getProperty("user.dir") +
-                    File.separator +
-                    "testPlots" +
-                    File.separator,
-                "lets-plot-images",
-            ),
-        )
-        val file = Paths.get(dir.pathString, "my_plot.html")
-        file.writeText(content)
-        Desktop.getDesktop().browse(file.toUri())
+// TODO  commented out because the tests can't do this bit in github- how to do Headless browser tests?
+//        val dir = Files.createDirectories(
+//            Paths.get(
+//                System.getProperty("user.dir") +
+//                    File.separator +
+//                    "testPlots" +
+//                    File.separator,
+//                "lets-plot-images",
+//            ),
+//        )
+//        val file = Paths.get(dir.pathString, "my_plot.html")
+//        file.writeText(content)
+//        Desktop.getDesktop().browse(file.toUri())
     }
 
     @Test
