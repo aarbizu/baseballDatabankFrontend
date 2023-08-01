@@ -31,8 +31,10 @@ import org.aarbizu.baseballDatabankFrontend.query.QueryEngine
 import org.aarbizu.baseballDatabankFrontend.query.playerNamesSorted
 import org.aarbizu.baseballDatabankFrontend.query.preloadQueries
 import org.aarbizu.baseballDatabankFrontend.query.toJsonArray
+import org.aarbizu.baseballDatabankFrontend.query.toJsonObject
 import org.aarbizu.baseballDatabankFrontend.retrosheet.SeasonProgress
 import org.aarbizu.baseballDatabankFrontend.retrosheet.TeamInfo
+import org.aarbizu.baseballDatabankFrontend.retrosheet.modernDivisionList
 import org.h2.tools.Server
 import org.slf4j.LoggerFactory
 import java.io.File
@@ -145,6 +147,8 @@ fun Application.databankBackend() {
             val param = call.receive<StatParam>()
             call.respond(queryService.engine.pitchingStatLeaders(param))
         }
+
+        post(MODERN_MLB_DIVISIONS) { call.respond(toJsonObject(modernDivisionList())) }
 
         post(SEASON_DAILY_STANDINGS) {
             val param = call.receive<SeasonDailyStandingsParam>()

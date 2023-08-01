@@ -54,7 +54,7 @@ class RetrosheetTests {
                 it.split(",")
             }.map {
                 "${it[0]}: ${it[3]} (${it[4]}) ${it[9]} at ${it[6]} (${it[7]}) ${it[10]}"
-            }//.also { println(it) }
+            } // .also { println(it) }
     }
 
     @Test
@@ -164,13 +164,17 @@ class RetrosheetTests {
 
     @Test
     fun `standings incrementing`() {
-        val initialStandings = Standings(mutableMapOf(
-            NL1901 to mutableListOf(TeamRecord("NY1", w = 1, l = 1, t = 0), TeamRecord("PIT", 0, 0 , 0))
-        ))
+        val initialStandings = Standings(
+            mutableMapOf(
+                NL1901 to mutableListOf(TeamRecord("NY1", w = 1, l = 1, t = 0), TeamRecord("PIT", 0, 0, 0)),
+            ),
+        )
 
-        val incremental = Standings(mutableMapOf(
-            NL1901 to mutableListOf(TeamRecord("NY1", w = 1, l = 1, t = 0), TeamRecord("PIT", w = 1, l =  1, t =  0))
-        ))
+        val incremental = Standings(
+            mutableMapOf(
+                NL1901 to mutableListOf(TeamRecord("NY1", w = 1, l = 1, t = 0), TeamRecord("PIT", w = 1, l = 1, t = 0)),
+            ),
+        )
 
         val summed = initialStandings + incremental
         assertThat(summed.teamRecordsByDivision[NL1901]).hasSize(2)
@@ -204,29 +208,42 @@ class RetrosheetTests {
         val data = mapOf(
             "1901" to dates,
             "PIT" to pct2,
-            "BSN" to pct
+            "BSN" to pct,
         )
 
         val plot = letsPlot(data) +
-                geomStep(color = "blue") { x = "1901"; y = "BSN" } +
-                geomLabel(data = mapOf("BSN" to listOf("BSN")), fontface = "bold", color = "blue",
-                    x = data["1901"]?.lastIndex!! - 3, y = data["BSN"]?.last() as Double) { label = "BSN" } +
-                geomStep(color = "red") { x = "1901"; y = "PIT" } +
-                geomLabel(data = mapOf("PIT" to listOf("PIT")), fontface = "bold", color = "red",
-                    x = data["1901"]?.lastIndex!! - 3, y =  data["PIT"]?.last() as Double
-                ) { label = "PIT" }+
-                ggsize(width = 1000, height = 625) +
-                ggtitle("foo", "subfoo") +
-                ylab("winning pct")
+            geomStep(color = "blue") { x = "1901"; y = "BSN" } +
+            geomLabel(
+                data = mapOf("BSN" to listOf("BSN")),
+                fontface = "bold",
+                color = "blue",
+                x = data["1901"]?.lastIndex!! - 3,
+                y = data["BSN"]?.last() as Double,
+            ) { label = "BSN" } +
+            geomStep(color = "red") { x = "1901"; y = "PIT" } +
+            geomLabel(
+                data = mapOf("PIT" to listOf("PIT")),
+                fontface = "bold",
+                color = "red",
+                x = data["1901"]?.lastIndex!! - 3,
+                y = data["PIT"]?.last() as Double,
+            ) { label = "PIT" } +
+            ggsize(width = 1000, height = 625) +
+            ggtitle("foo", "subfoo") +
+            ylab("winning pct")
 
         val content = PlotSvgExport.buildSvgImageFromRawSpecs(plot.toSpec())
 //        val content = PlotHtmlExport.buildHtmlFromRawSpecs(plot.toSpec(), scriptUrl(VersionChecker.letsPlotJsVersion))
 
-        val dir = Files.createDirectories(Paths.get(System.getProperty("user.dir") +
-                File.separator +
-                "testPlots" +
-                File.separator +
-                "BSN-1901-day-by-day"))
+        val dir = Files.createDirectories(
+            Paths.get(
+                System.getProperty("user.dir") +
+                    File.separator +
+                    "testPlots" +
+                    File.separator +
+                    "BSN-1901-day-by-day",
+            ),
+        )
         val file = Paths.get(dir.pathString, "test-BSN-1901-plot.html")
         file.writeText(content)
         Desktop.getDesktop().browse(file.toUri())
@@ -248,13 +265,13 @@ class RetrosheetTests {
         val seasonProgress = SeasonProgress()
 
         val nlePlot = seasonProgress.plotDayByDayStandingsHelper("1989", "NLE", testGameLogsProvider())
-        localBrowserPlot(nlePlot,  "1989nle")
+        localBrowserPlot(nlePlot, "1989nle")
 
         val nlwPlot = seasonProgress.plotDayByDayStandingsHelper("1989", "NLW", testGameLogsProvider())
         localBrowserPlot(nlwPlot, "1989nlw")
 
         val alePlot = seasonProgress.plotDayByDayStandingsHelper("1989", "ALE", testGameLogsProvider())
-        localBrowserPlot(alePlot,  "1989ale")
+        localBrowserPlot(alePlot, "1989ale")
 
         val alwPlot = seasonProgress.plotDayByDayStandingsHelper("1989", "ALW", testGameLogsProvider())
         localBrowserPlot(alwPlot, "1989alw")
@@ -264,10 +281,15 @@ class RetrosheetTests {
         val content = PlotSvgExport.buildSvgImageFromRawSpecs(plot.toSpec())
 //        val content = PlotHtmlExport.buildHtmlFromRawSpecs(plot.toSpec(), scriptUrl(VersionChecker.letsPlotJsVersion))
 
-        val dir = Files.createDirectories(Paths.get(System.getProperty("user.dir") +
-            File.separator +
-            "testPlots" +
-            File.separator, name))
+        val dir = Files.createDirectories(
+            Paths.get(
+                System.getProperty("user.dir") +
+                    File.separator +
+                    "testPlots" +
+                    File.separator,
+                name,
+            ),
+        )
         val file = Paths.get(dir.pathString, "${name}plot.html")
         file.writeText(content)
         Desktop.getDesktop().browse(file.toUri())
@@ -289,9 +311,11 @@ class RetrosheetTests {
 
     @Test
     fun standingsDeepCopy() {
-        val initialStandings = Standings(mutableMapOf(
-            NL1901 to mutableListOf(TeamRecord("NY1", w = 1, l = 1, t = 0))
-        ))
+        val initialStandings = Standings(
+            mutableMapOf(
+                NL1901 to mutableListOf(TeamRecord("NY1", w = 1, l = 1, t = 0)),
+            ),
+        )
 
         val newStandings = initialStandings.deepCopy()
         assertThat(newStandings === initialStandings).isFalse()
@@ -302,24 +326,37 @@ class RetrosheetTests {
         val rand = java.util.Random()
         val n = 200
         val data = mapOf(
-            "x" to List(n) { rand.nextGaussian() }
+            "x" to List(n) { rand.nextGaussian() },
         )
 
         val plot = letsPlot(data) + geomDensity(
             color = "dark-green",
             fill = "green",
             alpha = .3,
-            size = 2.0
+            size = 2.0,
         ) { x = "x" }
         val content = PlotSvgExport.buildSvgImageFromRawSpecs(plot.toSpec())
 
-        val dir = Files.createDirectories(Paths.get(System.getProperty("user.dir") +
-            File.separator +
-            "testPlots" +
-            File.separator, "lets-plot-images"))
+        val dir = Files.createDirectories(
+            Paths.get(
+                System.getProperty("user.dir") +
+                    File.separator +
+                    "testPlots" +
+                    File.separator,
+                "lets-plot-images",
+            ),
+        )
         val file = Paths.get(dir.pathString, "my_plot.html")
         file.writeText(content)
         Desktop.getDesktop().browse(file.toUri())
+    }
+
+    @Test
+    fun buildLeagueDivisionSelectMap() {
+        val mapped = modernDivisionList()
+
+        assertThat(mapped).isNotNull()
+        assertThat(mapped.keys).isEqualTo((1901..2023).map { it.toString() }.toSet())
     }
 
     private fun testGameLogsProvider() = GameLogs { FileInputStream("$RESOURCES/retrosheet/gl1871_2022.zip") }
@@ -328,5 +365,4 @@ class RetrosheetTests {
         val gl = testGameLogsProvider()
         return gl.getGameLogs(year)
     }
-
 }

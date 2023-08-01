@@ -5,6 +5,7 @@ import kotlinx.coroutines.MainScope
 import mui.material.styles.ThemeProvider
 import mui.material.styles.createTheme
 import org.aarbizu.baseballDatabankFrontend.routes.Home
+import org.aarbizu.baseballDatabankFrontend.routes.ModernSeasonStandings
 import org.aarbizu.baseballDatabankFrontend.routes.NameLengthSearch
 import org.aarbizu.baseballDatabankFrontend.routes.NavBar
 import org.aarbizu.baseballDatabankFrontend.routes.NoMatch
@@ -28,11 +29,13 @@ data class BBStore(
     var minMaxNameValues: String,
     var pitchingStatNames: List<String>,
     var hittingStateNames: List<String>,
+    var modernMLBDivisions: Map<String, List<String>>,
 )
 
 data class AddMinMaxValues(val text: String)
 data class AddPitchingStatNames(val text: String)
 data class AddHittingStatNames(val text: String)
+data class ModernMLBDivisions(val text: String)
 
 typealias Reducer<State> = (state: State, action: Any) -> State
 val nonAlphaRex = """[\[\]"]""".toRegex()
@@ -41,11 +44,12 @@ val reducer: Reducer<BBStore> = { state, action ->
         is AddMinMaxValues -> state.copy(minMaxNameValues = JSON.parse(action.text))
         is AddPitchingStatNames -> state.copy(pitchingStatNames = action.text.replace(nonAlphaRex, "").split(","))
         is AddHittingStatNames -> state.copy(hittingStateNames = action.text.replace(nonAlphaRex, "").split(","))
+        is ModernMLBDivisions -> state.copy(modernMLBDivisions = JSON.parse(action.text))
         else -> state
     }
 }
 
-val store = createThreadSafeStore(reducer, BBStore("", emptyList(), emptyList()))
+val store = createThreadSafeStore(reducer, BBStore("", emptyList(), emptyList(), emptyMap()))
 
 val myAppTheme =
     createTheme(
@@ -101,6 +105,11 @@ val App = VFC {
                     Route {
                         path = "stats"
                         element = StatsSearch.create()
+                    }
+
+                    Route {
+                        path = "modern-standings"
+                        element = ModernSeasonStandings.create()
                     }
 
                     Route {

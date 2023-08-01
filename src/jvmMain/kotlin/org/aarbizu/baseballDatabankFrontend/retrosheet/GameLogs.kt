@@ -16,7 +16,7 @@ class GameLogs(private val logProvider: () -> InputStream? = gameLogArchiveProvi
 
     private val seasonGameLogCache: LoadingCache<String, List<SimpleGameLog>> = CacheBuilder.newBuilder()
         .build(
-            CacheLoader.from { year: String? -> year?.let { getGameLogs(year, logProvider) } }
+            CacheLoader.from { year: String? -> year?.let { getGameLogs(year, logProvider) } },
         )
 
     fun getGameLogs(year: String): List<SimpleGameLog> {
@@ -43,7 +43,7 @@ class GameLogs(private val logProvider: () -> InputStream? = gameLogArchiveProvi
                     it[6],
                     "${homeTeam?.league}",
                     it[10],
-                    it[6]
+                    it[6],
                 )
             }
     }

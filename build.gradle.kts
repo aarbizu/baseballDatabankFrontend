@@ -114,7 +114,6 @@ kotlin {
                 runtimeOnly("org.junit.platform:junit-platform-console:$junitPlatformConsole")
                 runtimeOnly("org.junit.jupiter:junit-jupiter-engine:$junit")
             }
-
         }
         val jsMain by getting {
             dependencies {

@@ -1,0 +1,2 @@
+POST http://localhost:8080/modern-mlb-divisions
+Content-Type: application/json

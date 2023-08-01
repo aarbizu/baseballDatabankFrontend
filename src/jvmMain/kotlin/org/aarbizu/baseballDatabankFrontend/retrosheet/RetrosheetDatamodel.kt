@@ -33,7 +33,7 @@ data class SimpleGameLog(
     val homeTeam: String,
     val homeLeague: String,
     val homeRuns: String,
-    val home: String
+    val home: String,
 ) {
     override fun toString(): String = "${LocalDate.parse(date, logDateFormat)} $visitorTeam ($visitorLeague) $visitorRuns vs $homeTeam ($homeLeague) $homeRuns"
 }
@@ -44,7 +44,7 @@ data class TeamRecord(val team: String, var w: Int, var l: Int, var t: Int) {
         this.w += inc.w
         this.l += inc.l
         this.t += inc.t
-        return this.copy(w = (this.w + inc.w), l = (this.l + inc.l),  t = (this.t + inc.t))
+        return this.copy(w = (this.w + inc.w), l = (this.l + inc.l), t = (this.t + inc.t))
     }
 
     fun toDatum(): Pair<String, Double> {
@@ -57,14 +57,33 @@ data class TeamRecord(val team: String, var w: Int, var l: Int, var t: Int) {
 fun initialStandings(mlbYear: MLB): Standings {
     return Standings(
         mlbYear.leagues()
-        .map { l -> l.divisions() }
-        .flatten()
-        .associateWith { d ->
-            d.teams().map { t ->
-                TeamRecord(t, 0, 0, 0)
-            }.toMutableList()
-        }
+            .map { l -> l.divisions() }
+            .flatten()
+            .associateWith { d ->
+                d.teams().map { t ->
+                    TeamRecord(t, 0, 0, 0)
+                }.toMutableList()
+            },
     )
+}
+
+fun modernDivisionList(): Map<String, List<String>> {
+    return (1901..2023).map {
+        Pair(it, MLBTeams.of(it))
+    }.map { yearAndMlb ->
+        Pair(
+            yearAndMlb.first,
+            yearAndMlb.second.leagues()
+                .flatMap {
+                    it.divisions()
+                }.map {
+                    val divName = it.javaClass.simpleName
+                    divName.substring(0, divName.length - 4)
+                },
+        )
+    }.associate {
+        Pair(it.first.toString(), it.second)
+    }
 }
 
 class Standings(val teamRecordsByDivision: Map<Division, List<TeamRecord>>, val asOf: String = "") {
@@ -92,7 +111,7 @@ class Standings(val teamRecordsByDivision: Map<Division, List<TeamRecord>>, val 
         }
     }
 
-    fun summaries(): Map<Division, List<Pair<String,Double>>> {
+    fun summaries(): Map<Division, List<Pair<String, Double>>> {
         return teamRecordsByDivision.mapValues { (_, value) ->
             value.map { it.toDatum() }
         }
@@ -126,7 +145,7 @@ class Standings(val teamRecordsByDivision: Map<Division, List<TeamRecord>>, val 
                     val visitorDivRecs = records.getOrDefault(visitorDiv, mutableListOf())
                     updateRecord(homeDivRecs, glog.homeTeam, winLoseOrTie(glog.homeRuns, glog.visitorRuns))
                     updateRecord(visitorDivRecs, glog.visitorTeam, winLoseOrTie(glog.visitorRuns, glog.homeRuns))
-                    records[homeDiv!!] =  homeDivRecs
+                    records[homeDiv!!] = homeDivRecs
                     records[visitorDiv!!] = visitorDivRecs
                 }
             }
@@ -137,19 +156,18 @@ class Standings(val teamRecordsByDivision: Map<Division, List<TeamRecord>>, val 
             teamRecords
                 .firstOrNull { it.team == toUpdate }
                 ?.also {
-                    when(added) {
+                    when (added) {
                         "w" -> it.w++
                         "l" -> it.l++
                         "t" -> it.t++
                     }
                 }
-                ?: when(added) {
-                    "w" -> teamRecords.add(TeamRecord(toUpdate, w=1, l=0, t=0))
-                    "l" -> teamRecords.add(TeamRecord(toUpdate, w=0, l=1, t=0))
-                    "t" -> teamRecords.add(TeamRecord(toUpdate, w=0, l=0, t=1))
-                    else -> { throw UnsupportedOperationException("must add 'w' 'l' or 't'")}
+                ?: when (added) {
+                    "w" -> teamRecords.add(TeamRecord(toUpdate, w = 1, l = 0, t = 0))
+                    "l" -> teamRecords.add(TeamRecord(toUpdate, w = 0, l = 1, t = 0))
+                    "t" -> teamRecords.add(TeamRecord(toUpdate, w = 0, l = 0, t = 1))
+                    else -> { throw UnsupportedOperationException("must add 'w' 'l' or 't'") }
                 }
-
         }
 
         private fun winLoseOrTie(myScore: String, oppScore: String): String {
@@ -159,7 +177,6 @@ class Standings(val teamRecordsByDivision: Map<Division, List<TeamRecord>>, val 
                 else -> "t"
             }
         }
-
     }
 }
 
@@ -170,28 +187,28 @@ object MLBTeams {
             year == 1901 -> MLB1901
             year == 1902 -> MLB1902
             year == 1903 -> MLB1903
-            year in 1904 .. 1952 -> MLB1903
+            year in 1904..1952 -> MLB1903
             year == 1953 -> MLB1953
             year == 1954 -> MLB1954
-            year in 1955 .. 1957 -> MLB1955
-            year in 1958 .. 1960-> MLB1958
+            year in 1955..1957 -> MLB1955
+            year in 1958..1960 -> MLB1958
             year == 1961 -> MLB1961
-            year in 1962 .. 1964 -> MLB1962
+            year in 1962..1964 -> MLB1962
             year == 1965 -> MLB1965
-            year in 1966 .. 1967 -> MLB1966
+            year in 1966..1967 -> MLB1966
             year == 1968 -> MLB1968
             year == 1969 -> MLB1969
-            year in 1970 .. 1971 -> MLB1970
-            year in 1972 .. 1976 -> MLB1972
-            year in 1977 .. 1992 -> MLB1977
+            year in 1970..1971 -> MLB1970
+            year in 1972..1976 -> MLB1972
+            year in 1977..1992 -> MLB1977
             year == 1993 -> MLB1993
-            year in 1994 .. 1996 -> MLB1994
+            year in 1994..1996 -> MLB1994
             year == 1997 -> MLB1997
-            year in 1998 .. 2004 -> MLB1998
-            year in 2005 .. 2011 -> MLB2005
+            year in 1998..2004 -> MLB1998
+            year in 2005..2011 -> MLB2005
             year == 2012 -> MLB2012
             year >= 2013 -> MLB2013
-            else -> { throw UnsupportedOperationException("unknown year")}
+            else -> { throw UnsupportedOperationException("unknown year") }
         }
     }
 }
@@ -238,33 +255,33 @@ sealed interface NL : League
 sealed interface AL : League
 
 /* League === Division from 1900 to 1968 */
-object NL1901 : Division,NL {
+object NL1901 : Division, NL {
     override fun teams(): List<String> =
         listOf(
-           "BSN", // boston braves
-           "BRO", // brooklyn (boooo)
-           "CHN", // cubs
-           "CIN", // reds
-           "NY1", // New York Giants (yayyy)
-           "PHI", // phillies
-           "PIT", // pirates
-           "SLN", // cardinals
-       )
+            "BSN", // boston braves
+            "BRO", // brooklyn (boooo)
+            "CHN", // cubs
+            "CIN", // reds
+            "NY1", // New York Giants (yayyy)
+            "PHI", // phillies
+            "PIT", // pirates
+            "SLN", // cardinals
+        )
 
     override fun divisions() = listOf(NL1901)
 }
 
-object AL1901 : Division,AL {
+object AL1901 : Division, AL {
     override fun teams() = listOf(
-            "BLA", // baltimore, later yankees in '03
-            "PHA", // philadelphia athletics
-            "BOS", // bosox
-            "CHA", // chisox
-            "CLE", // cleveland blues, indians, guardians
-            "DET", // tigers
-            "MLA", // milwaukee brewers (browns, then bal orioles)
-            "WS1", // senators (twins in '61)
-        )
+        "BLA", // baltimore, later yankees in '03
+        "PHA", // philadelphia athletics
+        "BOS", // bosox
+        "CHA", // chisox
+        "CLE", // cleveland blues, indians, guardians
+        "DET", // tigers
+        "MLA", // milwaukee brewers (browns, then bal orioles)
+        "WS1", // senators (twins in '61)
+    )
     override fun divisions() = listOf(AL1901)
 }
 
@@ -272,8 +289,8 @@ object MLB1901 : MLB {
     override fun leagues(): List<League> = listOf(NL1901, AL1901)
 }
 
-object AL1902 : Division,AL {
-    override fun teams() = listOf("BLA", "BOS", "CHA", "CLE", "DET", "PHA", "SLA" /* stl. browns */, "WS1")
+object AL1902 : Division, AL {
+    override fun teams() = listOf("BLA", "BOS", "CHA", "CLE", "DET", "PHA", "SLA", "WS1")
     override fun divisions() = listOf(AL1902)
 }
 
@@ -281,7 +298,7 @@ object MLB1902 : MLB {
     override fun leagues(): List<League> = listOf(NL1901, AL1902)
 }
 
-object AL1903 : Division,AL {
+object AL1903 : Division, AL {
     override fun teams() = listOf("BOS", "CHA", "CLE", "DET", "NYA", "PHA", "SLA", "WS1")
     override fun divisions() = listOf(AL1903)
 }
@@ -290,7 +307,7 @@ object MLB1903 : MLB {
     override fun leagues(): List<League> = listOf(NL1901, AL1903)
 }
 
-object NL1953 : Division,NL {
+object NL1953 : Division, NL {
     override fun teams() = listOf("BRO", "CHN", "CIN", "MLN", "NY1", "PHI", "PIT", "SLN")
     override fun divisions() = listOf(NL1953)
 }
@@ -299,7 +316,7 @@ object MLB1953 : MLB {
     override fun leagues(): List<League> = listOf(NL1953, AL1903)
 }
 
-object AL1954 : Division,AL {
+object AL1954 : Division, AL {
     override fun teams() = listOf("BAL", "BOS", "CHA", "CLE", "DET", "NYA", "PHA", "WS1")
     override fun divisions() = listOf(AL1954)
 }
@@ -308,8 +325,8 @@ object MLB1954 : MLB {
     override fun leagues(): List<League> = listOf(NL1953, AL1954)
 }
 
-object AL1955 : Division,AL {
-    override fun teams() = listOf( "BAL", "BOS", "CHA", "CLE", "DET", "KC1", "NYA", "WS1")
+object AL1955 : Division, AL {
+    override fun teams() = listOf("BAL", "BOS", "CHA", "CLE", "DET", "KC1", "NYA", "WS1")
     override fun divisions() = listOf(AL1955)
 }
 
@@ -317,7 +334,7 @@ object MLB1955 : MLB {
     override fun leagues(): List<League> = listOf(NL1953, AL1955)
 }
 
-object NL1958 : Division,NL {
+object NL1958 : Division, NL {
     override fun teams() = listOf("CHN", "CIN", "LAN", "MLN", "PHI", "PIT", "SFN", "SLN")
     override fun divisions() = listOf(NL1958)
 }
@@ -326,7 +343,7 @@ object MLB1958 : MLB {
     override fun leagues(): List<League> = listOf(NL1958, AL1955)
 }
 
-object AL1961 : Division,AL {
+object AL1961 : Division, AL {
     override fun teams() = listOf("BAL", "BOS", "CHA", "CLE", "DET", "KC1", "LAA", "MIN", "NYA", "WS2")
     override fun divisions() = listOf(AL1961)
 }
@@ -335,7 +352,7 @@ object MLB1961 : MLB {
     override fun leagues(): List<League> = listOf(NL1958, AL1961)
 }
 
-object NL1962 : Division,NL {
+object NL1962 : Division, NL {
     override fun teams() = listOf("CHN", "CIN", "HOU", "LAN", "MLN", "NYN", "PHI", "PIT", "SFN", "SLN")
     override fun divisions() = listOf(NL1962)
 }
@@ -344,7 +361,7 @@ object MLB1962 : MLB {
     override fun leagues(): List<League> = listOf(NL1962, AL1961)
 }
 
-object AL1965 : Division,AL {
+object AL1965 : Division, AL {
     override fun teams() = listOf("BAL", "BOS", "CAL", "CHA", "CLE", "DET", "KC1", "MIN", "NYA", "WS2")
     override fun divisions(): List<Division> = listOf(AL1965)
 }
@@ -353,7 +370,7 @@ object MLB1965 : MLB {
     override fun leagues(): List<League> = listOf(NL1962, AL1965)
 }
 
-object NL1966 : Division,NL {
+object NL1966 : Division, NL {
     override fun teams() = listOf("ATL", "CHN", "CIN", "HOU", "LAN", "NYN", "PHI", "PIT", "SFN", "SLN")
     override fun divisions() = listOf(NL1966)
 }
@@ -362,7 +379,7 @@ object MLB1966 : MLB {
     override fun leagues(): List<League> = listOf(NL1966, AL1965)
 }
 
-object AL1968 : Division,AL {
+object AL1968 : Division, AL {
     override fun teams() = listOf("BAL", "BOS", "CAL", "CHA", "CLE", "DET", "MIN", "NYA", "OAK", "WS2")
     override fun divisions(): List<Division> = listOf(AL1968)
 }

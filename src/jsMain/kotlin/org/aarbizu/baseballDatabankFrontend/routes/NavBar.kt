@@ -13,8 +13,11 @@ import org.aarbizu.baseballDatabankFrontend.AddHittingStatNames
 import org.aarbizu.baseballDatabankFrontend.AddMinMaxValues
 import org.aarbizu.baseballDatabankFrontend.AddPitchingStatNames
 import org.aarbizu.baseballDatabankFrontend.BasicMenu
+import org.aarbizu.baseballDatabankFrontend.ModernMLBDivisions
+import org.aarbizu.baseballDatabankFrontend.SeasonStandingsMenu
 import org.aarbizu.baseballDatabankFrontend.StatsMenu
 import org.aarbizu.baseballDatabankFrontend.getMinMaxNameLengths
+import org.aarbizu.baseballDatabankFrontend.getModernMLBDivisions
 import org.aarbizu.baseballDatabankFrontend.getOffenseStatNames
 import org.aarbizu.baseballDatabankFrontend.getPitchingStatNames
 import org.aarbizu.baseballDatabankFrontend.myAppTheme
@@ -32,6 +35,7 @@ val NavBar = VFC {
             store.dispatch(AddMinMaxValues(getMinMaxNameLengths()))
             store.dispatch(AddHittingStatNames(getOffenseStatNames()))
             store.dispatch(AddPitchingStatNames(getPitchingStatNames()))
+            store.dispatch(ModernMLBDivisions(getModernMLBDivisions()))
         }
     }
 
@@ -53,6 +57,10 @@ val NavBar = VFC {
 
                 StatsMenu {
                     buttonLabel = "Stats"
+                }
+
+                SeasonStandingsMenu {
+                    buttonLabel = "Standings"
                 }
             }
         }

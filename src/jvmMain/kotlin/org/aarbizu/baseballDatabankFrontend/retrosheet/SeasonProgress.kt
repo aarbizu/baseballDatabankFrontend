@@ -17,7 +17,7 @@ import java.time.LocalDate
 /**
  * Gruvbox palette
  */
-//val plotColors = listOf(
+// val plotColors = listOf(
 //    "#9d0006",
 //    "#79740e",
 //    "#b57614",
@@ -35,8 +35,7 @@ import java.time.LocalDate
 //    "#fe8019",
 //    "#3c3836",
 //    "#b16286"
-//)
-
+// )
 
 /**
  * Solarized palette, then some generic colors
@@ -65,11 +64,11 @@ val plotColors = listOf(
  */
 class SeasonProgress {
 
-    private val plotCache: LoadingCache<Pair<String,String>, String> = CacheBuilder.newBuilder()
+    private val plotCache: LoadingCache<Pair<String, String>, String> = CacheBuilder.newBuilder()
         .build(
             CacheLoader.from { (year: String?, division: String?) ->
                 innerPlotDayByDayStandings(year, division)
-            }
+            },
         )
 
     fun plotDayByDayStandings(year: String, division: String): String {
@@ -86,11 +85,11 @@ class SeasonProgress {
         return plot(year, division, teamByTeamDailyResults)
     }
 
-    //TODO -- maybe refactor the List<> or the Pair<> into objects?
+    // TODO -- maybe refactor the List<> or the Pair<> into objects?
     internal fun teamByTeamDailyResults(results: List<SimpleGameLog>): Map<String, List<Pair<String, Double>>> {
         val progressiveStandings = standingsByDay(results)
 
-        val teamSeasonProgress = mutableMapOf<String, MutableList<Pair<String,Double>>>()
+        val teamSeasonProgress = mutableMapOf<String, MutableList<Pair<String, Double>>>()
 
         // generate a mapping of date to list of (team abbr, winning pct) pairs
         val mapValues = progressiveStandings
@@ -128,7 +127,7 @@ class SeasonProgress {
 
     private fun plot(year: String, div: String, dailyResults: Map<String, List<Pair<String, Double>>>): Plot {
         require(div.isNotEmpty() && div.isNotBlank()) { "Invalid division" }
-        require(year == dailyResults.entries.first().value.last().first.subSequence(0,4)) { "$year doesn't match data" }
+        require(year == dailyResults.entries.first().value.last().first.subSequence(0, 4)) { "$year doesn't match data" }
         val mlb = MLBTeams.of(year.toInt())
         val division = mlb.leagues().flatMap { it.divisions() }.firstOrNull { divToName(it) == div }
         requireNotNull(division)
@@ -147,21 +146,22 @@ class SeasonProgress {
 
         val graphFeatures = division.teams().mapIndexed { index, team ->
             geomStep(color = plotColors[index]) { x = year; y = team } +
-            geomLabel(data = mapOf(team to listOf(team)),
-                fontface = "bold",
-                color = plotColors[index],
-                x = lastXIdx - (index * 10),
-                y = data[team]?.last() as Double
-            ) { label = team }
+                geomLabel(
+                    data = mapOf(team to listOf(team)),
+                    fontface = "bold",
+                    color = plotColors[index],
+                    x = lastXIdx - (index * 10),
+                    y = data[team]?.last() as Double,
+                ) { label = team }
         }
 
         val teamList = division.toTeamNames().chunked(4).joinToString("\n") { it.joinToString(" : ") }
 
         return graphFeatures.foldRight(plot) { feature, p -> p + feature } +
-                geomLabel(size = 5, x = data[year]?.size?.div(2), y = 0.10, label = teamList) +
-                ggsize(width = 1000, height = 625) +
-                ggtitle("Daily Standings", "$year - $div") +
-                ylab("winning pct")
+            geomLabel(size = 5, x = data[year]?.size?.div(2), y = 0.10, label = teamList) +
+            ggsize(width = 1000, height = 625) +
+            ggtitle("Daily Standings", "$year - $div") +
+            ylab("winning pct")
     }
 
     private fun dateWPctPairs(dailyResults: Map<String, List<Pair<String, Double>>>, team: String) =
@@ -172,5 +172,4 @@ class SeasonProgress {
                 Pair(date.format(graphDateFormat), it.second)
             }
             ?.unzip()!!
-
 }
