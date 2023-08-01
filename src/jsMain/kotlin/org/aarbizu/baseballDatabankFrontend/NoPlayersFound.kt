@@ -9,7 +9,7 @@ import web.cssom.TextAlign
 import web.cssom.pct
 
 val NoPlayersFound =
-    VFC() {
+    VFC {
         Paper {
             elevation = 0
             square = true

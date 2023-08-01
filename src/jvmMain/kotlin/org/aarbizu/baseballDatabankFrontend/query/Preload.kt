@@ -2,8 +2,10 @@ package org.aarbizu.baseballDatabankFrontend.query
 
 import com.google.common.base.Stopwatch
 import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.add
 import kotlinx.serialization.json.buildJsonArray
+import kotlinx.serialization.json.buildJsonObject
 import org.aarbizu.baseballDatabankFrontend.BaseballRecord
 import org.aarbizu.baseballDatabankFrontend.NamesSortedByLengthParam
 import org.aarbizu.baseballDatabankFrontend.OffenseStats
@@ -72,5 +74,13 @@ private fun getTopN(
 fun toJsonArray(strs: List<String>): JsonArray {
     return buildJsonArray {
         strs.map { add(it) }
+    }
+}
+
+fun toJsonObject(map: Map<String, List<String>>): JsonObject {
+    return buildJsonObject {
+        map.entries.map { e ->
+            put(e.key, toJsonArray(e.value))
+        }
     }
 }

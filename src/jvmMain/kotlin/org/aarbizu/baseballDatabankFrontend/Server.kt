@@ -31,11 +31,16 @@ import org.aarbizu.baseballDatabankFrontend.query.QueryEngine
 import org.aarbizu.baseballDatabankFrontend.query.playerNamesSorted
 import org.aarbizu.baseballDatabankFrontend.query.preloadQueries
 import org.aarbizu.baseballDatabankFrontend.query.toJsonArray
+import org.aarbizu.baseballDatabankFrontend.query.toJsonObject
+import org.aarbizu.baseballDatabankFrontend.retrosheet.SeasonProgress
+import org.aarbizu.baseballDatabankFrontend.retrosheet.TeamInfo
+import org.aarbizu.baseballDatabankFrontend.retrosheet.modernDivisionList
 import org.h2.tools.Server
 import org.slf4j.LoggerFactory
 import java.io.File
 import java.nio.file.Files.readString
 import java.nio.file.Paths
+import kotlin.math.log
 
 private const val DEFAULT_HTML_DOC = "src/commonMain/resources/index.html"
 val defaultHtmlText: String = readString(Paths.get(DEFAULT_HTML_DOC))
@@ -47,11 +52,22 @@ val queryService = QueryEngineService(NoneQueryEngine)
 class Server(private val config: AppConfig) {
 
     fun start() {
+        /* process retrosheet data */
+        initializeRetrosheet()
+        /* init db */
         initializeDb(config)
         queryService.engine = QueryEngine(config.db)
         PreloadedResults.preloads = preloadQueries(queryService.engine)
         /* this needs to be last since it starts the server loop */
         startBackend(config)
+    }
+
+    private fun initializeRetrosheet() {
+        /* initialize historical team info */
+        val log = LoggerFactory.getLogger(this.javaClass)
+        val timer = Stopwatch.createStarted()
+        TeamInfo().initializeMap()
+        log.info("initialized team info map: ${TeamInfo.teamInfoMap.size} mappings, $timer")
     }
 
     private fun initializeDb(config: AppConfig) {
@@ -60,7 +76,7 @@ class Server(private val config: AppConfig) {
         val timer = Stopwatch.createStarted()
 
         // load csv files into the db
-        val dataLoader = DataLoader(config.db, config.csvHome)
+        val dataLoader = DataLoader(config.db)
         dataLoader.loadAllFiles()
         dataLoader.buildIndexes()
         config.db.stats()
@@ -96,6 +112,8 @@ fun Application.databankBackend() {
     }
     install(Compression) { gzip() }
 
+    val seasonProgress = SeasonProgress()
+
     routing {
         //                trace {
         // LoggerFactory.getLogger(this.javaClass).info(it.buildText()) }
@@ -128,6 +146,13 @@ fun Application.databankBackend() {
         post(ALL_TIME_PITCHING) {
             val param = call.receive<StatParam>()
             call.respond(queryService.engine.pitchingStatLeaders(param))
+        }
+
+        post(MODERN_MLB_DIVISIONS) { call.respond(toJsonObject(modernDivisionList())) }
+
+        post(SEASON_DAILY_STANDINGS) {
+            val param = call.receive<SeasonDailyStandingsParam>()
+            call.respond(seasonProgress.plotDayByDayStandings(param.year, param.division))
         }
 
         route("/") {

@@ -7,14 +7,13 @@ class SupervocallicTest {
 
     @Test
     fun `validates isSupervocalic`() {
-        assertThat(isSuperVocalic("aeiou")).isTrue()
-        assertThat(isSuperVocalic("AEIOU")).isTrue()
-        assertThat(isSuperVocalic("UOIEA")).isTrue()
-        assertThat(isSuperVocalic("iOuAe")).isTrue()
-        assertThat(isSuperVocalic("axxexx ixxoxx xxuxx")).isTrue()
+        assertThat("aeiou".isSuperVocalic()).isTrue()
+        assertThat("AEIOU".isSuperVocalic()).isTrue()
+        assertThat("UOIEA".isSuperVocalic()).isTrue()
+        assertThat("iOuAe".isSuperVocalic()).isTrue()
+        assertThat("axxexx ixxoxx xxuxx".isSuperVocalic()).isTrue()
         assertThat(
-            isSuperVocalic(
-                """
+            """
             a
             
             zzzzzzz
@@ -32,18 +31,15 @@ class SupervocallicTest {
             zzzzzzzz
             
             u
-                """
-                    .trimIndent(),
-            ),
-        )
-            .isTrue()
+            """.trimIndent().isSuperVocalic(),
+        ).isTrue()
 
-        assertThat(isSuperVocalic("aaeiou")).isFalse()
-        assertThat(isSuperVocalic("zzzzz")).isFalse()
-        assertThat(isSuperVocalic("aaeeiioouu")).isFalse()
-        assertThat(isSuperVocalic("aeioz")).isFalse()
-        assertThat(isSuperVocalic("AZiou")).isFalse()
-        assertThat(isSuperVocalic("Barry Bonds")).isFalse()
-        assertThat(isSuperVocalic("Juan Encarnacion")).isFalse()
+        assertThat("aaeiou".isSuperVocalic()).isFalse()
+        assertThat("zzzzz".isSuperVocalic()).isFalse()
+        assertThat("aaeeiioouu".isSuperVocalic()).isFalse()
+        assertThat("aeioz".isSuperVocalic()).isFalse()
+        assertThat("AZiou".isSuperVocalic()).isFalse()
+        assertThat("Barry Bonds".isSuperVocalic()).isFalse()
+        assertThat("Juan Encarnacion".isSuperVocalic()).isFalse()
     }
 }

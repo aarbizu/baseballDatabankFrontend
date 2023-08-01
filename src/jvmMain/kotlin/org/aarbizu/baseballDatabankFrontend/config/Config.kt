@@ -7,14 +7,12 @@ import java.sql.Connection
 
 interface AppConfig {
     val port: Int
-    val csvHome: String
     val jdbcUrl: String
     val db: DBProvider
 }
 
 object ServerConfig : AppConfig {
     override val port = System.getenv("PORT")?.toInt() ?: 8080
-    override val csvHome = "src/commonMain/resources/csv"
     override val jdbcUrl = "jdbc:h2:mem:stats;DB_CLOSE_DELAY=-1"
     override val db =
         object : DBProvider {

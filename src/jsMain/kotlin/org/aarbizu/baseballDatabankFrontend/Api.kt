@@ -99,3 +99,18 @@ suspend fun getPitchingCareerStats(pitchingStatParam: StatParam): List<PlayerCar
         }
         .body()
 }
+
+suspend fun getModernMLBDivisions(): String {
+    return jsonClient
+        .post("$endpoint/$MODERN_MLB_DIVISIONS") { contentType(ContentType.Application.Json) }
+        .bodyAsText()
+}
+
+suspend fun getModernStandings(standingsParam: SeasonDailyStandingsParam): String {
+    return jsonClient
+        .post("$endpoint/$SEASON_DAILY_STANDINGS") {
+            contentType(ContentType.Application.Json)
+            setBody(standingsParam)
+        }
+        .body()
+}

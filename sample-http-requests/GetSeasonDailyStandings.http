@@ -1,0 +1,7 @@
+POST http://localhost:8080/season-daily-standings
+Content-Type: application/json
+
+{
+  "year": "1989",
+  "division": "NLW"
+}
