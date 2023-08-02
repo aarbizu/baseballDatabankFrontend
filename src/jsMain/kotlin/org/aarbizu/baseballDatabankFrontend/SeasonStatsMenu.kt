@@ -27,7 +27,7 @@ val SeasonStandingsMenu =
                     menuAnchorSetter(null)
                     navigate("/modern-standings")
                 }
-                +"1901 - Present"
+                +"MLB (1901 - Present)"
             }
         }
     }
