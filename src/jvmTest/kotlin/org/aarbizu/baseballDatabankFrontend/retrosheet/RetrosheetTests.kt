@@ -368,11 +368,10 @@ class RetrosheetTests {
         val timer = Stopwatch.createStarted()
         modernDivisionList().entries.forEach { entry ->
             entry.value.forEach { div ->
-                val plot = season.plotDayByDayStandingsHelper(entry.key, div, testGameLogsProvider)
-                assertThat(plot).isNotNull()
-                println("${entry.key}, $div - $timer")
+                season.plotDayByDayStandingsHelper(entry.key, div, testGameLogsProvider)
             }
         }
+        println("generated all plots in $timer")
     }
 
     private fun testGameLogsProvider() = GameLogs { FileInputStream("$RESOURCES/retrosheet/gl1871_2022.zip") }

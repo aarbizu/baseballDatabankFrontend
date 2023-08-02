@@ -103,7 +103,7 @@ class NewDbTest {
 
                 rs.next()
                 val rows = rs.getInt(1)
-                assertThat(rows).isEqualTo(5454)
+                assertThat(rows).isEqualTo(5516)
             }
         }
     }

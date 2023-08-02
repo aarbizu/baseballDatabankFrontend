@@ -1,6 +1,6 @@
 package org.aarbizu.baseballDatabankFrontend.db
 
-class PitchingPostLoadder : CsvLoader {
+class PitchingPostLoader : CsvLoader {
     override fun load(db: DBProvider, csvFile: DataLoader.CsvFile) {
         val tableName = csvFile.nameWithoutExtension
         db.getConnection().use {
@@ -40,7 +40,38 @@ class PitchingPostLoadder : CsvLoader {
                             SF int DEFAULT null,
                             GIDP int DEFAULT null
                         ) AS
-                        SELECT * FROM CSVREAD('${csvFile.absolutePath}');
+                        SELECT 
+                            playerID,
+                            yearId,
+                            round,
+                            teamID,
+                            lgID,
+                            W,
+                            L,
+                            G,
+                            GS,
+                            CG,
+                            SHO,
+                            SV,
+                            IPouts,
+                            H,
+                            ER,
+                            HR,
+                            BB,
+                            SO,
+                            BAOpp,
+                            CASE WHEN ERA = 'inf' THEN 'Infinity' ELSE ERA END,
+                            IBB,
+                            WP,
+                            HBP,
+                            BK,
+                            BFP,
+                            GF,
+                            R,
+                            SH,
+                            SF,
+                            GIDP
+                        FROM CSVREAD('${csvFile.absolutePath}');
                     """
                         .trimIndent(),
                 )
