@@ -19,7 +19,17 @@ class HallOfFameLoader : CsvLoader {
                             category varchar,
                             needed_note varchar
                         ) AS
-                        SELECT * FROM CSVREAD('${csvFile.absolutePath}');
+                        SELECT
+                            playerID,
+                            yearid,
+                            votedBy,
+                            CASE WHEN ballots = 'NA' THEN -1 ELSE ballots END,
+                            CASE WHEN needed = 'NA' THEN -1 ELSE ballots END,
+                            CASE WHEN votes = 'NA' THEN -1 ELSE ballots END,
+                            inducted,
+                            category,
+                            needed_note
+                        FROM CSVREAD('${csvFile.absolutePath}');
                     """
                         .trimIndent(),
                 )

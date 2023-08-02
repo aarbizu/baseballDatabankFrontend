@@ -40,7 +40,7 @@ class DataLoader(
             "Parks" to ParksLoader(),
             "People" to PeopleLoader(),
             "Pitching" to PitchingLoader(),
-            "PitchingPost" to PitchingPostLoadder(),
+            "PitchingPost" to PitchingPostLoader(),
             "SeriesPost" to SeriesPostLoader(),
             "Teams" to TeamsLoader(),
             "TeamsFranchises" to TeamsFranchisesLoader(),
