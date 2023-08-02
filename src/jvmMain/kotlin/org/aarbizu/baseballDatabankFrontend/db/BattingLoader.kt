@@ -1,9 +1,7 @@
 package org.aarbizu.baseballDatabankFrontend.db
 
-import java.io.File
-
 class BattingLoader : CsvLoader {
-    override fun load(db: DBProvider, csvFile: File) {
+    override fun load(db: DBProvider, csvFile: DataLoader.CsvFile) {
         val tableName = csvFile.nameWithoutExtension
         db.getConnection().use {
             it.createStatement().use { stmt ->
@@ -34,7 +32,7 @@ class BattingLoader : CsvLoader {
                             SF int DEFAULT null,
                             GIDP int DEFAULT null
                         ) AS
-                        SELECT * FROM CSVREAD('${csvFile.absolutePath}');
+                        SELECT * FROM CSVREAD('${csvFile.csvData.absolutePath}');
                     """
                         .trimIndent(),
                 )

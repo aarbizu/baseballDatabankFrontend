@@ -1,9 +1,7 @@
 package org.aarbizu.baseballDatabankFrontend.db
 
-import java.io.File
-
 class AppearancesLoader : CsvLoader {
-    override fun load(db: DBProvider, csvFile: File) {
+    override fun load(db: DBProvider, csvFile: DataLoader.CsvFile) {
         val tableName = csvFile.nameWithoutExtension
         db.getConnection().use {
             it.createStatement().use { stmt ->

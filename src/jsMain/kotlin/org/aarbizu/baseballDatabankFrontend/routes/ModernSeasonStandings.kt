@@ -93,9 +93,11 @@ val ModernSeasonStandings = VFC {
 
             Grid {
                 container = true
-                val imgB64 = Base64.encode(image.encodeToByteArray())
-                img {
-                    src = "data:image/svg+xml;base64,$imgB64"
+                if (image.isNotEmpty()) {
+                    val imgB64 = Base64.encode(image.encodeToByteArray())
+                    img {
+                        src = "data:image/svg+xml;base64,$imgB64"
+                    }
                 }
             }
         }
