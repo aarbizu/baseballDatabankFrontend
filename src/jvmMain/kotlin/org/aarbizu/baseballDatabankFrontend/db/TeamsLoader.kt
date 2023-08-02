@@ -1,19 +1,17 @@
 package org.aarbizu.baseballDatabankFrontend.db
 
-import java.io.File
-
 class TeamsLoader : CsvLoader {
-    override fun load(db: DBProvider, csvFile: File) {
+    override fun load(db: DBProvider, csvFile: DataLoader.CsvFile) {
         // upstream/Teams.csv vs core/Teams.csv -- not sure what the differences are, but, handle
         // them here
-        if (csvFile.absolutePath.contains("/core/")) {
+        if (csvFile.originalPath.contains("/core/")) {
             loadCore(db, csvFile)
         } else {
             loadUpstream(db, csvFile)
         }
     }
 
-    private fun loadCore(db: DBProvider, csvFile: File) {
+    private fun loadCore(db: DBProvider, csvFile: DataLoader.CsvFile) {
         val tableName = csvFile.nameWithoutExtension
         db.getConnection().use {
             it.createStatement().use { stmt ->
@@ -78,7 +76,7 @@ class TeamsLoader : CsvLoader {
         }
     }
 
-    private fun loadUpstream(db: DBProvider, csvFile: File) {
+    private fun loadUpstream(db: DBProvider, csvFile: DataLoader.CsvFile) {
         val tableName = csvFile.nameWithoutExtension
         db.getConnection().use {
             it.createStatement().use { stmt ->

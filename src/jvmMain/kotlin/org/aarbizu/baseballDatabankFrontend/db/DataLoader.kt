@@ -1,14 +1,26 @@
 package org.aarbizu.baseballDatabankFrontend.db
 
+import org.h2.util.IOUtils
 import org.slf4j.LoggerFactory
 import java.io.File
+import java.io.FileOutputStream
+import java.net.URI
+import java.nio.file.FileSystems
+import java.nio.file.FileVisitResult
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
+import java.nio.file.SimpleFileVisitor
+import java.nio.file.attribute.BasicFileAttributes
+import kotlin.io.path.extension
+import kotlin.io.path.name
 
 val CSV_FILES_PATH = "${File.separator}csv"
-val defaultCsvLocation: () -> File? = { object { }.javaClass.getResource(CSV_FILES_PATH)?.let { File(it.toURI()) } }
+val defaultCsvLocation: () -> URI? = { object { }.javaClass.getResource(CSV_FILES_PATH)?.toURI() }
 
 class DataLoader(
     private val db: DBProvider,
-    private val csvLocationProvider: () -> File? = defaultCsvLocation,
+    private val csvLocationProvider: () -> URI? = defaultCsvLocation,
 ) {
     private val log = LoggerFactory.getLogger(this.javaClass)
 
@@ -49,6 +61,7 @@ class DataLoader(
         getCsvFiles().forEach {
             log.info("loading $it")
             fileLoaders[it.nameWithoutExtension]?.load(db, it).also { count += 1 }
+            it.csvData.delete()
         }
         log.info("loaded $count files")
     }
@@ -102,11 +115,42 @@ class DataLoader(
         }
     }
 
-    fun getCsvFiles(): List<File> {
+    fun getCsvFiles(): List<CsvFile> {
         return getCsvFiles(csvLocationProvider.invoke())
     }
 
-    private fun getCsvFiles(dir: File?): List<File> {
-        return dir?.walkTopDown()?.filter { it.isFile && it.extension == "csv" }?.toList().orEmpty()
+    private fun getCsvFiles(dir: URI?): List<CsvFile> {
+        val csvFiles: MutableList<CsvFile> = mutableListOf()
+        val path = dir?.let {
+            if (dir.scheme == "jar") {
+                val fs = FileSystems.newFileSystem(dir, emptyMap<String, Any>())
+                fs.getPath(CSV_FILES_PATH)
+            } else {
+                Paths.get(dir)
+            }
+        }
+        path?.let {
+            Files.walkFileTree(path, GetFileVisitor(csvFiles))
+        }
+        return csvFiles
+    }
+
+    class GetFileVisitor(private val files: MutableList<CsvFile>) : SimpleFileVisitor<Path>() {
+        override fun visitFile(file: Path?, attrs: BasicFileAttributes?): FileVisitResult {
+            file?.let {
+                if (it.extension == "csv") {
+                    val f = Files.newInputStream(it)
+                    val name = it.name.substringAfter('_').substringBefore('.')
+                    val tempFile = File.createTempFile(name, it.extension)
+                    IOUtils.copy(f, FileOutputStream(tempFile))
+                    files.add(CsvFile(name, it.toAbsolutePath().toString(), tempFile))
+                }
+            }
+            return FileVisitResult.CONTINUE
+        }
+    }
+
+    data class CsvFile(val nameWithoutExtension: String, val originalPath: String, val csvData: File) {
+        val absolutePath: String = csvData.absolutePath
     }
 }

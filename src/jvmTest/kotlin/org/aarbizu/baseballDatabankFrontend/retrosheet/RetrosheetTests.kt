@@ -14,8 +14,10 @@ import org.jetbrains.letsPlot.letsPlot
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import java.io.FileInputStream
+import java.nio.file.Files
 import java.nio.file.Paths
 import java.time.LocalDate
+import kotlin.test.assertNotNull
 
 const val RESOURCES = "src/commonMain/resources"
 
@@ -25,8 +27,8 @@ class RetrosheetTests {
         @JvmStatic
         @BeforeAll
         fun `init team info for tests`() {
-            val fileUrl = Paths.get("$RESOURCES/retrosheet/team-abbreviations.csv").toUri().toURL()
-            TeamInfo.teamInfoMap = TeamInfo().readHistoricalTeamInfo { fileUrl }
+            val file = Paths.get("$RESOURCES/retrosheet/team-abbreviations.csv").let { Files.newInputStream(it) }
+            TeamInfo.teamInfoMap = TeamInfo().readHistoricalTeamInfo { file }
         }
     }
 
@@ -54,8 +56,8 @@ class RetrosheetTests {
 
     @Test
     fun `reading historical team info`() {
-        val fileUrl = Paths.get("$RESOURCES/retrosheet/team-abbreviations.csv").toUri().toURL()
-        val teamInfoMap = TeamInfo().readHistoricalTeamInfo { fileUrl }
+        val file = Paths.get("$RESOURCES/retrosheet/team-abbreviations.csv").let { Files.newInputStream(it) }
+        val teamInfoMap = TeamInfo().readHistoricalTeamInfo { file }
 
         assertThat(teamInfoMap["SFN"]!!.name).isEqualTo("Giants")
         assertThat(teamInfoMap["SFN"]!!.from).isEqualTo("1958")
@@ -206,7 +208,8 @@ class RetrosheetTests {
             "BSN" to pct,
         )
 
-        val plot = letsPlot(data) +
+        /* val plot = */
+        letsPlot(data) +
             geomStep(color = "blue") { x = "1901"; y = "BSN" } +
             geomLabel(
                 data = mapOf("BSN" to listOf("BSN")),
@@ -273,6 +276,8 @@ class RetrosheetTests {
     }
 
     private fun localBrowserPlot(plot: Plot, name: String) {
+        assertNotNull(plot)
+        assertNotNull(name)
         // TODO headless browser style plz, k thx
 //        val content = PlotSvgExport.buildSvgImageFromRawSpecs(plot.toSpec())
 // //        val content = PlotHtmlExport.buildHtmlFromRawSpecs(plot.toSpec(), scriptUrl(VersionChecker.letsPlotJsVersion))

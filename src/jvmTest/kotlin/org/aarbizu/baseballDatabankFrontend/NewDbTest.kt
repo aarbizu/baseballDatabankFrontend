@@ -65,7 +65,7 @@ class NewDbTest {
         System.setProperty("jdbc.drivers", currentDrivers)
         val jdbcUrl = "jdbc:h2:mem:stats;DB_CLOSE_DELAY=-1"
         val connPool = JdbcConnectionPool.create(jdbcUrl, "stats", "stats")
-        val fileOne = File("$PROD_RESOURCES$CSV_FILES_PATH/core/AllstarFull.csv")
+        val fileOne = File("$PROD_RESOURCES${File.separator}$CSV_FILES_PATH/core/AllstarFull.csv")
 
         assertThat(fileOne.canRead())
         val simplename = fileOne.nameWithoutExtension
@@ -112,10 +112,9 @@ class NewDbTest {
     fun `list all csv files`() {
         var fileCount = 0
         val expectedFileCount = 28 // as of 4/3/2022, when copied from baseballdatabank repo
-        val prodCsv = { File("$PROD_RESOURCES$CSV_FILES_PATH") }
+        val prodCsv = { object {}.javaClass.getResource(CSV_FILES_PATH)?.toURI() }
         DataLoader(dbmock, prodCsv).getCsvFiles().forEach {
-            assertThat(it.isFile && it.extension == "csv")
-            assertThat(it.canRead())
+            assertThat(it.csvData.canRead())
             fileCount += 1
         }
         assertThat(fileCount).isEqualTo(expectedFileCount)
@@ -123,7 +122,7 @@ class NewDbTest {
 
     @Test
     fun `test initializing db`() {
-        val prodCsv = { File("$PROD_RESOURCES$CSV_FILES_PATH") }
+        val prodCsv = { object {}.javaClass.getResource(CSV_FILES_PATH)?.toURI() }
         val dataLoader = DataLoader(ServerConfig.db, prodCsv)
         dataLoader.loadAllFiles()
         dataLoader.buildIndexes()
