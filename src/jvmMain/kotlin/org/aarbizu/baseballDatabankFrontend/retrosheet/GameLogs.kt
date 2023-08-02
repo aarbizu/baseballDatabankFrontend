@@ -8,30 +8,42 @@ import java.io.File
 import java.io.InputStream
 import java.util.zip.ZipInputStream
 
-/**
+/**L
  * Retrieve GameLog info from retrosheet archive.
  */
 val RETROSHEET_GAMELOGS_ARCHIVE = "${File.separator}retrosheet${File.separator}gl1871_2022.zip"
 class GameLogs(private val logProvider: () -> InputStream? = gameLogArchiveProvider) {
 
-    private val seasonGameLogCache: LoadingCache<String, List<SimpleGameLog>> = CacheBuilder.newBuilder()
-        .build(
-            CacheLoader.from { year: String? -> year?.let { getGameLogs(year, logProvider) } },
+    private val leagueIdentifiers = listOf("AL", "NL")
+
+    private val seasonGameLogCache: LoadingCache<String, List<SimpleGameLog>> =
+        CacheBuilder.newBuilder().build(
+            CacheLoader.from { year: String? ->
+                year?.let {
+                    getGameLogs(year, logProvider) { league ->
+                        leagueIdentifiers.contains(league)
+                    }
+                }
+            },
         )
 
     fun getGameLogs(year: String): List<SimpleGameLog> {
         return seasonGameLogCache.get(year)
     }
 
-    private fun getGameLogs(year: String, provider: () -> InputStream?): List<SimpleGameLog> {
+    private fun getGameLogs(
+        year: String,
+        provider: () -> InputStream?,
+        leagueFilter: (s: String) -> Boolean,
+    ): List<SimpleGameLog> {
         return getGameLogFromArchive(year, provider)
-            .filter {
-                it.isNotEmpty()
-            }
+            .filter { it.isNotEmpty() }
             .map { it.replace("\"", "") }
+            .map { it.split(",") }
+            .filter {
+                leagueFilter.invoke(it[4]) && leagueFilter.invoke(it[7])
+            }
             .map {
-                it.split(",")
-            }.map {
                 val visitingTeam = TeamInfo.teamInfoMap[it[3]]
                 val homeTeam = TeamInfo.teamInfoMap[it[6]]
                 SimpleGameLog(

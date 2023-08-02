@@ -1,5 +1,6 @@
 package org.aarbizu.baseballDatabankFrontend.retrosheet
 
+import com.google.common.base.Stopwatch
 import com.google.common.truth.Truth.assertThat
 import jetbrains.datalore.plot.PlotSvgExport
 import org.jetbrains.letsPlot.geom.geomDensity
@@ -51,7 +52,7 @@ class RetrosheetTests {
                 it.split(",")
             }.map {
                 "${it[0]}: ${it[3]} (${it[4]}) ${it[9]} at ${it[6]} (${it[7]}) ${it[10]}"
-            } // .also { println(it) }
+            }
     }
 
     @Test
@@ -336,7 +337,8 @@ class RetrosheetTests {
             alpha = .3,
             size = 2.0,
         ) { x = "x" }
-        val content = PlotSvgExport.buildSvgImageFromRawSpecs(plot.toSpec())
+        /* val content = */
+        PlotSvgExport.buildSvgImageFromRawSpecs(plot.toSpec())
 // TODO  commented out because the tests can't do this bit in github- how to do Headless browser tests?
 //        val dir = Files.createDirectories(
 //            Paths.get(
@@ -355,9 +357,22 @@ class RetrosheetTests {
     @Test
     fun buildLeagueDivisionSelectMap() {
         val mapped = modernDivisionList()
-
         assertThat(mapped).isNotNull()
-        assertThat(mapped.keys).isEqualTo((1901..2023).map { it.toString() }.toSet())
+        assertThat(mapped.keys).isEqualTo((1901..2022).map { it.toString() }.toSet())
+    }
+
+    @Test
+    fun testAllMLBPlots() {
+        val season = SeasonProgress()
+        val testGameLogsProvider = testGameLogsProvider()
+        val timer = Stopwatch.createStarted()
+        modernDivisionList().entries.forEach { entry ->
+            entry.value.forEach { div ->
+                val plot = season.plotDayByDayStandingsHelper(entry.key, div, testGameLogsProvider)
+                assertThat(plot).isNotNull()
+                println("${entry.key}, $div - $timer")
+            }
+        }
     }
 
     private fun testGameLogsProvider() = GameLogs { FileInputStream("$RESOURCES/retrosheet/gl1871_2022.zip") }

@@ -11,9 +11,7 @@ import mui.material.MenuItem
 import mui.material.Select
 import mui.material.Size
 import mui.material.Stack
-import mui.material.StackDirection.Companion.row
-import mui.material.Typography
-import mui.material.styles.TypographyVariant
+import mui.material.StackDirection.Companion.column
 import mui.system.responsive
 import mui.system.sx
 import org.aarbizu.baseballDatabankFrontend.SeasonDailyStandingsParam
@@ -24,7 +22,6 @@ import react.ReactNode
 import react.VFC
 import react.dom.html.ReactHTML.img
 import react.useState
-import web.cssom.TextAlign
 import web.cssom.em
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
@@ -40,29 +37,20 @@ val ModernSeasonStandings = VFC {
     Box {
         sx { padding = 1.em }
 
-        Typography {
-            variant = TypographyVariant.body1
-            sx {
-                textAlign = TextAlign.center
-                paddingBottom = 0.1.em
-            }
-            +"Modern Era Daily Standings"
-        }
-
         Stack {
-            direction = responsive(row)
+            direction = responsive(column)
             FormControl {
                 sx { margin = 1.em }
                 variant = FormControlVariant.standard
                 size = Size.small
                 InputLabel {
                     id = "daily-standings"
-                    +"Daily Standings"
+                    +"Season/Division"
                 }
                 Select {
                     labelId = "standings-select"
                     value = selection.unsafeCast<Nothing?>()
-                    label = ReactNode("Season/Division")
+                    label = ReactNode("standings")
                     onChange = { event, _ -> selection = event.target.value }
                     for (k in keys(modernMLBDivisions)) {
                         val divs = "${modernMLBDivisions[k]}"

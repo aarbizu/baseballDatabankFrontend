@@ -68,7 +68,7 @@ fun initialStandings(mlbYear: MLB): Standings {
 }
 
 fun modernDivisionList(): Map<String, List<String>> {
-    return (1901..2023).map {
+    return (1901..2022).map {
         Pair(it, MLBTeams.of(it))
     }.map { yearAndMlb ->
         Pair(
