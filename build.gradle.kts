@@ -5,7 +5,7 @@ import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 
 val kotlin = "2.0.0"
 val kotlinLogging = "3.0.4"
-val kotlinxCoroutines = "1.6.4"
+val kotlinxCoroutines = "1.7.3"
 val ktor = "2.3.1"
 val guava = "32.0.1-jre"
 val systemRules = "1.19.0"
@@ -207,7 +207,8 @@ tasks.getByName<Jar>("jvmJar") {
     val webpackTask = tasks.getByName<KotlinWebpack>(taskName)
     dependsOn(webpackTask) // make sure JS gets compiled first
     dependsOn(tasks.getByName("jsDevelopmentExecutableCompileSync"))
-    from(File(webpackTask.outputDirectory.toString(), webpackTask.mainOutputFileName.toString())) // bring output file along into the JAR
+    println("copying output file: ${webpackTask.outputDirectory.get()}, ${webpackTask.mainOutputFileName.get()}")
+    from(File(webpackTask.outputDirectory.get().toString(), webpackTask.mainOutputFileName.get())) // bring output file along into the JAR
 }
 
 tasks.create("stage") {
