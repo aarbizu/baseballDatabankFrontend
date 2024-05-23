@@ -48,7 +48,7 @@ plugins {
 }
 
 kotlin {
-    jvmToolchain(11)
+    jvmToolchain(17)
     jvm {
         withJava()
 
@@ -166,7 +166,7 @@ spotless {
 tasks {
     withType<KotlinCompile> {
         kotlinOptions {
-            jvmTarget = "11"
+            jvmTarget = "17"
         }
     }
 }
