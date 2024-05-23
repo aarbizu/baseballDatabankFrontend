@@ -66,7 +66,7 @@ class SeasonProgress {
 
     private val plotCache: LoadingCache<Pair<String, String>, String> = CacheBuilder.newBuilder()
         .build(
-            CacheLoader.from { (year: String?, division: String?) ->
+            CacheLoader.from { (year: String, division: String) ->
                 innerPlotDayByDayStandings(year, division)
             },
         )

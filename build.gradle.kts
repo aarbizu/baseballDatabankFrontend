@@ -2,9 +2,8 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent.FAILED
 import org.gradle.api.tasks.testing.logging.TestLogEvent.PASSED
 import org.gradle.api.tasks.testing.logging.TestLogEvent.SKIPPED
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-val kotlin = "1.8.10"
+val kotlin = "2.0.0"
 val kotlinLogging = "3.0.4"
 val kotlinxCoroutines = "1.6.4"
 val ktor = "2.3.1"
@@ -30,12 +29,12 @@ val letsplotcommon = "3.2.0"
 
 plugins {
     // Apply the Kotlin JVM plugin to add support for Kotlin.
-    kotlin("multiplatform") version "1.8.22"
+    kotlin("multiplatform") version "2.0.0"
 
     // Apply the application plugin to add support for building a CLI application.
     application
 
-    kotlin("plugin.serialization") version "1.8.22"
+    kotlin("plugin.serialization") version "2.0.0"
 
     // Apply the idea plugin
     idea
@@ -48,6 +47,9 @@ plugins {
 }
 
 kotlin {
+    compilerOptions {
+        apiVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_0)
+    }
     jvmToolchain(17)
     jvm {
         withJava()
@@ -163,14 +165,6 @@ spotless {
     }
 }
 
-tasks {
-    withType<KotlinCompile> {
-        kotlinOptions {
-            jvmTarget = "17"
-        }
-    }
-}
-
 distributions {
     main {
         contents {
@@ -213,7 +207,7 @@ tasks.getByName<Jar>("jvmJar") {
     val webpackTask = tasks.getByName<KotlinWebpack>(taskName)
     dependsOn(webpackTask) // make sure JS gets compiled first
     dependsOn(tasks.getByName("jsDevelopmentExecutableCompileSync"))
-    from(File(webpackTask.destinationDirectory, webpackTask.outputFileName)) // bring output file along into the JAR
+    from(File(webpackTask.outputDirectory.toString(), webpackTask.mainOutputFileName.toString())) // bring output file along into the JAR
 }
 
 tasks.create("stage") {
