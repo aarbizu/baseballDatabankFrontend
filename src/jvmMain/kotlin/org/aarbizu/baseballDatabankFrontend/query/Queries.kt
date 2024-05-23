@@ -168,3 +168,10 @@ fun careerStatleader(statName: String, statTable: String): String {
     """
         .trimIndent()
 }
+
+fun namesAndIdsSql() = """
+    SELECT namefirst, namelast, playerid
+    FROM people
+    WHERE namefirst IS NOT NULL
+""".trimIndent()
+
