@@ -174,4 +174,3 @@ fun namesAndIdsSql() = """
     FROM people
     WHERE namefirst IS NOT NULL
 """.trimIndent()
-
