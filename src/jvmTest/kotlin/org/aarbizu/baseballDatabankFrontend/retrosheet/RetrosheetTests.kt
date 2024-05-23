@@ -3,6 +3,11 @@ package org.aarbizu.baseballDatabankFrontend.retrosheet
 import com.google.common.base.Stopwatch
 import com.google.common.truth.Truth.assertThat
 import jetbrains.datalore.plot.PlotSvgExport
+import org.aarbizu.baseballDatabankFrontend.config.ServerConfig
+import org.aarbizu.baseballDatabankFrontend.db.CSV_FILES_PATH
+import org.aarbizu.baseballDatabankFrontend.db.DBProvider
+import org.aarbizu.baseballDatabankFrontend.db.DataLoader
+import org.aarbizu.baseballDatabankFrontend.query.QueryEngine
 import org.jetbrains.letsPlot.geom.geomDensity
 import org.jetbrains.letsPlot.geom.geomLabel
 import org.jetbrains.letsPlot.geom.geomStep
@@ -14,9 +19,11 @@ import org.jetbrains.letsPlot.label.ylab
 import org.jetbrains.letsPlot.letsPlot
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
+import java.io.File
 import java.io.FileInputStream
 import java.nio.file.Files
 import java.nio.file.Paths
+import java.sql.Connection
 import java.time.LocalDate
 import kotlin.test.assertNotNull
 
@@ -28,8 +35,8 @@ class RetrosheetTests {
         @JvmStatic
         @BeforeAll
         fun `init team info for tests`() {
-            val file = Paths.get("$RESOURCES/retrosheet/team-abbreviations.csv").let { Files.newInputStream(it) }
-            TeamInfo.teamInfoMap = TeamInfo().readHistoricalTeamInfo { file }
+            val inputStream = Paths.get("$RESOURCES/retrosheet/team-abbreviations.csv").let { Files.newInputStream(it) }
+            TeamInfo.teamInfoMap = TeamInfo().readHistoricalTeamInfo { inputStream }
         }
     }
 
@@ -372,6 +379,43 @@ class RetrosheetTests {
             }
         }
         println("generated all plots in $timer")
+    }
+
+    @Test
+    fun testConventionalNames() {
+        val rareInputStream = Paths.get("$RESOURCES/retrosheet/rarenames-out.zip").let { Files.newInputStream(it) }
+        val commonInputStream = Paths.get("$RESOURCES/retrosheet/commonnames-out.zip").let { Files.newInputStream(it) }
+        val names = Names()
+        Names.rareNames = names.readHistoricalNamesData { rareInputStream }
+        Names.commonNames = names.readHistoricalNamesData { commonInputStream }
+
+        assertThat(Names.rareNames).isNotEmpty()
+        assertThat(Names.commonNames).isNotEmpty()
+
+        // spin up in memory h2 db, load all player namefirst,playerid
+        val prodCsv = { object {}.javaClass.getResource(CSV_FILES_PATH)?.toURI() }
+        val dataLoader = DataLoader(ServerConfig.db, prodCsv)
+        dataLoader.loadAllFiles()
+        dataLoader.buildIndexes()
+        val allPlayerNames = QueryEngine(
+            object : DBProvider {
+                override fun getConnection(): Connection = ServerConfig.db.getConnection()
+                override fun stats() {}
+            },
+        ).allPlayerNames()
+
+        val namesAsInitials = Regex("""[A-Z]\.?\s?[A-Z]\.?\s?""") // e.g. "A.J.", "C.J.", etc.
+        val rareNames = allPlayerNames
+            .filterNot { Names.commonNames.contains(it.name) || namesAsInitials.matches(it.name) }
+
+        println(rareNames.size)
+        File("interesting-player-names.txt").bufferedWriter().use { bw ->
+            rareNames.forEach { bw.appendLine("${it.name} ${it.lastname}") }
+        }
+
+        File("rarenames-in-players.txt").bufferedWriter().use { bw ->
+            rareNames.filter { Names.rareNames.contains(it.name) }.forEach { bw.appendLine("${it.name} ${it.lastname}") }
+        }
     }
 
     private fun testGameLogsProvider() = GameLogs { FileInputStream("$RESOURCES/retrosheet/gl1871_2022.zip") }

@@ -32,6 +32,7 @@ import org.aarbizu.baseballDatabankFrontend.query.playerNamesSorted
 import org.aarbizu.baseballDatabankFrontend.query.preloadQueries
 import org.aarbizu.baseballDatabankFrontend.query.toJsonArray
 import org.aarbizu.baseballDatabankFrontend.query.toJsonObject
+import org.aarbizu.baseballDatabankFrontend.retrosheet.Names
 import org.aarbizu.baseballDatabankFrontend.retrosheet.SeasonProgress
 import org.aarbizu.baseballDatabankFrontend.retrosheet.TeamInfo
 import org.aarbizu.baseballDatabankFrontend.retrosheet.modernDivisionList
@@ -40,7 +41,6 @@ import org.slf4j.LoggerFactory
 import java.io.File
 import java.nio.file.Files.readString
 import java.nio.file.Paths
-import kotlin.math.log
 
 private const val DEFAULT_HTML_DOC = "src/commonMain/resources/index.html"
 val defaultHtmlText: String = readString(Paths.get(DEFAULT_HTML_DOC))
@@ -68,6 +68,9 @@ class Server(private val config: AppConfig) {
         val timer = Stopwatch.createStarted()
         TeamInfo().initializeMap()
         log.info("initialized team info map: ${TeamInfo.teamInfoMap.size} mappings, $timer")
+
+        Names().initialize()
+        log.info("initialized name set: ${Names.rareNames.size} names loaded")
     }
 
     private fun initializeDb(config: AppConfig) {

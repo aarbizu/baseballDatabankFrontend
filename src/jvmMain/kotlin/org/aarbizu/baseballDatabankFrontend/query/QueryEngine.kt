@@ -1,6 +1,7 @@
 package org.aarbizu.baseballDatabankFrontend.query
 
 import com.google.common.base.Stopwatch
+import org.aarbizu.baseballDatabankFrontend.BasePlayer
 import org.aarbizu.baseballDatabankFrontend.BaseballRecord
 import org.aarbizu.baseballDatabankFrontend.MinMaxValues
 import org.aarbizu.baseballDatabankFrontend.PlayerCareerStatRecord
@@ -23,19 +24,20 @@ object NoneDbProvider : DBProvider {
 
     override fun stats() { /*no op*/ }
 }
+
 object NoneQueryEngine : QueryEngine(NoneDbProvider)
 
 open class QueryEngine(private val dbProvider: DBProvider) {
     companion object DbDriver {
-        fun query(
+        fun <T : BaseballRecord> query(
             dbProvider: DBProvider,
             queryTemplate: String,
             binds: List<Bind<*>>,
-            extractor: (ResultSet) -> List<BaseballRecord>,
-        ): List<BaseballRecord> {
+            extractor: (ResultSet) -> List<T>,
+        ): List<T> {
             val logger = LoggerFactory.getLogger("QueryEngine")
             val timer = Stopwatch.createStarted()
-            var records: List<BaseballRecord>
+            var records: List<T>
             // TODO -- preempt db conn usages with a cache based on hash of binds per queryTemplate
             dbProvider.getConnection().use {
                 val rs = statement(it, queryTemplate, binds).executeQuery()
@@ -121,6 +123,15 @@ open class QueryEngine(private val dbProvider: DBProvider) {
         )
     }
 
+    fun allPlayerNames(): List<BasePlayer> {
+        return query(
+            dbProvider,
+            namesAndIdsSql(),
+            emptyList(),
+            extractNameAndId,
+        )
+    }
+
     private val minMaxNameLengthsExtract: (ResultSet) -> List<MinMaxValues> = {
         it.next()
         listOf(
@@ -183,6 +194,14 @@ open class QueryEngine(private val dbProvider: DBProvider) {
                     stat = it.getString("stat_total"),
                 ),
             )
+        }
+        records
+    }
+
+    private val extractNameAndId: (ResultSet) -> List<BasePlayer> = {
+        val records = mutableListOf<BasePlayer>()
+        while (it.next()) {
+            records.add(BasePlayer(it.getString("namefirst"), it.getString("namelast"), it.getString("playerid")))
         }
         records
     }
